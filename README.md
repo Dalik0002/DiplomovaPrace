@@ -1,4 +1,4 @@
-# Diplomova_prace
+# Diplomová Práce
 Diplomová práce
 
 ## Téma:
