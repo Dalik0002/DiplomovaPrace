@@ -9,6 +9,18 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.myapplication.databinding.ActivityMainBinding
 
+/*class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        val navController = findNavController(R.id.nav_host_fragment)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
+        bottomNavigationView.setupWithNavController(navController)
+    }
+}*/
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
