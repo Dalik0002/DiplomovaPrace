@@ -1,0 +1,25 @@
+/* Global reset and base styles */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--light);
+  color: var(--dark);
+  font-family: var(--font-family, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif);
+}
+
+/* Remove default list styles */
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style-position: outside;
+}
+
+button {
+  font-family: inherit;
+}

@@ -1,0 +1,254 @@
+/* Global styles for the DrinkMaker React application */
+
+:root {
+  --primary: #e63946;
+  --secondary: #a8dadc;
+  --dark: #1d3557;
+  --light: #f1faee;
+  --accent: #457b9d;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--light);
+  color: var(--dark);
+  line-height: 1.5;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Navigation bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--dark);
+  color: var(--light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar .logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar .nav-links li {
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.navbar .nav-links li:hover,
+.navbar .nav-links li.active {
+  background-color: var(--accent);
+  color: var(--light);
+}
+
+/* Hero section at top of the list view */
+.hero-section {
+  position: relative;
+  height: 40vh;
+  min-height: 240px;
+  background-image: url('/abstract-cocktails.png');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--light);
+  text-align: center;
+}
+
+.hero-section .overlay {
+  background-color: rgba(29, 53, 87, 0.6);
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.hero-section h1 {
+  margin: 0;
+  font-size: 2.25rem;
+}
+
+.hero-section p {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Drink list */
+.drink-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.drink-card {
+  background-color: var(--light);
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.drink-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.drink-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--dark);
+}
+
+.drink-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Drink details */
+.drink-details {
+  max-width: 800px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--light);
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.drink-details h2 {
+  margin-top: 0;
+  color: var(--primary);
+}
+
+.drink-details h3 {
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+
+.drink-details .ingredient-list,
+.drink-details .instruction-list {
+  margin: 0 0 1rem 1rem;
+}
+
+.drink-details li {
+  margin-bottom: 0.3rem;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+/* Custom drink form */
+.custom-drink-form {
+  max-width: 600px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: var(--light);
+  border: 1px solid var(--secondary);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.custom-drink-form h2 {
+  margin: 0;
+  color: var(--primary);
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.ingredient-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.ingredient-row input {
+  flex: 1 1 0;
+}
+
+.ingredient-row .remove-btn,
+.ingredient-row .add-btn,
+.submit-btn {
+  background-color: var(--accent);
+  color: var(--light);
+  border: none;
+  padding: 0.4rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
+.ingredient-row .remove-btn {
+  background-color: var(--primary);
+}
+
+.ingredient-row .remove-btn:hover,
+.ingredient-row .add-btn:hover,
+.submit-btn:hover {
+  opacity: 0.9;
+}
+
+.submit-btn {
+  align-self: flex-end;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
