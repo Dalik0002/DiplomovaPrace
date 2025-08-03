@@ -1,0 +1,109 @@
+import serial
+import asyncio
+import platform
+import json
+
+from services.input_state import InputState
+
+input_state = InputState()
+
+# Pufr pro vstup
+uart_buffer = ""
+
+# Nastavení UART portu (na Raspberry Pi obvykle /dev/serial0)
+SERIAL_PORT = '/dev/serial0'
+BAUDRATE = 115200
+
+IS_LINUX = platform.system() == "Linux"
+ser = None
+
+if IS_LINUX:
+    try:
+        ser = serial.Serial(
+            port=SERIAL_PORT,
+            baudrate=BAUDRATE,
+            timeout=1        # timeout pro čtení v sekundách
+        )
+        print("[UART] UART inicializován (/dev/serial0)")
+    except Exception as e:
+        print(f"[UART] Chyba při inicializaci: {e}")
+        ser = None
+else:
+    print("[UART] Není Linux → UART ignorován")
+
+
+# Asynchronní funkce pro poslouchání UART
+async def uart_listener_loop():
+    if not ser:
+        print("[UART ←] Není Linux → automatické přijímaní není spuštěno")
+        return
+
+    print("[UART ←] Přijímání spuštěno")
+    while True:
+        try:
+            if ser.in_waiting:
+                data = ser.readline().decode('utf-8', errors='ignore').strip()
+                if data:
+                    print(f"[UART ←] Příchozí data: {data}")
+        except Exception as e:
+            print(f"[UART ←] Chyba při čtení: {e}")
+        await asyncio.sleep(0.1)
+
+
+# Asynchronní funkce pro poslouchání JSON zprávy po UARTu
+async def uart_JSON_listener_loop():
+    global uart_buffer
+    if not ser:
+        print("[UART ←] Není k dispozici UART port")
+        return
+
+    print("[UART] Přijímání spuštěno")
+    while True:
+        try:
+            if ser.in_waiting:
+                chunk = ser.read(ser.in_waiting).decode("utf-8", errors="ignore")
+                uart_buffer += chunk
+
+                # Zpracuj všechny kompletní bloky <JSON>...</JSON>
+                while "<JSON>" in uart_buffer and "</JSON>" in uart_buffer:
+                    start = uart_buffer.find("<JSON>") + len("<JSON>")
+                    end = uart_buffer.find("</JSON>")
+                    json_str = uart_buffer[start:end]
+                    uart_buffer = uart_buffer[end + len("</JSON>"):]  # odstraněný zbytek
+
+                    try:
+                        msg = json.loads(json_str)
+                        print("[UART ←]", msg)
+                        input_state.update_from_json(msg)
+                    except json.JSONDecodeError:
+                        print("[UART JSON ERROR] Neplatný JSON:", json_str)
+
+        except Exception as e:
+            print(f"[UART ← ERROR] Chyba při čtení: {e}")
+
+        await asyncio.sleep(0.1)
+
+#################################################
+# Funkce pro odesílání zpráv přes UART
+def send_uart_command(msg: str):
+    if ser:
+        try:
+            msg = msg + '\n'
+            ser.write(msg.encode('utf-8'))
+            print(f"[UART →] Odesláno: {msg}")
+        except Exception as e:
+            print(f"[UART → ERROR] Chyba při odesílání: {e}")
+    else:
+        print(f"[UART →] Není Linux → odesílání ignorováno")
+        
+
+def send_json(json_obj):
+    if ser:
+        try:
+            data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
+            ser.write(data.encode("utf-8"))
+            print(f"[UART →] Odesláno", data.strip())
+        except Exception as e:
+            print(f"[UART → ERROR] Chyba při odesílání: {e}")
+    else:
+        print(f"[UART →] Není Linux → odesílání ignorováno")

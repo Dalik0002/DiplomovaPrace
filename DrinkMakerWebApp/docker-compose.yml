@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: drinkmaker-backend
+    ports:
+      - "8000:8000"
+    devices:
+      - "/dev/serial0:/dev/serial0"
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend  # složka s frontendem
+    container_name: drinkmaker-frontend
+    ports:
+      - "5173:5173"  # výchozí port pro Vite
+    restart: unless-stopped
+    environment:
+      - CHOKIDAR_USEPOLLING=true  # občas potřeba na RPi pro sledování změn
