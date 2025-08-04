@@ -5,43 +5,6 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -68,7 +31,7 @@ body {
   color: white;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 2.5rem;
   transition: color 0.3s ease;
 }
 
@@ -133,9 +96,23 @@ body {
 }
 
 .logo-static {
-  width: 120px;
+  width: 400px;
   height: auto;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.logo-container {
+  display: flex;  
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(40, 9, 43);
+}
+
+.logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 5px;
 }
 
 .spinner {
@@ -145,6 +122,7 @@ body {
   border-top: 4px solid rgb(255, 176, 250);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 50px;
 }
 
 @keyframes spin {
