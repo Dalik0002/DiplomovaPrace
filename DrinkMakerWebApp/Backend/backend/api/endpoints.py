@@ -1,7 +1,12 @@
 from fastapi import APIRouter
-from models.endpointsClasses import Order
+from typing import List
 
+from models.endpointsClasses import Order
+from models.endpointsClasses import BottleAssignment
 import services.queue_service as queue_service
+from services.bottle_state import BottleState
+
+bottle_state = BottleState()
 
 router = APIRouter()
 
@@ -29,4 +34,14 @@ def deleteQueue(order: Order):
     print(f"Vymazání fronty drinků")
     return {"status": "ok", "message": "Fronta vymazána"}
 
+#bottles
+stored_bottles = [""] * 6
 
+@router.post("/bottles/assigBottles", tags=["Bottles"])
+def assign_bottles(bottles: List[BottleAssignment]):
+    bottle_state.set_bottles(bottles)
+    return {"status": "ok", "message": "Bottles assigned"}
+
+@router.get("/bottles/getBottles", response_model=List[BottleAssignment], tags=["Bottles"])
+def get_bottles():
+    return bottle_state.get_bottle_assignments()

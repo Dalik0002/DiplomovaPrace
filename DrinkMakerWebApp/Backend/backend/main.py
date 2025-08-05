@@ -17,7 +17,8 @@ app = FastAPI(
     openapi_tags=[
         {"name": "Pouring", "description": "Zahájení procesu nalévání drinku"},
         {"name": "Queue", "description": "Správa fronty objednávek"},
-        {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"}
+        {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
+        {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"}
     ]
 )
 

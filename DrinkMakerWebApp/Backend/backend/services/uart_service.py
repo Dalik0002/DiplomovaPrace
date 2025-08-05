@@ -4,6 +4,7 @@ import platform
 import json
 
 from services.input_state import InputState
+from services.bottle_state import BottleState
 
 input_state = InputState()
 
@@ -103,6 +104,19 @@ def send_json(json_obj):
             data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
             ser.write(data.encode("utf-8"))
             print(f"[UART →] Odesláno", data.strip())
+        except Exception as e:
+            print(f"[UART → ERROR] Chyba při odesílání: {e}")
+    else:
+        print(f"[UART →] Není Linux → odesílání ignorováno")
+
+
+def send_bottles():
+    if ser:
+        try:
+            json_obj = BottleState.bottle_to_uart_json()
+            data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
+            ser.write(data.encode("utf-8"))
+            print(f"[UART →] Odesláno:", data.strip())
         except Exception as e:
             print(f"[UART → ERROR] Chyba při odesílání: {e}")
     else:
