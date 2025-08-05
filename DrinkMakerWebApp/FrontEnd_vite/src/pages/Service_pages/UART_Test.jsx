@@ -1,6 +1,8 @@
 // src/Service_pages/UART_Test.jsx
 import { useState } from 'react'
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function UART_Test() {
   const [previewInfo, setPreviewInfo] = useState(null)
   const [previewGlasses, setPreviewGlasses] = useState(null)
@@ -8,13 +10,13 @@ function UART_Test() {
   const [inputState, setInputState] = useState(null)
 
   const send = (endpoint) => {
-    fetch(`http://localhost:8000/uart/${endpoint}`, {
+    fetch(`${API_URL}/uart/${endpoint}`, {
       method: 'POST'
     })
   }
 
   const preview = async (endpoint, setFunc) => {
-    const res = await fetch(`http://localhost:8000/uart/${endpoint}`)
+    const res = await fetch(`${API_URL}/uart/${endpoint}`)
     const data = await res.json()
     setFunc(data)
   }

@@ -22,14 +22,20 @@ app = FastAPI(
     ]
 )
 
+# Povolené originy
+origins = [
+    "http://localhost:5173",         # vývojové prostředí
+    "http://192.168.1.111:5173",     # produkční frontend na RPi
+    "http://127.0.0.1:5173",         # alternativa pro vývoj
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,          # seznam povolených originů
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],            # povol všechny metody (GET, POST, atd.)
+    allow_headers=["*"],            # povol všechny hlavičky
 )
-
 app.include_router(router)
 app.include_router(router_UART)
 
