@@ -28,8 +28,8 @@ def addToQueue(order: Order):
     print(f"Přidání objednávky do fronty: {order}")
     return {"status": "ok", "message": "Přidáno do fronty"}
 
-@router.post("/queue/deleteQueue", tags=["Queue"])
-def deleteQueue(order: Order):
+@router.post("/queue/deleteFullQueue", tags=["Queue"])
+def deleteFullQueue():
     queue_service.clear_queue()
     print(f"Vymazání fronty drinků")
     return {"status": "ok", "message": "Fronta vymazána"}

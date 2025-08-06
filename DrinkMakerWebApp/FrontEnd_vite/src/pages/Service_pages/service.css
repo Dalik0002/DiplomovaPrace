@@ -1,0 +1,47 @@
+.bottle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.bottle-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bottle-pos {
+  min-width: 80px;
+  font-weight: bold;
+}
+
+.input-field {
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: #333;
+}

@@ -8,6 +8,7 @@ function Service_main() {
 
   return (
     <div className="centered-page">
+      <h1>Service</h1>
       {isBaseRoute && (
         <div className="nav-bar">
           <Link to="/service/ingredient">Ingredient</Link>
