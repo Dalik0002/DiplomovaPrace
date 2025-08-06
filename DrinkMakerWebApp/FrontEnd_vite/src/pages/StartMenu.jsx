@@ -1,9 +1,12 @@
 import { Routes, Route, Link } from 'react-router-dom'
-import OrderScreen from './Order_pages/OrderScreen'
+import Order_main from './Order_pages/OrderScreen'
+import NewDrink from './Order_pages/NewDrink'
+import DrinksQueue from './Order_pages/DrinksQueue'
+
 import Service_main from './Service_pages/Service_main'
 import Ingredient from './Service_pages/Ingredient'
 import UART_Test from './Service_pages/UART_Test'
-import BackButton from '../components/BackButton'  // ← sem importuješ komponentu
+import BackButton from '../components/BackButton'
 import '../App.css'
 
 function StartMenu() {
@@ -11,14 +14,17 @@ function StartMenu() {
     <div className="app-container">
       <Routes>
         <Route
-          path="/order"
+          path="/order/*"
           element={
             <>
               <BackButton />
-              <OrderScreen />
+              <Order_main />
             </>
           }
-        />
+        >
+          <Route path="drinksQueue" element={<DrinksQueue />} />
+          <Route path="newDrink" element={<NewDrink />} />
+        </Route>
 
         <Route
           path="/service/*"

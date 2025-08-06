@@ -1,40 +1,27 @@
-import { useDrink } from '../../state/DrinkContext'
-import './OrderScreen.css'
 
-function OrderScreen() {
-  const { glasses, setGlasses, ingredients } = useDrink()
+import { Outlet, Link, useLocation } from 'react-router-dom'
+import '../../App.css'
+import './OrderScreens.css'
 
-  const handleSelect = (index, value) => {
-    const updated = [...glasses]
-    updated[index] = value
-    setGlasses(updated)
-  }
+function Order_main() {
+  const location = useLocation()
+  const isBaseRoute = location.pathname === '/order'
 
   return (
     <div className="centered-page">
       <h1>DrinkMaker</h1>
-      <div className="glass-grid">
-        {glasses.map((content, idx) => (
-          <div
-            key={idx}
-            className={`glass-item ${!content ? 'empty' : ''}`}
-          >
-            <p>Sklenka {idx + 1}</p>
-            <select
-              value={content}
-              onChange={e => handleSelect(idx, e.target.value)}
-              className="input-field"
-            >
-              <option value="">--Vyber ingredienci--</option>
-              {ingredients.map((ing, i) => (
-                <option key={i} value={ing}>{ing}</option>
-              ))}
-            </select>
+      {isBaseRoute && (
+        <>
+          <div className="nav-bar">
+            <Link to="/order/drinksQueue">Edit drink Queue</Link>
+            <Link to="/order/newDrink">Add new Drink</Link>
           </div>
-        ))}
-      </div>
+        </>
+      )}
+
+      <Outlet />
     </div>
   )
 }
 
-export default OrderScreen
+export default Order_main
