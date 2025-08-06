@@ -1,36 +1,53 @@
-// src/pages/Setup.jsx
+// src/Service_pages/Ingredient.jsx (nebo Setup.jsx)
+
 import { useState } from 'react'
+import { useDrink } from '../../state/DrinkContext'
 
 function Ingredient() {
-  const [ingredients, setIngredients] = useState([''])
+  const { ingredients, setIngredients } = useDrink()
+  const [newIngredient, setNewIngredient] = useState('')
 
-  const handleChange = (index, value) => {
-    const updated = [...ingredients]
-    updated[index] = value
-    setIngredients(updated)
+  const handleAdd = () => {
+    if (newIngredient.trim() !== '' && ingredients.length < 6 && !ingredients.includes(newIngredient)) {
+      setIngredients([...ingredients, newIngredient])
+      setNewIngredient('')
+    }
   }
 
-  const addIngredient = () => {
-    if (ingredients.length < 6) {
-      setIngredients([...ingredients, ''])
-    }
+  const handleRemove = (indexToRemove) => {
+    const updated = ingredients.filter((_, index) => index !== indexToRemove)
+    setIngredients(updated)
   }
 
   return (
     <div className="centered-page">
-      <h1>Setup Ingrediencí</h1>
-      {ingredients.map((ing, idx) => (
+      <h2>Setup – Ingredience</h2>
+
+      <div className="input-group">
         <input
-          key={idx}
-          value={ing}
-          onChange={e => handleChange(idx, e.target.value)}
-          placeholder={`Ingredience ${idx + 1}`}
+          type="text"
+          value={newIngredient}
+          onChange={(e) => setNewIngredient(e.target.value)}
+          placeholder="Zadej název ingredience"
           className="input-field"
         />
-      ))}
-      <button onClick={addIngredient} disabled={ingredients.length >= 6} className="add-button">
-        Přidat ingredienci
-      </button>
+        <button onClick={handleAdd} className="action-button">
+          Přidat
+        </button>
+      </div>
+
+      <ul className="ingredient-list">
+        {ingredients.map((ing, idx) => (
+          <li key={idx}>
+            {ing}
+            <button onClick={() => handleRemove(idx)} className="remove-button">
+              ✕
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      <p>{ingredients.length}/6 ingrediencí</p>
     </div>
   )
 }

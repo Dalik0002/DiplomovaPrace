@@ -1,22 +1,24 @@
-import { useState } from 'react'
+import { useDrink } from '../../state/DrinkContext'
+import './OrderScreen.css'
 
 function OrderScreen() {
-  const [glassContents, setGlassContents] = useState(Array(6).fill(''))
+  const { glasses, setGlasses, ingredients } = useDrink()
 
   const handleSelect = (index, value) => {
-    const updated = [...glassContents]
+    const updated = [...glasses]
     updated[index] = value
-    setGlassContents(updated)
+    setGlasses(updated)
   }
-
-  const ingredients = ['Rum', 'Gin', 'Tonic', 'Vodka', 'Whisky', 'Pepsi']
 
   return (
     <div className="centered-page">
       <h1>DrinkMaker</h1>
-      <div className="glass-container">
-        {glassContents.map((content, idx) => (
-          <div key={idx} className="glass-item">
+      <div className="glass-grid">
+        {glasses.map((content, idx) => (
+          <div
+            key={idx}
+            className={`glass-item ${!content ? 'empty' : ''}`}
+          >
             <p>Sklenka {idx + 1}</p>
             <select
               value={content}

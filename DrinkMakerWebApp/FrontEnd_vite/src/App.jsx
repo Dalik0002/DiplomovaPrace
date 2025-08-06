@@ -1,9 +1,12 @@
+// src/App.jsx
 import StartMenu from './pages/StartMenu'
-import './App.css'
+import { DrinkProvider } from './state/DrinkContext'  // Cesta podle tebe
 
 function App() {
   return (
-    <StartMenu />
+    <DrinkProvider>
+      <StartMenu />
+    </DrinkProvider>
   )
 }
 
