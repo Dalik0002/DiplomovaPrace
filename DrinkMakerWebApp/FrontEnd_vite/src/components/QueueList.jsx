@@ -1,8 +1,3 @@
-// src/components/QueueList.jsx
-
-import { useEffect, useState } from 'react'
-import { getQueueList} from '../services/queueService'
-
 function QueueList({ queue }) {
   return (
     <>

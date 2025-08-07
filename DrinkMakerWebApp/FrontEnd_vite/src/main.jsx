@@ -8,7 +8,7 @@ import './index.css'
 function Loader() {
   return (
     <div className="loader">
-      <img src="/icon-512.png" alt="Logo" className="logo-static" />
+      <img src="/logo_small.png" alt="Logo" className="logo-static" />
       <div className="spinner" />
     </div>
   )

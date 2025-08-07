@@ -5,47 +5,6 @@
   padding: 2rem;
 }
 
-.glass-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 sloupce */
-  grid-template-rows: repeat(3, auto);  /* 3 řádky */
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 600px;
-}
-
-.glass-item {
-  padding: 1rem;
-  border: 2px solid #000000;
-  border-radius: 8px;
-  text-align: center;
-  background-color: #1c9440;
-  transition: border-color 0.3s ease, background-color 0.3s ease;
-}
-
-.glass-item.empty {
-  border-color: #2e1513;
-  background-color: #620e8f;
-}
-
-.input-field {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
-  width: 100%;
-  font-size: 1rem;
-}
-
-.add-button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  background-color: #4CAF50; /* Green */
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
 .delete-button {
   margin-top: 1rem;
   padding: 0.5rem 1rem;

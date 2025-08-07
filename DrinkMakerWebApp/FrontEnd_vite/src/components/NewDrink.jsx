@@ -1,8 +1,8 @@
-import { useDrink } from '../../state/DrinkContext'
+import { useDrink } from '../state/DrinkContext'
 import { useState, useEffect } from 'react'
-import { addToQueue } from '../../services/queueService'
-import { getBottles } from '../../services/bottleService'
-import './OrderScreens.css'
+import { addToQueue } from '../services/queueService'
+import { getBottles } from '../services/bottleService'
+import './Components.css'
 
 function NewDrink() {
   const [drinkName, setDrinkName] = useState("")
@@ -80,7 +80,7 @@ function NewDrink() {
   return (
     <div className="centered-page">
       <h2>New Drink</h2>
-
+      {status && <p>{status}</p>}
       <input
         type="text"
         placeholder="Název drinku"
@@ -101,7 +101,7 @@ function NewDrink() {
               onChange={e => handleSelect(idx, e.target.value)}
               className="input-field"
             >
-              <option value="">--Vyber ingredienci--</option>
+              <option value="">--Ingredience--</option>
               {availableIngredients.map((ing, i) => (
                 <option key={i} value={ing}>{ing}</option>
               ))}
@@ -112,7 +112,7 @@ function NewDrink() {
               className="input-field"
               placeholder="Objem (ml)"
               min="0"
-              max="300"
+              max="250"
               value={volumes[idx]}
               onChange={e => handleVolumeChange(idx, e.target.value)}
               disabled={!selected}
@@ -124,8 +124,6 @@ function NewDrink() {
       <button className="add-button" onClick={handleAdd}>
         ➕ Add Drink
       </button>
-
-      {status && <p>{status}</p>}
     </div>
   )
 }

@@ -9,7 +9,6 @@ function Order_main() {
 
   return (
     <div className="centered-page">
-      <h1>DrinkMaker</h1>
       {isBaseRoute && (
         <>
           <div className="nav-bar">

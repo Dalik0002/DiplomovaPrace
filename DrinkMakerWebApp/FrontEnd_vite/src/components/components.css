@@ -1,3 +1,11 @@
+.centered-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-sizing: border-box;
+}
 
 .back-button {
   margin-bottom: 1rem;
@@ -8,4 +16,93 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.glass-grid {
+  display: grid;
+  grid-template-columns: repeat(3, auto); /* 2 sloupce */
+  grid-template-rows: repeat(2, auto);  /* 3 řádky */
+  gap: 1.5rem;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.glass-item {
+  padding: 1rem;
+  border: 2px solid #000000;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #1c9440;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.glass-item.empty {
+  border-color: #2e1513;
+  background-color: #620e8f;
+}
+
+.input-field {
+  padding: 0.5rem;
+  width: 80%;
+  font-size: 1rem;
+}
+
+.add-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.bottle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-width: 500px;
+  margin: auto;
+}
+
+.bottle-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bottle-pos {
+  min-width: 80px;
+  font-weight: bold;
+}
+
+.input-field {
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.action-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #111;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background-color: #333;
 }

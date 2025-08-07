@@ -1,6 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom'
 import Order_main from './Order_pages/OrderScreen'
-import NewDrink from './Order_pages/NewDrink'
+import NewDrink from '../components/NewDrink'
 import DrinksQueue from './Order_pages/DrinksQueue'
 
 import Service_main from './Service_pages/Service_main'
@@ -11,7 +11,12 @@ import '../App.css'
 
 function StartMenu() {
   return (
-    <div className="app-container">
+    <div className="app-maincontainer">
+      <div className="app-header">
+        <h1>Drink Maker</h1>
+        <h2>PANORAMIX</h2>
+        <h3>• Průmyslový • Automatický • Nápojový • Odborník • Receptur • Alkoholických • MIXů •</h3>
+      </div>
       <Routes>
         <Route
           path="/order/*"

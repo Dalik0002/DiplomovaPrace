@@ -12,7 +12,7 @@ body {
   color: white;
 }
 
-.app-container {
+.app-maincontainer {
   text-align: center;
   /*min-height: 100vh;*/
   border: 2px solid white;
@@ -21,6 +21,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.app-header {
+  background-color: rgb(40, 9, 43);
+  padding: 1rem;
+  border: 2px solid white;
 }
 
 .nav-bar {
@@ -76,20 +82,6 @@ body {
   border: none;
   width: 200px;
   margin-bottom: 0.5rem;
-}
-
-.add-button {
-  padding: 0.5rem 1rem;
-  background-color: rgb(255, 176, 250);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.add-button:disabled {
-  background-color: gray;
-  cursor: not-allowed;
 }
 
 .loader {
