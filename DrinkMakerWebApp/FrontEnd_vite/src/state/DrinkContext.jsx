@@ -1,4 +1,3 @@
-// src/state/DrinkContext.jsx
 import { createContext, useContext, useState } from 'react'
 
 const DrinkContext = createContext()

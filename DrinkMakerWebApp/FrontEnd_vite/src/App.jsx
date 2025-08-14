@@ -1,11 +1,14 @@
 // src/App.jsx
-import StartMenu from './pages/StartMenu'
-import { DrinkProvider } from './state/DrinkContext'  // Cesta podle tebe
+import { BrowserRouter } from 'react-router-dom'
+import { DrinkProvider } from './state/DrinkContext'
+import AppRouter from './AppRouter'
 
 function App() {
   return (
     <DrinkProvider>
-      <StartMenu />
+      <BrowserRouter>
+        <AppRouter />
+      </BrowserRouter>
     </DrinkProvider>
   )
 }

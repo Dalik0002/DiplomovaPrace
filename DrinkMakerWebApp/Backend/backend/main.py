@@ -9,6 +9,7 @@ import asyncio
 
 from api.endpoints import router
 from api.UARTTest_Api import router_UART
+from api.queue_api import router_queue
 
 app = FastAPI(
     title="DrinkMaker API",
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 app.include_router(router)
 app.include_router(router_UART)
+app.include_router(router_queue)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")
