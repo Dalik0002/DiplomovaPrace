@@ -11,11 +11,16 @@
   margin-bottom: 1rem;
   padding: 0.4rem 1rem;
   font-size: 1.2rem;
-  background-color: #111;
+  background: #aa44cc;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+}
+
+.back-button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
 }
 
 .glass-grid {
@@ -91,12 +96,13 @@
   gap: 1rem;
   margin-top: 1.5rem;
   justify-content: center;
+
 }
 
 .action-button {
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
-  background-color: #111;
+  background: #aa44cc;
   color: white;
   border: none;
   border-radius: 6px;
@@ -104,7 +110,8 @@
 }
 
 .action-button:hover {
-  background-color: #333;
+  background: #cc66ee;
+  transform: scale(1.05);
 }
 
 /* QueueList */

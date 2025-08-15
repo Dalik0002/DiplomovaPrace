@@ -20,15 +20,6 @@ function Dashboard() {
     refreshQueue()
   }, [])
 
-  const glasses = [
-    { name: 'Rum + Cola' },
-    { name: 'Gin + Tonic' },
-    { name: '' },
-    { name: 'Jack + Cola' },
-    { name: '' },
-    { name: 'Vodka' },
-  ]
-
   useEffect(() => {
     const fetchQueueCount = async () => {
       try {

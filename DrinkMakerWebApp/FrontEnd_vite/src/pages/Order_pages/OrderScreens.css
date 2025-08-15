@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem;
+  background: #3b1b4b;
 }
 
 .delete-button {
