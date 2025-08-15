@@ -1,10 +1,12 @@
-import './OrderScreens.css'
+import './DrinkQueue.css'
 import { useEffect, useState } from 'react'
-import QueueList from '../../components/QueueList'
-import { getQueueList, deleteQueue } from '../../services/queueService'
+import QueueList from '../components/QueueList'
+import { getQueueList, deleteQueue } from '../services/queueService'
+import { useNavigate } from 'react-router-dom'
 
 function DrinksQueue() {
   const [queue, setQueue] = useState([])
+  const navigate = useNavigate()
 
   const refreshQueue = () => {
     getQueueList()
@@ -27,6 +29,7 @@ function DrinksQueue() {
 
   return (
     <div className="centered-page">
+      <button onClick={() => navigate('/')}>Zpět</button>
       <h1>QUEUE</h1>
       <QueueList queue={queue} />
       <button className="delete-button" onClick={clearQueue}>

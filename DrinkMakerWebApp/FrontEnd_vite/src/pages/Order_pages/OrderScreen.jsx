@@ -1,6 +1,5 @@
 
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import '../../App.css'
 import './OrderScreens.css'
 
 function Order_main() {
@@ -12,7 +11,6 @@ function Order_main() {
       {isBaseRoute && (
         <>
           <div className="nav-bar">
-            <Link to="/order/drinksQueue">Edit drink Queue</Link>
             <Link to="/order/newDrink">Add new Drink</Link>
           </div>
         </>

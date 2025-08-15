@@ -47,42 +47,44 @@ function Dashboard() {
       <div className="top-bar">
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
-          <button onClick={() => navigate('/order')}>📦 Setup</button>
-          <button onClick={() => navigate('/service')}>⚙️ Nastavení</button>
+          <button onClick={() => navigate('/bottles')}>📦 Setup</button>
+          <button onClick={() => navigate('/service')}>⚙️ Service</button>
         </div>
       </div>
 
       <div className="core-container">
-        {/* Levý sloupec - sklenice */}
-        <div className="glass-grid">
-          {glasses.map((g, i) => (
-            <div key={i} className="glass-box">
-              <div className="glass-emoji">🍹 Sklenice {i + 1}</div>
-              <div className="glass-content">[{g.name || 'Nezadáno'}]</div>
-            </div>
-          ))}
-        </div>
-
-
-        <div className="queue-container">
-          <h2 className="queue-title">Fronta Drinků</h2>
-
-          <div className="queue-list">
-            {queue.length === 0 ? (
-              <p className="queue-empty">Žádný drink ve frontě</p>
-            ) : (
-              <ul>
-                {queue.map((drink, index) => (
-                  <li key={index}>
-                    {index + 1}. {drink}
-                  </li>
-                ))}
-              </ul>
-            )}
+        {/* Levý sloupec*/}
+        <div className="left-column">
+          <div className="state-container">
+            <h2 className="state-title">Stav</h2>
           </div>
+          <div className="control-container">
+            <h2 className="control-title">Začít nalévat</h2>
+          </div>
+        </div>
+        
+        {/* Pravý sloupec */}
+        <div className="right-column">
+          <div className="queue-container">
+            <h2 className="queue-title">Fronta Drinků</h2>
 
-          <div className="queue-info">
-            ⏱ Fronta: {queueCount} objednávky
+            <div className="queue-list">
+              {queue.length === 0 ? (
+                <p className="queue-empty">Žádný drink ve frontě</p>
+              ) : (
+                <ul>
+                  {queue.map((drink, index) => (
+                    <li key={index}>
+                      {index + 1}. {drink}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <div className="queue-info">
+              ⏱ Fronta: {queueCount} objednávky
+            </div>
+            <button onClick={() => navigate('/editQueue')}>Upravit frontu</button>
           </div>
         </div>
       </div>

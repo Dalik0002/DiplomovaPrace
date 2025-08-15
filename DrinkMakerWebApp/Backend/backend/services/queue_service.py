@@ -19,3 +19,12 @@ def get_next_order():
 
 def clear_queue():
     order_queue.clear()
+
+def get_number_of_drinks() -> int:
+    return len(order_queue)
+
+def delete_item_from_queue(index: int):
+    if 0 <= index < len(order_queue):
+        del order_queue[index]
+    else:
+        raise IndexError("Index out of range for queue")

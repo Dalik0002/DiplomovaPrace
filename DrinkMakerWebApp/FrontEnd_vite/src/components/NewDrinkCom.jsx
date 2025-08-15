@@ -4,7 +4,7 @@ import { addToQueue } from '../services/queueService'
 import { getBottles } from '../services/bottleService'
 import './Components.css'
 
-function NewDrink() {
+function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState("")
   const [glassIngredients, setGlassIngredients] = useState(Array(6).fill(""))
   const [volumes, setVolumes] = useState(Array(6).fill(0))
@@ -128,4 +128,4 @@ function NewDrink() {
   )
 }
 
-export default NewDrink
+export default NewDrinkCom

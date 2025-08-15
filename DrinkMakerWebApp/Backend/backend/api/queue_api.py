@@ -31,3 +31,9 @@ def numberOfDrinks():
     number = queue_service.get_number_of_drinks()
     print(f"Počet drinků ve frontě: {number}")
     return {"status": "ok", "count": number}
+
+@router_queue.post("/queue/deleteItemFromQueue", tags=["Queue"])
+def deleteItemFromQueue(index: int):
+    queue_service.delete_item_from_queue(index)
+    print(f"Vymazání položky z fronty na indexu: {index}")
+    return {"status": "ok", "message": "Položka vymazána z fronty"}

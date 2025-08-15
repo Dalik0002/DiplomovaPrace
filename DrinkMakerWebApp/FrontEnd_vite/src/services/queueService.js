@@ -15,3 +15,7 @@ export function addToQueue(drink) {
 export function getNumberOfDrinks(number) {
   return apiGet('/queue/numberOfDrinks', number)
 }
+
+export function deleteItemFromQueue(index) {
+  return apiPost('/queue/deleteItemFromQueue', { index })
+}
