@@ -14,14 +14,14 @@ function QueueList({ queue }) {
   return (
     <>
       {queue.length === 0 ? (
-        <p>No drink in queue</p>
+        <p>Fronta je prázdná</p>
       ) : (
         <ul className="queue-list">
           {queue.map((order, i) => (
             <li key={i} className="drink-item">
               <strong>{i + 1}.</strong> {order.name || `Drink ${i + 1}`}
               <button className="delete-button" onClick={() => deleteItem(i)}>
-                Delete
+                Smazat
               </button>
             </li>
            

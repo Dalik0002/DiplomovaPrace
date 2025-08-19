@@ -12,6 +12,9 @@ def has_pending_order():
 def get_queue() -> List[Order]:
     return order_queue
 
+def get_queue_of_6() -> List[Order]:
+    return order_queue[:6]
+
 def get_next_order():
     if not order_queue.empty():
         return order_queue.get()

@@ -30,7 +30,7 @@ function DrinksQueue() {
   return (
     <div className="centered-page">
       <button onClick={() => navigate('/')}>Zpět</button>
-      <h1>QUEUE</h1>
+      <h1>Fronta drinků</h1>
       <QueueList queue={queue} />
       <button className="delete-button" onClick={clearQueue}>
         Vymazat celou frontu

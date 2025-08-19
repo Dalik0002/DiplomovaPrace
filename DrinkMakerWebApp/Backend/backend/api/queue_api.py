@@ -14,6 +14,11 @@ def getQueueList():
     print(f"Požadavek na frontu drinků")
     return queue_service.get_queue()
 
+@router_queue.get("/queue/queueList6", tags=["Queue"])
+def getQueueListof6():
+    print(f"Požadavek na frontu drinků s maximálně 6 položkami")
+    return queue_service.get_queue_of_6()
+
 @router_queue.post("/queue/addToQueue", tags=["Queue"])
 def addToQueue(order: Order):
     queue_service.add_order(order)

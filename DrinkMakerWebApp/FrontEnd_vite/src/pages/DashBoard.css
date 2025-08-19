@@ -67,20 +67,6 @@ body {
   gap: 1rem;
 }
 
-.state-container {
-  flex: 1;
-  background: #3b1b4b;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-}
-
-.state-title {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
 
 .control-container {
   flex: 1;
@@ -104,46 +90,6 @@ body {
   gap: 1rem;
 }
 
-.queue-container {
-  flex: 1;
-  background: #3b1b4b;
-  border-radius: 0.75rem;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-}
-
-.queue-title {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.queue-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.queue-list li {
-  background: #4d2a5e;
-  margin-bottom: 0.4rem;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.5rem;
-}
-
-.queue-empty {
-  color: #ccc;
-  font-style: italic;
-}
-
-.queue-info {
-  margin-top: 1rem;
-  font-size: 1rem;
-  text-align: center;
-  color: #ddd;
-  margin-bottom: 0.5rem;
-}
 
 .footer {
   margin-top: 1.5rem;

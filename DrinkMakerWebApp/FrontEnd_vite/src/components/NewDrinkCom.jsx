@@ -1,129 +1,158 @@
-import { useDrink } from '../state/DrinkContext'
 import { useState, useEffect } from 'react'
 import { addToQueue } from '../services/queueService'
 import { getBottles } from '../services/bottleService'
+import IngredientCard from './IngredientCard'
 import './Components.css'
 
 function NewDrinkCom() {
-  const [drinkName, setDrinkName] = useState("")
-  const [glassIngredients, setGlassIngredients] = useState(Array(6).fill(""))
-  const [volumes, setVolumes] = useState(Array(6).fill(0))
+  const [drinkName, setDrinkName] = useState('')
+  const [items, setItems] = useState([
+    { ingredient: '', volume: 0 },
+    { ingredient: '', volume: 0 },
+  ])
+  const [emptyIngredient, setEmptyIngredient] = useState(false)
+  const [fetchError, setFetchError] = useState(false)
   const [availableIngredients, setAvailableIngredients] = useState([])
-  const [status, setStatus] = useState("")
+  const [status, setStatus] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    getBottles()
-      .then((backendData) => {
+    const load = async () => {
+      setLoading(true)
+      setStatus('⏳ Načítám ingredience…')
+      try {
+        const backendData = await getBottles()
         const names = backendData
           .map(b => b.name || b.bottle)
-          .filter(name => name && name.trim() !== "")
+          .filter(name => name && name.trim() !== '')
         setAvailableIngredients(names)
-        setStatus('✅ Ingredience načteny')
-      })
-      .catch((err) => {
+        if (names.length === 0) {
+          setStatus('❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.')
+          setEmptyIngredient(true)
+          setFetchError(false)
+        } else {
+          setStatus('✅ Ingredience načteny')
+          setEmptyIngredient(false)
+          setFetchError(false)
+        }
+      } catch (err) {
         console.error(err)
-        setStatus('❌ Nepodařilo se načíst ingredience')
-      })
+        setStatus('❌ Nepodařilo se načíst ingredience z backendu')
+        setEmptyIngredient(true)
+        setFetchError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
   }, [])
 
-  const handleSelect = (index, value) => {
-    const updated = [...glassIngredients]
-    updated[index] = value
-    setGlassIngredients(updated)
-
-    if (value && volumes[index] === 0) {
-      const volCopy = [...volumes]
-      volCopy[index] = 100
-      setVolumes(volCopy)
-    }
+  const updateItem = (idx, newVal) => {
+    setItems(prev => prev.map((it, i) => (i === idx ? newVal : it)))
   }
 
-  const handleVolumeChange = (index, value) => {
-    const numeric = parseInt(value)
-    const updated = [...volumes]
-    updated[index] = isNaN(numeric) ? 0 : numeric
-    setVolumes(updated)
+  const addItem = () => {
+    if (items.length >= 6) return
+    setItems(prev => [...prev, { ingredient: '', volume: 0 }])
   }
 
   const handleAdd = async () => {
-    const hasAny = glassIngredients.some(g => g.trim() !== "")
-    const hasName = drinkName.trim() !== ""
-
+    const hasName = drinkName.trim() !== ''
+    const filtered = items.filter(it => it.ingredient.trim() !== '')
     if (!hasName) {
-      setStatus("❌ Zadej název drinku")
+      setStatus('❌ Zadej název drinku')
+      return
+    }
+    if (filtered.length === 0) {
+      setStatus('❌ Není vybrána žádná ingredience')
       return
     }
 
-    if (!hasAny) {
-      setStatus("❌ Není vybrána žádná ingredience")
-      return
-    }
-
-    const drink = {
-      name: drinkName,
-      ingredients: glassIngredients,
-      volumes: volumes
-    }
+    // fixed-length pole pro backend (6)
+    const ingredients6 = Array(6).fill('')
+    const volumes6 = Array(6).fill(0)
+    filtered.slice(0, 6).forEach((it, i) => {
+      ingredients6[i] = it.ingredient
+      volumes6[i] = it.volume || 0
+    })
 
     try {
-      await addToQueue(drink)
+      setSaving(true)
+      await addToQueue({ name: drinkName, ingredients: ingredients6, volumes: volumes6 })
       setStatus(`✅ "${drinkName}" byl přidán do fronty`)
-      setGlassIngredients(Array(6).fill(""))
-      setVolumes(Array(6).fill(0))
-      setDrinkName("")
+      setDrinkName('')
+      setItems([
+        { ingredient: '', volume: 0 },
+        { ingredient: '', volume: 0 },
+      ])
     } catch (err) {
       console.error(err)
-      setStatus("❌ Chyba při odesílání")
+      setStatus('❌ Chyba při odesílání')
+    } finally {
+      setSaving(false)
     }
   }
 
   return (
     <div className="centered-page">
-      <h2>New Drink</h2>
+      <h1>Přidání nového drinku</h1>
       {status && <p>{status}</p>}
-      <input
-        type="text"
-        placeholder="Název drinku"
-        className="input-field"
-        value={drinkName}
-        onChange={e => setDrinkName(e.target.value)}
-      />
 
-      <div className="glass-grid">
-        {glassIngredients.map((selected, idx) => (
-          <div
-            key={idx}
-            className={`glass-item ${!selected ? 'empty' : ''}`}
-          >
-            <p>Ingredience {idx + 1}</p>
-            <select
-              value={selected}
-              onChange={e => handleSelect(idx, e.target.value)}
-              className="input-field"
-            >
-              <option value="">--Ingredience--</option>
-              {availableIngredients.map((ing, i) => (
-                <option key={i} value={ing}>{ing}</option>
-              ))}
-            </select>
+      {loading ? (
+        <div className="loading-block">
+          <div className="spinner" aria-hidden="true" />
+        </div>
+      ) : fetchError ? (
+        <></>
+      ) : emptyIngredient && !fetchError ? (
+        <p>Nejdřív nastav dostupné ingredience v sekci „Konfigurace lahví“.</p>
+      ) : (
+        <>
+          {/* Název drinku */}
+          <input
+            type="text"
+            placeholder="Název drinku"
+            className="input-field"
+            value={drinkName}
+            onChange={e => setDrinkName(e.target.value)}
+            disabled={saving}
+          />
 
-            <input
-              type="number"
-              className="input-field"
-              placeholder="Objem (ml)"
-              min="0"
-              max="250"
-              value={volumes[idx]}
-              onChange={e => handleVolumeChange(idx, e.target.value)}
-              disabled={!selected}
-            />
+          {/* Seznam ingrediencí (karty) */}
+          <div className="ingredients-container">
+            {items.map((it, idx) => (
+              <IngredientCard
+                key={idx}
+                index={idx}
+                value={it}
+                onChange={updateItem}
+                available={availableIngredients}
+                disabled={saving}
+              />
+            ))}
           </div>
-        ))}
-      </div>
 
-      <button className="add-button" onClick={handleAdd}>
-        ➕ Add Drink
-      </button>
+          {/* Přidat ingredienci */}
+          <div className="button-row">
+            <button
+              className="secondary-button"
+              onClick={addItem}
+              disabled={saving || items.length >= 6}
+              title={items.length >= 6 ? 'Maximálně 6 ingrediencí' : 'Přidat ingredienci'}
+            >
+              ➕ Přidat ingredienci ({items.length}/6)
+            </button>
+          </div>
+
+          {/* Odeslat do fronty */}
+          <div className="button-row">
+            <button className="add-button" onClick={handleAdd} disabled={saving}>
+              ➕ Přidat drink do fronty
+            </button>
+          </div>
+        </>
+      )}
     </div>
   )
 }

@@ -1,8 +1,8 @@
-import './NewDrink.css'
+import './AddNewDrink.css'
 import NewDrinkCom from '../components/NewDrinkCom'
 import { useNavigate } from 'react-router-dom'
 
-function NewDrink() {
+function AddNewDrink() {
   const navigate = useNavigate()
 
   return (
@@ -13,4 +13,4 @@ function NewDrink() {
   )
 }
 
-export default NewDrink
+export default AddNewDrink
