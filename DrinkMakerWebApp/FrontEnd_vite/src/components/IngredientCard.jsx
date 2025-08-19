@@ -5,7 +5,7 @@ function IngredientCard({ index, value, onChange, available, disabled }) {
   const handleSelect = (e) => {
     const ing = e.target.value
     // pokud ještě není objem, nastav default 100 ml
-    const vol = value.volume > 0 ? value.volume : 100
+    const vol = value.volume > 0 ? value.volume : 10
     onChange(index, { ingredient: ing, volume: ing ? vol : 0 })
   }
 

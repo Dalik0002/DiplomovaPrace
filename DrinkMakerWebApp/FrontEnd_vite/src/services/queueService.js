@@ -4,6 +4,10 @@ export function getQueueList() {
   return apiGet('/queue/queueList')
 }
 
+export function getQueueListof4() {
+  return apiGet('/queue/queueList4')
+}
+
 export function deleteQueue() {
   return apiPost('/queue/deleteFullQueue', {})
 }
@@ -16,6 +20,6 @@ export function getNumberOfDrinks(number) {
   return apiGet('/queue/numberOfDrinks', number)
 }
 
-export function deleteItemFromQueue(index) {
-  return apiPost('/queue/deleteItemFromQueue', { index })
+export function deleteItemFromQueue(name) {
+  return apiPost('/queue/deleteItemFromQueue', { name });
 }

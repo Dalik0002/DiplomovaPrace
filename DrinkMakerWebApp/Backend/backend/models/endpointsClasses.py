@@ -9,3 +9,6 @@ class Order(BaseModel):
 class BottleAssignment(BaseModel):
     position: int
     bottle: str
+
+class DrinkName(BaseModel):
+    name: str

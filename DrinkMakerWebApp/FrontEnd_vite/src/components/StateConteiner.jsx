@@ -31,7 +31,7 @@ function StateConteiner() {
         <p className="error-message">{error}</p>
       ) : (
         <div className="state-info">
-          <p><strong>Stav:</strong> {state.status}</p>
+          <p>{state.message}</p>
         </div>
       ))}
     </div>

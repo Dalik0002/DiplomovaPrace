@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { getNumberOfDrinks } from '../services/queueService'
+import { getNumberOfDrinks, getQueueListof4 } from '../services/queueService'
 import { getQueueList } from '../services/queueService'
 import './QueueListConteiner.css'
 
@@ -11,7 +11,7 @@ function QueueListConteiner() {
   const [queue, setQueue] = useState([])    
   
   const refreshQueue = () => {
-    getQueueList()
+    getQueueListof4()
       .then(setQueue)
       .catch((err) => console.error("Chyba při načítání fronty:", err))
   }

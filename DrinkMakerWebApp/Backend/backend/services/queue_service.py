@@ -12,13 +12,13 @@ def has_pending_order():
 def get_queue() -> List[Order]:
     return order_queue
 
-def get_queue_of_6() -> List[Order]:
-    return order_queue[:6]
+def get_queue_of_4_only_name() -> List[Order]:
+    return [order.name for order in order_queue[:4]]
 
 def get_next_order():
     if not order_queue.empty():
         return order_queue.get()
-    return None
+    return None   
 
 def clear_queue():
     order_queue.clear()
@@ -26,8 +26,10 @@ def clear_queue():
 def get_number_of_drinks() -> int:
     return len(order_queue)
 
-def delete_item_from_queue(index: int):
-    if 0 <= index < len(order_queue):
-        del order_queue[index]
+def delete_item_from_queue(name: str):
+    global order_queue
+    order_queue = [order for order in order_queue if order.name != name]
+    if not order_queue:
+        print("Fronta je nyní prázdná.")
     else:
-        raise IndexError("Index out of range for queue")
+        print(f"Zbývající položky ve frontě: {[order.name for order in order_queue]}")

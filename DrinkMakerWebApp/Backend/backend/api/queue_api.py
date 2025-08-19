@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 from typing import List
+from fastapi import HTTPException
 
 from models.endpointsClasses import Order
+from models.endpointsClasses import DrinkName
 
 import services.queue_service as queue_service
 from services.bottle_state import BottleState
@@ -14,10 +16,10 @@ def getQueueList():
     print(f"Požadavek na frontu drinků")
     return queue_service.get_queue()
 
-@router_queue.get("/queue/queueList6", tags=["Queue"])
-def getQueueListof6():
+@router_queue.get("/queue/queueList4", tags=["Queue"])
+def getQueueListof4():
     print(f"Požadavek na frontu drinků s maximálně 6 položkami")
-    return queue_service.get_queue_of_6()
+    return queue_service.get_queue_of_4_only_name()
 
 @router_queue.post("/queue/addToQueue", tags=["Queue"])
 def addToQueue(order: Order):
@@ -38,7 +40,6 @@ def numberOfDrinks():
     return {"status": "ok", "count": number}
 
 @router_queue.post("/queue/deleteItemFromQueue", tags=["Queue"])
-def deleteItemFromQueue(index: int):
-    queue_service.delete_item_from_queue(index)
-    print(f"Vymazání položky z fronty na indexu: {index}")
-    return {"status": "ok", "message": "Položka vymazána z fronty"}
+def deleteItemFromQueue(payload: DrinkName):
+      queue_service.delete_item_from_queue(payload.name)
+      return {"status": "ok", "message": "Položka vymazána z fronty"}

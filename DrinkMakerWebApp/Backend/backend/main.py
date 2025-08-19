@@ -19,7 +19,8 @@ app = FastAPI(
         {"name": "Pouring", "description": "Zahájení procesu nalévání drinku"},
         {"name": "Queue", "description": "Správa fronty objednávek"},
         {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
-        {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"}
+        {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"},
+        {"name": "State", "description": "Získání stavu backendu a jeho běhu"},
     ]
 )
 

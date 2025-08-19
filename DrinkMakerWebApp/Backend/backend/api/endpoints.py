@@ -15,6 +15,12 @@ def startPouring():
     print(f"Požadavek na zahájení nalévání")
     return {"status": "ok", "message": "Nalévání drinků zahájeno"}
 
+@router.get("/state", tags=["State"])
+def get_state():
+    print(f"Požadavek na zahájení nalévání")
+    return {"status": "ok", "message": "Running"}
+
+
 
 #bottles
 stored_bottles = [""] * 6
