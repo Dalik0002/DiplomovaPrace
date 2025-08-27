@@ -95,20 +95,43 @@ body {
   margin-top: 1.5rem;
 }
 
-.add-button {
-  font-size: 1.1rem;
+.addtoqueue-button {
+  font-size: 1rem;
   padding: 0.8rem 2rem;
-  background: #ff00aa;
+  background: #4caf50;
   color: white;
   border: none;
-  border-radius: 1rem;
+  border-radius: 0.5rem;  
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(255, 0, 170, 0.5);
+  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
+  transition: transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.addtoqueue-button:hover {
+  transform: scale(1.05);
+}
+
+.start-button {
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
   transition: transform 0.2s;
 }
 
-.add-button:hover {
+.start-button:hover {
   transform: scale(1.05);
+}
+
+.start-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
 }
 
 /* 📱 Mobilní přizpůsobení */
