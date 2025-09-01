@@ -2,14 +2,18 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import StateConteiner from '../components/StateConteiner'
 import QueueListConteiner from '../components/QueueListConteiner'
-import { getState } from '../services/stateService'
-import './Dashboard.css'
+import { getState, setService } from '../services/stateService'
+import { getServiceStatus, acquireService } from '../services/serviceLockService'
+
+import './DashBoard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
 
   const [state, setState] = useState(false)
-
+  const [loading, setLoading] = useState(true)
+  const [serviceBusy, setServiceBusy] = useState(false)
+  
   useEffect(() => {
     const fetchState = async () => {
       try {
@@ -25,13 +29,29 @@ function Dashboard() {
     fetchState()
   }, [])
 
+  useEffect(() => {
+    getServiceStatus().then(s => setServiceBusy(s.locked)).catch(() => {})
+  }, [])
+
+  const sendService = async () => {
+    try {
+      await acquireService()
+      navigate('/service')   // máme lock
+    } catch (err) {
+      setServiceBusy(true)
+      alert('Service je právě obsazený. Zkuste to později.')
+    }
+  }
+
   return (
     <div className="dashboard-container">
       <div className="top-bar">
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
           <button onClick={() => navigate('/bottles')}>📦 Setup</button>
-          <button onClick={() => navigate('/service')}>⚙️ Service</button>
+          <button onClick={sendService} disabled={serviceBusy}>
+            {serviceBusy ? '⚙️ Service (obsazeno)' : '⚙️ Service'}
+          </button>
         </div>
       </div>
 
@@ -43,12 +63,12 @@ function Dashboard() {
             <button
               className="start-button"
               disabled={state > 0}
-              onClick={() => navigate('/newDrink')}
+              onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ 
             </button>
             <button
-              className="addtoqueue-button"onClick={() => navigate('/newDrink')}> PŘIDAT NOVÝ DRINK 
+              className="add-button"onClick={() => navigate('/newDrink')}> PŘIDAT NOVÝ DRINK 
             </button>
           </div>
         </div>

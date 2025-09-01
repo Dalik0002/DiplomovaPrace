@@ -1,15 +1,16 @@
-// src/App.jsx
 import { BrowserRouter } from 'react-router-dom'
-import { DrinkProvider } from './state/DrinkContext'
 import AppRouter from './AppRouter'
+import './App.css'
+import './css/Interface.css'
+import './css/Buttons.css'
 
 function App() {
   return (
-    <DrinkProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <div className="app-shell">
         <AppRouter />
-      </BrowserRouter>
-    </DrinkProvider>
+      </div>
+    </BrowserRouter>
   )
 }
 

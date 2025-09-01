@@ -1,0 +1,29 @@
+.pages-centered-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+  border-radius: 0.75rem;
+  border: #ffffff 2px dashed;
+}
+
+.centered-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #3b1b4b;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: #ffffff 2px dashed;
+}
+
+.error-message {
+  color: red;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+

@@ -1,16 +1,24 @@
+import { useEffect, useState, useCallback } from 'react'
+import { getState, setStop, resetStop } from '../services/stateService'
 import './StateConteiner.css'
-import { useEffect, useState } from 'react'
-import { getState } from '../services/stateService'
 
 function StateConteiner() {
   const [state, setState] = useState(null)
+  const [stop, setStop] = useState(false)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [ackChecked, setAckChecked] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     const fetchState = async () => {
       try {
         const result = await getState()
+        if (result.data == "STOP") {
+          setStop(true)
+        }
         setState(result)
       } catch (err) {
         console.error("Chyba při načítání stavu:", err)
@@ -21,19 +29,124 @@ function StateConteiner() {
     }
     fetchState()
   }, [])
- 
+
+  // tohle se volá po potvrzení v modálu
+  const sendReseteStop = useCallback(async () => {
+    try {
+      setSubmitting(true)
+      await resetStop()
+      // volitelné: refresh stavu po STOP
+      const refreshed = await getState().catch(() => null)
+      if (refreshed) setState(refreshed)
+    } catch (err) {
+      console.error(err)
+      setError("Nepodařilo se odeslat STOP.")
+    } finally {
+      setSubmitting(false)
+      setIsModalOpen(false)
+      setAckChecked(false)
+      setStop(false)
+    }
+  }, [])
+
+  const openConfirm = async () => { 
+    try { 
+      await setStop()
+      setIsModalOpen(true) 
+    } catch (err) { 
+      console.error(err) 
+    } 
+  }
+
+  const openConfirmKvit = async () => { 
+    try { 
+      setIsModalOpen(true) 
+    } catch (err) { 
+      console.error(err) 
+    } 
+  }
+
+  const closeConfirm = () => {
+    if (!submitting) {
+      setIsModalOpen(false)
+      setAckChecked(false)
+    }
+  }
+
+  const getStateClass = (state) => {
+  switch (state) {
+    case "STAND BY":
+      return "state-standby"; 
+    case "STOP":
+      return "state-stop";    
+    case "CHECKING":
+      return "state-checking";
+    case "POURING":
+      return "state-pouring"; 
+    case "SERVICE":
+      return "state-service"; 
+    case "UPDATING":
+      return "state-updating";
+    default:
+      return "state-unknown"; 
+  }
+};
+
   return (
     <div className="state-container">
       <h2 className="state-title">Stav</h2>
-      {(loading ? (
-        <p>Načítání...</p>
+
+      {loading ? (
+        <p>Stahování...</p>
       ) : error ? (
         <p className="error-message">{error}</p>
       ) : (
-        <div className="state-info">
-          <p>{state.message}</p>
+        <div className={`state-info ${getStateClass(state?.data)}`}>
+          {state?.data == null ? <p>NO DATA</p> : <p>{state.data}</p>}
         </div>
-      ))}
+      )}
+
+      {stop ? (
+        <button className="stop-button" onClick={openConfirmKvit}>Kvitace STOP</button>
+      ) : (
+        <button className="stop-button" onClick={openConfirm}>STOP</button>
+      )}
+
+      {isModalOpen && (
+        <div
+          className="modal-backdrop"
+          onClick={closeConfirm}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') closeConfirm()
+          }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Zařízení v režimu STOP</h3>
+            <p>Odstraňte veškeré závady a důkladně zkonktolujte zařizení před opětovným uvedním do normalního chodu.</p>
+
+            <label className="ack-row">
+              <input
+                type="checkbox"
+                checked={ackChecked}
+                onChange={(e) => setAckChecked(e.target.checked)}
+              />
+              <span>Potrzuji, že zařízení je připraveno.</span>
+            </label>
+
+            <div className="modal-actions">
+              <button
+                className="btn-danger"
+                onClick={sendReseteStop}
+                disabled={!ackChecked || submitting}
+              >
+                {submitting ? 'Odesílám…' : 'Potvrdit'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

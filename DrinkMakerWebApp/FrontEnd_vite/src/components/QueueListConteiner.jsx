@@ -53,7 +53,7 @@ function QueueListConteiner() {
       <div className="queue-info">
         ⏱ Fronta: {queueCount} objednávky
       </div>
-      <button onClick={() => navigate('/editQueue')}>Upravit frontu</button>
+      <button className="action-button" onClick={() => navigate('/editQueue')}>Upravit frontu</button>
     </div>
   )
 }

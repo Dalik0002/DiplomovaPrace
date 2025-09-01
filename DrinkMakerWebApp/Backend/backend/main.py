@@ -8,19 +8,20 @@ from services.uart_service import uart_JSON_listener_loop
 import asyncio
 
 from api.endpoints import router
-from api.UARTTest_Api import router_UART
+from api.uart_test_api import router_UART
 from api.queue_api import router_queue
+from api.service_api import router_service
 
 app = FastAPI(
     title="DrinkMaker API",
     description="Ovládací REST API pro DrinkMaker backend.",
     version="0.0.1",
     openapi_tags=[
-        {"name": "Pouring", "description": "Zahájení procesu nalévání drinku"},
+        {"name": "General", "description": "Obecná funkce API"},
         {"name": "Queue", "description": "Správa fronty objednávek"},
         {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
         {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"},
-        {"name": "State", "description": "Získání stavu backendu a jeho běhu"},
+        {"name": "Service", "description": "Správa zámku služby (service lock)"},
     ]
 )
 
@@ -29,6 +30,7 @@ origins = [
     "http://localhost:5173",         # vývojové prostředí
     "http://192.168.1.111:5173",     # produkční frontend na RPi
     "http://127.0.0.1:5173",         # alternativa pro vývoj
+    "http://100.115.134.119:5173",       # produkční frontend vzdálený přístup
 ]
 
 app.add_middleware(
@@ -41,6 +43,7 @@ app.add_middleware(
 app.include_router(router)
 app.include_router(router_UART)
 app.include_router(router_queue)
+app.include_router(router_service)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")

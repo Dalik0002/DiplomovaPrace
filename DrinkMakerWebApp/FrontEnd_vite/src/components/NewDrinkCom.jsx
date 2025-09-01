@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import { addToQueue } from '../services/queueService'
 import { getBottles } from '../services/bottleService'
 import IngredientCard from './IngredientCard'
-import './Components.css'
 
 function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState('')
@@ -96,7 +95,7 @@ function NewDrinkCom() {
 
   return (
     <div className="centered-page">
-      <h1>Přidání nového drinku</h1>
+      <h2>Přidání nového drinku</h2>
       {status && <p>{status}</p>}
 
       {loading ? (
@@ -106,7 +105,7 @@ function NewDrinkCom() {
       ) : fetchError ? (
         <></>
       ) : emptyIngredient && !fetchError ? (
-        <p>Nejdřív nastav dostupné ingredience v sekci „Konfigurace lahví“.</p>
+        <></>
       ) : (
         <>
           {/* Název drinku */}

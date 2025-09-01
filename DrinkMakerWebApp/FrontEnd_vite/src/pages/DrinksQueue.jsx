@@ -1,8 +1,8 @@
-import './DrinkQueue.css'
 import { useEffect, useState } from 'react'
 import QueueList from '../components/QueueList'
 import { getQueueList, deleteQueue } from '../services/queueService'
 import { useNavigate } from 'react-router-dom'
+import './DrinkQueue.css'
 
 function DrinksQueue() {
   const [queue, setQueue] = useState([])
@@ -29,7 +29,7 @@ function DrinksQueue() {
 
   return (
     <div className="centered-page">
-      <button onClick={() => navigate('/')}>Zpět</button>
+      <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
       <h1>Fronta drinků</h1>
       <QueueList />
       <button className="delete-button" onClick={clearQueue}>

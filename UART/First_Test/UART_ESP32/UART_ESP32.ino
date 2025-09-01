@@ -41,7 +41,7 @@ void sentToESP32_S3(){
 void setup() {
   Serial.begin(115200);
 
-  mySerial.begin(115200, SERIAL_8N1, 21, 22); // UART1: RX na GPIO16, TX na GPIO17
+  mySerial.begin(115200, SERIAL_8N1, 15, 2); // UART1: RX na GPIO16, TX na GPIO17
 
   Serial.println("UART RX Buffer Test - Připraven");
 

@@ -1,4 +1,12 @@
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = (() => {
+  const local = import.meta.env.VITE_API_URL;
+  const remote = import.meta.env.VITE_API_URL_REMOTE || local;
+
+  const host = window.location.hostname;          // např. 192.168.1.111 nebo 100.115.134.119
+  const isTailscale = /^100\./.test(host);        // jednoduchá detekce VPN (Tailscale IP)
+
+  return isTailscale ? remote : local;
+})();
 
 export async function apiGet(endpoint) {
   const res = await fetch(`${BASE_URL}${endpoint}`);

@@ -1,7 +1,7 @@
 from typing import List
-from models.endpointsClasses import BottleAssignment
+from models.endpoints_classes import BottleAssignment
 
-class BottleState:
+class BottlesState:
     def __init__(self):
         self.bottles = [""] * 6
 
@@ -19,7 +19,7 @@ class BottleState:
             for i, b in enumerate(self.bottles)
         ]
     
-    def bottle_to_uart_json(self) -> dict:
+    def to_position_json(self) -> dict:
         return {
             "bottOnPos": [
                 {f"pos_{i}": b for i, b in enumerate(self.bottles)}

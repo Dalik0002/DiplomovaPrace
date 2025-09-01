@@ -3,17 +3,14 @@ import asyncio
 import platform
 import json
 
-from services.input_state import InputState
-from services.bottle_state import BottleState
-
-input_state = InputState()
+from core.all_states import input_state
 
 # Pufr pro vstup
 uart_buffer = ""
 
 # Nastavení UART portu (na Raspberry Pi obvykle /dev/serial0)
 SERIAL_PORT = '/dev/serial0'
-BAUDRATE = 115200
+BAUDRATE = 9600
 
 IS_LINUX = platform.system() == "Linux"
 ser = None
@@ -78,6 +75,20 @@ async def uart_JSON_listener_loop():
                         input_state.update_from_json(msg)
                     except json.JSONDecodeError:
                         print("[UART JSON ERROR] Neplatný JSON:", json_str)
+                
+                # Zpracuj všechny kompletní bloky <STATE>...</STATE>
+                while "<STATE>" in uart_buffer and "</STATE>" in uart_buffer:
+                    start = uart_buffer.find("<STATE>") + len("<STATE>")
+                    end = uart_buffer.find("</STATE>")
+                    json_str = uart_buffer[start:end]
+                    uart_buffer = uart_buffer[end + len("</STATE>"):]  # odstraněný zbytek
+
+                    try:
+                        msg = json.loads(json_str)
+                        print("[UART ←]", msg)
+                        input_state.update_mode_from_json(msg)
+                    except Exception as e:
+                        print("[UART STATE ERROR] Neplatný JSON:", json_str)
 
         except Exception as e:
             print(f"[UART ← ERROR] Chyba při čtení: {e}")
@@ -104,19 +115,6 @@ def send_json(json_obj):
             data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
             ser.write(data.encode("utf-8"))
             print(f"[UART →] Odesláno", data.strip())
-        except Exception as e:
-            print(f"[UART → ERROR] Chyba při odesílání: {e}")
-    else:
-        print(f"[UART →] Není Linux → odesílání ignorováno")
-
-
-def send_bottles():
-    if ser:
-        try:
-            json_obj = BottleState.bottle_to_uart_json()
-            data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
-            ser.write(data.encode("utf-8"))
-            print(f"[UART →] Odesláno:", data.strip())
         except Exception as e:
             print(f"[UART → ERROR] Chyba při odesílání: {e}")
     else:

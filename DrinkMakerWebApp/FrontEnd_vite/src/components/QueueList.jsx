@@ -1,4 +1,3 @@
-import './Components.css'
 import { deleteItemFromQueue, getQueueList} from '../services/queueService'
 import { useEffect, useState } from 'react'
 
@@ -30,7 +29,7 @@ function QueueList() {
       {queue.length === 0 ? (
         <p>Fronta je prázdná</p>
       ) : (
-        <ul className="queue-list">
+        <div className="queue-list">
           {queue.map((order, i) => (
             <li key={i} className="drink-item">
               <strong>{i + 1}.</strong> {order.name || `Drink ${i + 1}`}
@@ -40,7 +39,7 @@ function QueueList() {
             </li>
            
           ))}
-        </ul>
+        </div>
       )}
     </>
   )

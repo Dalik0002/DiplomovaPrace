@@ -3,7 +3,7 @@ import time
 
 # Nastavení UART portu (na Raspberry Pi obvykle /dev/serial0)
 SERIAL_PORT = '/dev/serial0'
-BAUDRATE = 115200
+BAUDRATE = 9600
 
 # Inicializace sériové linky
 ser = serial.Serial(

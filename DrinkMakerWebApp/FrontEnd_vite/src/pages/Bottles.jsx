@@ -1,13 +1,12 @@
-import './Bottles.css'
 import BottleSetUp from '../components/BottleSetUp'
 import { useNavigate } from 'react-router-dom'
-import '../components/Components.css'
+import './Bottles.css'
 
 function Bottles() {
   const navigate = useNavigate()
 
   return (
-    <div className="centered-page">
+    <div className="pages-centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
       <BottleSetUp/>
     </div>

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useDrink } from '../state/DrinkContext'
 import { assignBottles, getBottles } from '../services/bottleService'
-import './Components.css'
+import './BottleSetUp.css'
 
 function BottleSetUp() {
-  const { bottles, setBottles } = useDrink()
+  const [bottles, setBottles] = useState(
+    Array(6).fill().map((_, i) => ({ position: i, name: "" }))
+  )
 
   const [status, setStatus] = useState('')
   const [hasData, setHasData] = useState(false)
