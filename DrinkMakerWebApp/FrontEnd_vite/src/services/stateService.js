@@ -1,8 +1,5 @@
-import { apiGet, apiPost } from "./api";
-
-export function getState() {
-  return apiGet("/state");
-}
+// src/services/stateService.js
+import { apiPost } from "./api";
 
 export function setService() {
   return apiPost('/remote/setService');

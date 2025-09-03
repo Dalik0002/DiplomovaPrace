@@ -8,25 +8,43 @@ const BASE_URL = (() => {
   return isTailscale ? remote : local;
 })();
 
-export async function apiGet(endpoint) {
-  const res = await fetch(`${BASE_URL}${endpoint}`);
-  return await res.json();
+
+// Pomocná funkce pro jednotné chyby
+async function parseOrThrow(res) {
+  const text = await res.text();
+  if (!res.ok) {
+    // zkus JSON → jinak pošli raw text
+    try {
+      const j = JSON.parse(text);
+      throw new Error(j.message || JSON.stringify(j));
+    } catch {
+      throw new Error(text || `HTTP ${res.status}`);
+    }
+  }
+  return text ? JSON.parse(text) : null;
 }
 
-export async function apiPost(endpoint, body) {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
+export async function apiGet(path) {
+  const res = await fetch(`${BASE_URL}${path}`, { credentials: 'include' });
+  return parseOrThrow(res);
+}
+
+export async function apiPost(path, body) {
+  const res = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body)
-  })
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body ?? {}),
+  });
+  return parseOrThrow(res);
+}
 
-  if (!res.ok) {
-    const errorText = await res.text()
-    console.error(`[API POST ${endpoint}] Chyba:`, res.status, errorText)
-    throw new Error(`API ${endpoint} failed: ${res.status}`)
-  }
-
-  return await res.json()
+export async function apiPostRaw(path, headers = {}) {
+  // pro acquire/heartbeat/release s vlastními headery (X-Client-Id)
+  const res = await fetch(`${BASE_URL}${path}`, {
+    method: 'POST',
+    headers,
+    credentials: 'include',
+  });
+  return parseOrThrow(res);
 }

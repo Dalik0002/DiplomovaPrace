@@ -1,31 +1,30 @@
 
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { getQueueList } from '../services/queueService'
 import './OrderReview.css'
+
+import { useQueueList} from '../hooks/useQueueData';
+
 
 function OrderReview() {
   const navigate = useNavigate()
-  const [queue, setQueue] = useState([])
   const [disabled, setDisabled] = useState(false)
 
+  const {
+    data: queue,
+    refresh: refreshQueueList,
+  } = useQueueList();
 
-  useEffect(() => {
-    getQueueList()
-      .then(setQueue)
-      .catch((err) => console.error("Chyba při načítání fronty:", err))
-  }, [])
 
   const onChange = () => {
     // TODO
   }
-  
 
   return (
     <div className="pages-centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
-      <h1>Revize objednávky</h1>
-      <p>Prosím zkontrolujte svou objednávku před odesláním do fronty.</p>
+      <h1>Výběr Nápoje</h1>
+      <p>Vyberte jeden z dostupných nápojů.</p>
       <select
         value={queue.name}
         onChange={onChange()}

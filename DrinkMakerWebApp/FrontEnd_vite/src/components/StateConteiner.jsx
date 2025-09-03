@@ -1,43 +1,27 @@
 import { useEffect, useState, useCallback } from 'react'
-import { getState, setStop, resetStop } from '../services/stateService'
+import { setStop, resetStop } from '../services/stateService'
 import './StateConteiner.css'
 
-function StateConteiner() {
-  const [state, setState] = useState(null)
-  const [stop, setStop] = useState(false)
-  const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(true)
+import { useStateStatus} from '../hooks/useStateData';
 
+function StateConteiner() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [ackChecked, setAckChecked] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    const fetchState = async () => {
-      try {
-        const result = await getState()
-        if (result.data == "STOP") {
-          setStop(true)
-        }
-        setState(result)
-      } catch (err) {
-        console.error("Chyba při načítání stavu:", err)
-        setError("Chyba při načítání stavu")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchState()
-  }, [])
+  const {
+    data: state,
+    isLoading: l_state,
+    error: e_state,
+    refresh: refreshState,
+    isStop,
+  } = useStateStatus();
 
   // tohle se volá po potvrzení v modálu
   const sendReseteStop = useCallback(async () => {
     try {
       setSubmitting(true)
       await resetStop()
-      // volitelné: refresh stavu po STOP
-      const refreshed = await getState().catch(() => null)
-      if (refreshed) setState(refreshed)
     } catch (err) {
       console.error(err)
       setError("Nepodařilo se odeslat STOP.")
@@ -45,7 +29,7 @@ function StateConteiner() {
       setSubmitting(false)
       setIsModalOpen(false)
       setAckChecked(false)
-      setStop(false)
+      refreshState();
     }
   }, [])
 
@@ -96,17 +80,17 @@ function StateConteiner() {
     <div className="state-container">
       <h2 className="state-title">Stav</h2>
 
-      {loading ? (
+      {l_state ? (
         <p>Stahování...</p>
-      ) : error ? (
-        <p className="error-message">{error}</p>
+      ) : e_state ? (
+        <p className="error-message">{e_state}</p>
       ) : (
         <div className={`state-info ${getStateClass(state?.data)}`}>
           {state?.data == null ? <p>NO DATA</p> : <p>{state.data}</p>}
         </div>
       )}
 
-      {stop ? (
+      {isStop ? (
         <button className="stop-button" onClick={openConfirmKvit}>Kvitace STOP</button>
       ) : (
         <button className="stop-button" onClick={openConfirm}>STOP</button>

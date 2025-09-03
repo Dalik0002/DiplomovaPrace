@@ -1,56 +1,61 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+
 import StateConteiner from '../components/StateConteiner'
 import QueueListConteiner from '../components/QueueListConteiner'
-import { getState, setService } from '../services/stateService'
-import { getServiceStatus, acquireService } from '../services/serviceLockService'
+
+import { useStateStatus} from '../hooks/useStateData';
+import { useServiceStatus} from '../hooks/useServiceStatus';
+import { acquireService } from '../services/serviceLockService';
 
 import './DashBoard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
 
-  const [state, setState] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [serviceBusy, setServiceBusy] = useState(false)
+  const {
+    data: state,
+    isLoading: l_state,
+    error: e_state,
+    refresh: refreshState,
+  } = useStateStatus();
+
+  const {
+    data: service,
+    isBusy,
+    isLoading: l_service,
+    error: e_service,
+    refresh: refreshService,
+  } = useServiceStatus();
+
   
-  useEffect(() => {
-    const fetchState = async () => {
-      try {
-        const result = await getState()
-        setState(result)
-      } catch (err) {
-        console.error("Chyba při načítání stavu:", err)
-        setError("Chyba při načítání stavu")
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchState()
-  }, [])
-
-  useEffect(() => {
-    getServiceStatus().then(s => setServiceBusy(s.locked)).catch(() => {})
-  }, [])
-
   const sendService = async () => {
     try {
-      await acquireService()
-      navigate('/service')   // máme lock
+      await acquireService();
+      // po úspěchu refreshni stav servisu (volitelné)
+      refreshService();
+      navigate('/service');
     } catch (err) {
-      setServiceBusy(true)
-      alert('Service je právě obsazený. Zkuste to později.')
+      alert('Service je právě obsazený. Zkuste to později.');
+      // volitelně re-fetch
+      refreshService();
     }
-  }
+  };
+
+  const disableStart = isBusy;
+
+  if (l_state || l_service) return <p>Načítání…</p>;
+  if (e_state) return <p>Chyba stavu: {e_state.message}</p>;
+  if (e_service) return <p>Chyba služby: {e_service.message}</p>;
 
   return (
     <div className="dashboard-container">
       <div className="top-bar">
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
-          <button onClick={() => navigate('/bottles')}>📦 Setup</button>
-          <button onClick={sendService} disabled={serviceBusy}>
-            {serviceBusy ? '⚙️ Service (obsazeno)' : '⚙️ Service'}
+          <button onClick={() => navigate('/bottles')}>📦 Konfigurace lahví</button>
+          <button onClick={sendService} disabled={isBusy}>
+            {isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis'}
           </button>
         </div>
       </div>
@@ -62,7 +67,7 @@ function Dashboard() {
           <div className="control-container">
             <button
               className="start-button"
-              disabled={state > 0}
+              disabled={disableStart}
               onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ 

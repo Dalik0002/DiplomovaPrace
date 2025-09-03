@@ -1,51 +1,26 @@
 import { useState, useEffect } from 'react'
 import { addToQueue } from '../services/queueService'
-import { getBottles } from '../services/bottleService'
 import IngredientCard from './IngredientCard'
+
+import { useBottles } from '../hooks/useBottleData'
 
 function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState('')
-  const [items, setItems] = useState([
+    const [items, setItems] = useState([
     { ingredient: '', volume: 0 },
     { ingredient: '', volume: 0 },
   ])
-  const [emptyIngredient, setEmptyIngredient] = useState(false)
-  const [fetchError, setFetchError] = useState(false)
-  const [availableIngredients, setAvailableIngredients] = useState([])
+
   const [status, setStatus] = useState('')
-  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true)
-      setStatus('⏳ Načítám ingredience…')
-      try {
-        const backendData = await getBottles()
-        const names = backendData
-          .map(b => b.name || b.bottle)
-          .filter(name => name && name.trim() !== '')
-        setAvailableIngredients(names)
-        if (names.length === 0) {
-          setStatus('❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.')
-          setEmptyIngredient(true)
-          setFetchError(false)
-        } else {
-          setStatus('✅ Ingredience načteny')
-          setEmptyIngredient(false)
-          setFetchError(false)
-        }
-      } catch (err) {
-        console.error(err)
-        setStatus('❌ Nepodařilo se načíst ingredience z backendu')
-        setEmptyIngredient(true)
-        setFetchError(true)
-      } finally {
-        setLoading(false)
-      }
-    }
-    load()
-  }, [])
+
+  const {
+    isLoading,
+    error,
+    availableIngredients,
+    isNoIngradience,
+  } = useBottles()
 
   const updateItem = (idx, newVal) => {
     setItems(prev => prev.map((it, i) => (i === idx ? newVal : it)))
@@ -97,15 +72,17 @@ function NewDrinkCom() {
     <div className="centered-page">
       <h2>Přidání nového drinku</h2>
       {status && <p>{status}</p>}
-
-      {loading ? (
-        <div className="loading-block">
-          <div className="spinner" aria-hidden="true" />
-        </div>
-      ) : fetchError ? (
-        <></>
-      ) : emptyIngredient && !fetchError ? (
-        <></>
+      {isLoading ? (
+        <>
+          <p>⏳ Načítám ingredience…</p>
+          <div className="loading-block">
+            <div className="spinner" aria-hidden="true" />
+          </div>
+        </>
+      ) : error ? (
+        <p>❌ Nepodařilo se načíst ingredience z backendu</p>
+      ) : isNoIngradience && !error ? (
+        <p>❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.</p>
       ) : (
         <>
           {/* Název drinku */}
