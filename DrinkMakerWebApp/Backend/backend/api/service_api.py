@@ -22,7 +22,7 @@ def service_acquire(x_client_id: str = Header(..., alias="X-Client-Id")):
     return res
 
 @router_service.post("/heartbeat")
-def service_heartbeat(x_client_id: str | None = Header(default=None, convert_underscores=False)):
+def service_heartbeat(x_client_id: str | None = Header(..., alias="X-Client-Id")):
     client_id = _client_id_or_400(x_client_id)
     res = heartbeat(client_id)
     if not res["ok"]:
@@ -30,7 +30,7 @@ def service_heartbeat(x_client_id: str | None = Header(default=None, convert_und
     return res
 
 @router_service.post("/release")
-def service_release(x_client_id: str | None = Header(default=None, convert_underscores=False)):
+def service_release(x_client_id: str | None = Header(..., alias="X-Client-Id")):
     client_id = _client_id_or_400(x_client_id)
     res = release(client_id)
     if not res["ok"]:

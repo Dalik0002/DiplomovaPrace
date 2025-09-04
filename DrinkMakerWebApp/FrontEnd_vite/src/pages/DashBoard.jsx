@@ -42,7 +42,7 @@ function Dashboard() {
     }
   };
 
-  const disableStart = isBusy;
+  const disableStart = state !== "STAND BY";
 
   if (l_state || l_service) return <p>Načítání…</p>;
   if (e_state) return <p>Chyba stavu: {e_state.message}</p>;
