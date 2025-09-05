@@ -3,6 +3,7 @@ import { addToQueue } from '../services/queueService'
 import IngredientCard from './IngredientCard'
 
 import { useBottles } from '../hooks/useBottleData'
+import { useQueueList } from '../hooks/useQueueData'
 
 function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState('')
@@ -22,6 +23,11 @@ function NewDrinkCom() {
     isNoIngradience,
   } = useBottles()
 
+  const {
+    data: queue = [],
+    refresh: refreshQueueList,
+  } = useQueueList();
+
   const updateItem = (idx, newVal) => {
     setItems(prev => prev.map((it, i) => (i === idx ? newVal : it)))
   }
@@ -32,7 +38,10 @@ function NewDrinkCom() {
   }
 
   const handleAdd = async () => {
-    const hasName = drinkName.trim() !== ''
+    const trimmedName = drinkName.trim()
+    const hasName = trimmedName !== ''
+
+
     const filtered = items.filter(it => it.ingredient.trim() !== '')
     if (!hasName) {
       setStatus('❌ Zadej název drinku')
@@ -40,6 +49,14 @@ function NewDrinkCom() {
     }
     if (filtered.length === 0) {
       setStatus('❌ Není vybrána žádná ingredience')
+      return
+    }
+
+    const nameExists = queue.some(q =>
+      q?.name?.trim().toLowerCase() === trimmedName.toLowerCase()
+    )
+    if (nameExists) {
+      setStatus('❌ Tento název drinku již existuje')
       return
     }
 
@@ -60,6 +77,8 @@ function NewDrinkCom() {
         { ingredient: '', volume: 0 },
         { ingredient: '', volume: 0 },
       ])
+
+      refreshQueueList()
     } catch (err) {
       console.error(err)
       setStatus('❌ Chyba při odesílání')

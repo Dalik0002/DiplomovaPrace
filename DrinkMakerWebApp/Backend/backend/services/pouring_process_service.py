@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Dict, Any
 
 # --- Importy sdílených stavů (už je máš v projektu) ---
-from core.all_states import Glasses_State, Input_State, System_State, Bottles_State
+from core.all_states import system_state, input_state, system_state
 
 # --- Typy a výjimky ---
 @dataclass
@@ -86,7 +86,7 @@ class PoweringProcessService:
             try:
                 notify("init", {"msg": "Zahajuji proces.", "glasses": glasses_payload})
 
-                # 1) Zasypat Glasses_State a poslat je do ESP
+                # 1) Zasypat system_state a poslat je do ESP
                 self._apply_glasses_to_memory(glasses_payload)
                 await self._uart_send_glasses(glasses_payload, notify)
 
@@ -129,16 +129,16 @@ class PoweringProcessService:
 
     def _apply_glasses_to_memory(self, glasses_payload: Dict[str, Any]) -> None:
         """
-        Naplní Glasses_State daty pro jednotlivé sklenky.
+        Naplní system_state daty pro jednotlivé sklenky.
         Očekává se, že už máš vlastní metody/settery.
         """
-        # Přizpůsob si dle své struktury Glasses_State
-        # Příklad: Glasses_State.set_from_api_payload(glasses_payload)
-        if hasattr(Glasses_State, "set_from_api_payload"):
-            Glasses_State.set_from_api_payload(glasses_payload)
+        # Přizpůsob si dle své struktury system_state
+        # Příklad: system_state.set_from_api_payload(glasses_payload)
+        if hasattr(system_state, "set_from_api_payload"):
+            system_state.set_from_api_payload(glasses_payload)
         else:
             # Fallback – uloží přímo (při vlastním řešení si udělej settery)
-            Glasses_State.glasses = glasses_payload
+            system_state.glasses = glasses_payload
 
     async def _uart_send_glasses(self, glasses_payload: Dict[str, Any], notify: NotifyFn) -> None:
         if not hasattr(self.uart, "send_glasses"):
@@ -173,7 +173,7 @@ class PoweringProcessService:
     async def _wait_for_check_ok(self, notify: NotifyFn, timeout: float) -> None:
         """
         Čeká, než ESP potvrdí, že CHECK proběhl OK.
-        Preferuje příznak 'Input_State.check_ok' (pokud existuje),
+        Preferuje příznak 'input_state.check_ok' (pokud existuje),
         jinak používá rozumné náhradní podmínky (position_check True & žádné chyby).
         """
         notify("wait", {"stage": "check", "msg": "Čekám na dokončení CHECK..."})
@@ -182,31 +182,31 @@ class PoweringProcessService:
 
     async def _wait_for_pouring_done(self, notify: NotifyFn, timeout: float) -> None:
         """
-        Čeká na System_State.pouring_done == True (viz tvůj to_dict v SystemState).
+        Čeká na system_state.pouring_done == True (viz tvůj to_dict v SystemState).
         """
         notify("wait", {"stage": "pour", "msg": "Čekám na dokončení nalévání..."})
-        cond = lambda: bool(getattr(System_State, "pouring_done", False))
+        cond = lambda: bool(getattr(system_state, "pouring_done", False))
         await self._wait_until(cond, timeout, "pour", extra_snapshot=True)
 
     async def _wait_for_pickup(self, notify: NotifyFn, timeout: float) -> None:
         """
         Po dokončení nalévání čeká, až budou sklenice vyzvednuty.
-        Preferuje 'Input_State.position_check == False' nebo speciální 'Input_State.glasses_present == False',
-        případně 'System_State.glass_done == True' pro všechny pozice – uprav dle FW.
+        Preferuje 'input_state.position_check == False' nebo speciální 'input_state.glasses_present == False',
+        případně 'system_state.glass_done == True' pro všechny pozice – uprav dle FW.
         """
         notify("wait", {"stage": "pickup", "msg": "Čekám na vyzvednutí sklenic..."})
 
         def cond() -> bool:
             # 1) pokud máš příznak glasses_present:
-            if hasattr(Input_State, "glasses_present"):
-                return not bool(getattr(Input_State, "glasses_present"))
+            if hasattr(input_state, "glasses_present"):
+                return not bool(getattr(input_state, "glasses_present"))
             # 2) fallback: kontrola snímače pozice (position_check == False => nic tam není)
-            if hasattr(Input_State, "position_check"):
-                if not bool(getattr(Input_State, "position_check")):
+            if hasattr(input_state, "position_check"):
+                if not bool(getattr(input_state, "position_check")):
                     return True
             # 3) alternativa: všechny sklenice jako 'glass_done' (pokud FW takto reportuje)
-            if hasattr(System_State, "glass_done"):
-                return bool(getattr(System_State, "glass_done"))
+            if hasattr(system_state, "glass_done"):
+                return bool(getattr(system_state, "glass_done"))
             return False
 
         await self._wait_until(cond, timeout, "pickup", extra_snapshot=True)
@@ -222,7 +222,7 @@ class PoweringProcessService:
             return out
 
         system = safe(
-            System_State,
+            system_state,
             [
                 "position_check", "glass_done", "empty_bottle", "pouring_done",
                 "mess_error", "cannot_process_position", "cannot_process_glass",
@@ -231,7 +231,7 @@ class PoweringProcessService:
         )
         input_ = {}
         for name in ("check_ok", "position_check", "glasses_present", "current_mode"):
-            input_[name] = getattr(Input_State, name, None)
+            input_[name] = getattr(input_state, name, None)
         return {"system": system, "input": input_}
 
     def _have_errors(self) -> Optional[str]:
@@ -241,31 +241,31 @@ class PoweringProcessService:
         """
         # Dle tvého to_dict: position_check, glass_done, empty_bottle, pouring_done,
         # mess_error, cannot_process_position, cannot_process_glass, cannot_set_mode, emergency_stop
-        if getattr(System_State, "emergency_stop", False):
+        if getattr(system_state, "emergency_stop", False):
             return "EMERGENCY STOP"
-        if getattr(System_State, "mess_error", False):
+        if getattr(system_state, "mess_error", False):
             return "MECHANICAL/PROCESS ERROR"
-        if getattr(System_State, "empty_bottle", False):
+        if getattr(system_state, "empty_bottle", False):
             return "EMPTY BOTTLE"
-        if getattr(System_State, "cannot_process_position", False):
+        if getattr(system_state, "cannot_process_position", False):
             return "CANNOT PROCESS POSITION"
-        if getattr(System_State, "cannot_process_glass", False):
+        if getattr(system_state, "cannot_process_glass", False):
             return "CANNOT PROCESS GLASS"
-        if getattr(System_State, "cannot_set_mode", False):
+        if getattr(system_state, "cannot_set_mode", False):
             return "CANNOT SET MODE"
         return None
 
     def _check_ok_condition(self) -> bool:
         """
-        Primárně čteme Input_State.check_ok; pokud není, použijeme:
+        Primárně čteme input_state.check_ok; pokud není, použijeme:
         - position_check True (na místě je validní sklenka)
         - a zároveň nejsou žádné chyby
         """
-        if hasattr(Input_State, "check_ok"):
-            if bool(getattr(Input_State, "check_ok")):
+        if hasattr(input_state, "check_ok"):
+            if bool(getattr(input_state, "check_ok")):
                 return True
-        if getattr(Input_State, "position_check", None) is not None:
-            if bool(getattr(Input_State, "position_check")) and self._have_errors() is None:
+        if getattr(input_state, "position_check", None) is not None:
+            if bool(getattr(input_state, "position_check")) and self._have_errors() is None:
                 return True
         return False
 

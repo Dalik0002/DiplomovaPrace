@@ -12,3 +12,7 @@ class BottleAssignment(BaseModel):
 
 class DrinkName(BaseModel):
     name: str
+
+class ChoosedDrink(BaseModel):
+    name: str
+    position: int

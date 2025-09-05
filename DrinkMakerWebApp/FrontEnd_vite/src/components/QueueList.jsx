@@ -22,17 +22,17 @@ function QueueList() {
   }
 
   if (isLoading) return <p>Načítání…</p>;
-  if (error) return <p className='error-message'>Chyba při načítání fronty.</p>;
+  if (error) return <p className='error-message'>Chyba při načítání sklenic.</p>;
 
   return (
     <>
       {queue.length === 0 ? (
-        <p>Fronta je prázdná</p>
+        <p>Žádná sklenice</p>
       ) : (
         <div className="queue-list">
           {queue.map((order, i) => (
             <li key={i} className="drink-item">
-              <strong>{i + 1}.</strong> {order.name || `Drink ${i + 1}`}
+              <strong>Sklenice {i + 1}:</strong> {order.name || `Drink ${i + 1}`}
               <button className="delete-button" onClick={() => deleteItem(order.name)}>
                 Smazat
               </button>

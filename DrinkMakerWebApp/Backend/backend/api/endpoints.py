@@ -1,18 +1,23 @@
 from fastapi import APIRouter
 from typing import List
 
-from models.endpoints_classes import BottleAssignment
-
 from core.all_states import system_state, input_state, bottles_state
 
+from models.endpoints_classes import BottleAssignment
+from models.endpoints_classes import ChoosedDrink
+
 from services.uart_service import send_json
+import services.queue_service as queue_service
+import services.pouring_process_service as PoweringProcessService
 
 router = APIRouter()
 
 @router.post("/startPouring", tags=["General"])
-def start_pouring():
+def start_pouring(payload: ChoosedDrink):
     print(f"Požadavek na zahájení nalévání")
-    return {"status": "ok", "message": "Nalévání drinků zahájeno"}
+    queue_service.choose_item_from_queue(payload.name, payload.position)
+    #PoweringProcessService.start()
+    return {"status": "ok", "message": "Položka vybrána z fronty a přidána do sklenic zahajuji nalávání"}
 
 @router.get("/state", tags=["General"])
 def get_state():

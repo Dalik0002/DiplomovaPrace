@@ -21,31 +21,31 @@ function QueueListConteiner() {
 
   return (
     <div className="queue-container">
-      <h2 className="queue-title">Fronta drinků</h2>
+      <h2 className="queue-title">Sklenice</h2>
 
       <div className="queue-list">
         {isLoading ? (
           <p>Načítám…</p>
         ) : queueError ? (
-          <p className="queue-empty">Nepodařilo se načíst frontu.</p>
+          <p className="queue-empty">Nepodařilo se načíst sklenice</p>
         ) : isEmpty ? (
-          <p className="queue-empty">Žádný drink ve frontě</p>
+          <p className="queue-empty">Žádná sklenice navolena</p>
         ) : (
           <ul>
             {queue.map((item, index) => {
               const name = typeof item === 'string' ? item : (item?.name ?? `Drink ${index + 1}`)
-              return <li key={index}>{index + 1}. {name}</li>
+              return <li key={index}><strong>Sklenice {index + 1}:</strong> {name}</li>
             })}
           </ul>
         )}
       </div>
 
       <div className="queue-info">
-        ⏱ Fronta: {queueCount} objednávky
+        Obsazeno: {queueCount}/6 sklenic
       </div>
 
       <button className="action-button" onClick={() => navigate('/editQueue')}>
-        Upravit frontu
+        Upravit sklenice
       </button>
     </div>
   )

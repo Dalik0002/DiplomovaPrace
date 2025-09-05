@@ -11,3 +11,7 @@ export function addToQueue(drink) {
 export function deleteItemFromQueue(name) {
   return apiPost('/queue/deleteItemFromQueue', { name });
 }
+
+export function chooseItemFromQueue(name){
+  return apiPost('/queue/chooseItemFromQueue', { name })
+}

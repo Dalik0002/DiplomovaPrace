@@ -42,11 +42,11 @@ function Dashboard() {
     }
   };
 
-  const disableStart = state !== "STAND BY";
+  const disableStart = state === "STAND BY"; // musí být: !==
 
   if (l_state || l_service) return <p>Načítání…</p>;
-  if (e_state) return <p>Chyba stavu: {e_state.message}</p>;
-  if (e_service) return <p>Chyba služby: {e_service.message}</p>;
+  if (e_state) return <p className="error">Chyba při získávání stavu: {e_state.message}</p>;
+  if (e_service) return <p className="error">Chyba služby: {e_service.message}</p>;
 
   return (
     <div className="dashboard-container">
