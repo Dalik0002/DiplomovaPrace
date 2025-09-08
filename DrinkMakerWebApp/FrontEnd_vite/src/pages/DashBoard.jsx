@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 import StateConteiner from '../components/StateConteiner'
-import QueueListConteiner from '../components/QueueListConteiner'
+import GlassesConteiner from '../components/GlassesConteiner'
 
 import { useStateStatus} from '../hooks/useStateData';
 import { useServiceStatus} from '../hooks/useServiceStatus';
@@ -80,7 +80,7 @@ function Dashboard() {
         
         {/* Pravý sloupec */}
         <div className="right-column">
-          <QueueListConteiner />
+          <GlassesConteiner />
         </div>
       </div>
 

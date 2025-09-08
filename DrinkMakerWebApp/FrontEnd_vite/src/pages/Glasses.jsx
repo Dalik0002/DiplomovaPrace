@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react'
-import QueueList from '../components/QueueList'
-import { deleteQueue } from '../services/queueService'
+import GlassesList from '../components/GlassesList'
+import { deleteGlasses } from '../services/glassesService'
 import { useNavigate } from 'react-router-dom'
-import './DrinkQueue.css'
+import './Glasses.css'
 
-function DrinksQueue() {
+function Glasses() {
   const navigate = useNavigate()
 
-  const clearQueue = async () => {
+  const clearGlasses = async () => {
     try {
-      await deleteQueue()
+      await deleteGlasses()
     } catch (err) {
-      console.error("Chyba při mazání fronty:", err)
+      console.error("Chyba při mazání sklenic:", err)
     }
   }
 
@@ -19,12 +19,12 @@ function DrinksQueue() {
     <div className="centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
       <h1>Sklenice</h1>
-      <QueueList />
-      <button className="delete-button" onClick={clearQueue}>
+      <GlassesList />
+      <button className="delete-button" onClick={clearGlasses}>
         Vymazat všechny sklenice
       </button>
     </div>
   )
 }
 
-export default DrinksQueue
+export default Glasses

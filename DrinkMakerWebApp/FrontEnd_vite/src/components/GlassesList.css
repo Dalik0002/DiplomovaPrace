@@ -1,0 +1,130 @@
+.glasses-container {
+  flex: 1;
+  background: #3b1b4b;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  width: 100%;
+  max-width: 60rem;           /* víc místa pro grid */
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.glasses-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* GRID LIST */
+.glasses-list {
+  display: grid;
+  grid-template-columns: 1fr;   /* výchozí: jeden sloupec (mobil) */
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 40rem;
+  padding: 0;
+  margin: 0 auto;
+  box-sizing: border-box;
+  flex: 1;
+}
+
+.glasses-list li {
+  background: #4d2a5e;
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+  border: #7312f1 2px solid;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.glasses-list button {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 12rem;
+}
+
+.glasses-list button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.glasses-empty {
+  color: #ccc;
+}
+
+.glasses-info {
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+  color: #ddd;
+  margin-bottom: 0.5rem;
+}
+
+/* 📱 Mobilní zobrazení: jeden sloupec */
+@media (max-width: 40rem) {
+  .glasses-container {
+    padding: 0.75rem;
+  }
+
+  .glasses-title {
+    font-size: 1.25rem;
+  }
+
+  .glasses-list {
+    grid-template-columns: 1fr;  /* jeden sloupec */
+  }
+
+  .glasses-list button {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+/* 🖥️ Desktop zobrazení: 3 sloupce × 2 řádky */
+@media (min-width: 40rem) {
+  .glasses-list {
+    grid-template-columns: repeat(3, 1fr); /* 3 sloupce */
+    grid-auto-rows: auto;                 /* automatické řádky */
+  }
+}
+
+.glass-item {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+  border-radius: 0.5rem;
+  background-color: #3b1e40;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  list-style-type: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.glass-empty {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  color: #ccc;
+  font-size: 1rem;
+  font-style: italic;   
+  list-style-type: none;
+  opacity: 0.8;         
+}
+
