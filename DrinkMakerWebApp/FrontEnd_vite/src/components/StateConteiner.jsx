@@ -15,6 +15,7 @@ function StateConteiner() {
     error: e_state,
     refresh: refreshState,
     isStop,
+    isNone,
   } = useStateStatus();
 
   // tohle se volá po potvrzení v modálu
@@ -77,23 +78,31 @@ function StateConteiner() {
 };
 
   return (
-    <div className="state-container">
-      <h2 className="state-title">Stav</h2>
-
+    <div className={`state-container${isNone ? ' state-container-error' : ''}`}>
       {l_state ? (
         <p>Stahování...</p>
       ) : e_state ? (
         <p className="error-message">{e_state}</p>
       ) : (
         <div className={`state-info ${getStateClass(state?.data)}`}>
-          {state?.data == null ? <p>NO DATA</p> : <p>{state.data}</p>}
+          {isNone ? (
+            <p>ZAŘÍZENÍ NEDOSTUPNÉ</p>
+          ) : (
+            <>
+              <h2 className="state-title">Stav</h2>
+              <p>{state.data}</p>
+              {isStop ? (
+                <button className="stop-button" onClick={openConfirmKvit}>
+                  Kvitace STOP
+                </button>
+              ) : (
+                <button className="stop-button" onClick={openConfirm}>
+                  STOP
+                </button>
+              )}
+            </>
+          )}
         </div>
-      )}
-
-      {isStop ? (
-        <button className="stop-button" onClick={openConfirmKvit}>Kvitace STOP</button>
-      ) : (
-        <button className="stop-button" onClick={openConfirm}>STOP</button>
       )}
 
       {isModalOpen && (

@@ -7,7 +7,9 @@ from dataclasses import dataclass
 from typing import Callable, Optional, Dict, Any
 
 # --- Importy sdílených stavů (už je máš v projektu) ---
-from core.all_states import system_state, input_state, system_state
+from core.all_states import system_state, input_state, system_state, glasses_state
+
+#send_json(glasses_state.to_info_json())
 
 # --- Typy a výjimky ---
 @dataclass

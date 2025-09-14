@@ -1,9 +1,9 @@
 # services/input_state.py
 
-
 class InputState:
     def __init__(self):
         self.reset()
+        self.reset_mode()
 
         self.mode_map = {
             1: "STAND BY",
@@ -13,7 +13,6 @@ class InputState:
             5: "SERVICE",
             6: "UPDATING"
         }
-
 
     def reset(self):
         self.position_check = [False] * 6
@@ -25,11 +24,18 @@ class InputState:
         self.cannot_process_glass = False
         self.cannot_set_mode = False
         self.emergency_stop = False
-
+    
+    def reset_mode(self):
         self.current_mode = None
     
     def update_mode_from_json(self, msg: dict):
         mode_number = msg.get("State", None)
+
+        if mode_number in self.mode_map:
+            self.current_mode = self.mode_map[mode_number]
+    
+    def set_standby_mode(self):
+        mode_number = 1
 
         if mode_number in self.mode_map:
             self.current_mode = self.mode_map[mode_number]

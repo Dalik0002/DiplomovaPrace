@@ -1,0 +1,54 @@
+.review-glasses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 sloupce */
+  gap: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Karty sklenic */
+.review-glass-card {
+  background: #3c1a3c; /* tmavý fialový podklad (můžeš změnit) */
+  border-radius: 1rem;
+  padding: 1rem;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease;
+}
+
+.review-glass-card:hover {
+  transform: scale(1.02);
+}
+
+.review-glass-header {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 0.5rem;
+}
+
+.review-glass-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.review-ing-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+.review-confirm-row {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/* 📱 Mobile responsive */
+@media (max-width: 768px) {
+  .review-glasses-grid {
+    grid-template-columns: 1fr; /* 1 sloupec */
+  }
+}

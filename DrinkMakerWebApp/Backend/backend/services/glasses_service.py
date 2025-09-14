@@ -69,3 +69,12 @@ def get_free_positions() -> List[int]:
     return [i for i, g in enumerate(glass_glasses) if g is None]
 
 
+def sync_to_hw_state() -> dict:
+    """
+    Propíše aktuální 6 slotů do GlassesState (JSON pro HW) a vrátí výsledek.
+    Použij po každé změně slotů, těsně před odesláním na ESP32.
+    """
+    glasses_state.set_from_slots(glass_glasses)
+    #return glasses_state.to_glasses_json()
+
+

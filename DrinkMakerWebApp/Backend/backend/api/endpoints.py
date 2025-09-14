@@ -7,22 +7,32 @@ from models.endpoints_classes import BottleAssignment
 from models.endpoints_classes import ChoosedDrink
 
 from services.uart_service import send_json
-import services.queue_service as queue_service
+import services.glasses_service as glasses_service
 import services.pouring_process_service as PoweringProcessService
 
 router = APIRouter()
 
 @router.post("/startPouring", tags=["General"])
-def start_pouring(payload: ChoosedDrink):
+def start_pouring():
     print(f"Požadavek na zahájení nalévání")
-    queue_service.choose_item_from_queue(payload.name, payload.position)
+    glasses_service.sync_to_hw_state()
     #PoweringProcessService.start()
     return {"status": "ok", "message": "Položka vybrána z fronty a přidána do sklenic zahajuji nalávání"}
 
-@router.get("/state", tags=["General"])
+@router.get("/getState", tags=["General"])
 def get_state():
-    print(f"Požadavek na stav stroje")
+    print(f"Požadavek na stav zařízení")
     return {"status": "ok", "data": input_state.mode_return()}
+
+@router.post("/setState", tags=["General"])
+def set_state():
+    print(f"Nastaven stav zařízení na STANDBY")
+    return {"status": "ok", "data": input_state.set_standby_mode()}
+
+@router.post("/resetState", tags=["General"])
+def reset_state():
+    print(f"Restartovan stav zařízení zpět na none")
+    return {"status": "ok", "data": input_state.reset_mode()}
 
 @router.get("/inputState", tags=["General"])
 def get_input_state():

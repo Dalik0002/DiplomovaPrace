@@ -8,7 +8,7 @@ export function useServiceStatus() {
     dedupingInterval: 1000,
     errorRetryCount: 3,
     errorRetryInterval: 2000,
-    refreshInterval: 10000,
+    refreshInterval: 5000,
   });
 
   const isBusy = !!data?.locked;

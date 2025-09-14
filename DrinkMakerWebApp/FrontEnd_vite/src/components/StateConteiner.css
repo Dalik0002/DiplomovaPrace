@@ -6,9 +6,35 @@
   display: flex;
   flex-direction: column;
   text-align: center;
+  justify-content: center;
+}
+
+.state-container-error {
+  flex: 1;
+  background: #cf6868;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  border: 2px solid #fffb00;
+  animation: blink-border 1s infinite;
+}
+
+@keyframes blink-border {
+  0% {
+    border-color: #fffb00;
+  }
+  50% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: #fffb00;
+  }
 }
 
 .state-title {
+  color: white;
   font-size: 1.2rem;
   margin-bottom: 0rem;
   text-align: center;

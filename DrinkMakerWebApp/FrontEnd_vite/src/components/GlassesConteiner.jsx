@@ -26,15 +26,15 @@ function GlassesConteiner() {
 
   return (
     <div className="glasses-container">
-      <h2 className="glasses-container-title">Sklenice</h2>
+      <h2 className="glasses-container-title">Pozice se skleničkami</h2>
 
       <div className="glasses-container-list">
         {isLoading ? (
           <p>Načítám…</p>
         ) : glassesError ? (
-          <p className="glasses-container-empty">Nepodařilo se načíst sklenice</p>
+          <p className="glasses-container-empty">Nepodařilo se načíst sklenice.</p>
         ) : isAllEmpty ? (
-          <p className="glasses-container-empty">Žádná sklenice navolena</p>
+          <p className="glasses-container-empty">Žádná sklenice navolena.</p>
         ) : (
           <ul>
             {glasses.map((glass, index) => {

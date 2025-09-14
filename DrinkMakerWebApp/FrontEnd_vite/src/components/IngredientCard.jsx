@@ -15,7 +15,7 @@ function IngredientCard({ index, value, onChange, available, disabled }) {
 
   return (
     <div className={`ingredient-item ${!value.ingredient ? 'empty' : ''}`}>
-      <p>Ingredience {index + 1}</p>
+      <p><strong>Ingredience {index + 1}</strong></p>
       <select
         value={value.ingredient}
         onChange={handleSelect}

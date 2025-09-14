@@ -1,108 +1,94 @@
 import { useNavigate } from 'react-router-dom'
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import './OrderReview.css'
-import { useQueueList } from '../hooks/useQueueData';
-import { startPouring } from '../services/general'
 
-const POSITIONS = [1, 2, 3, 4, 5, 6]; // uprav dle reality
+import { useGlasses } from '../hooks/useGlassesData'
+import { startPouring } from '../services/general'
 
 function OrderReview() {
   const navigate = useNavigate()
-
   const {
-    data: queue = [],
-    refresh: refreshQueueList,
-  } = useQueueList();
+    data: glasses = [],
+    refresh: refreshGlassesList,
+    isLoading,
+    error,
+  } = useGlasses()
 
-  const [status, setStatus] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState('');
-  const [selectedPos, setSelectedPos] = useState('')
+  const [status, setStatus] = useState('')
+  const [saving, setSaving] = useState(false)
 
-  const disabled = queue.length === 0;
+  // helper: má sklenice aspoň jednu položku s >0 ml?
+  const hasContent = (g) =>
+    Array.isArray(g?.ingredients) &&
+    Array.isArray(g?.volumes) &&
+    g.ingredients.some((ing, i) => (ing?.trim?.() ?? '') !== '' && (g.volumes[i] ?? 0) > 0)
 
-  const onChangeDrink = (e) => setSelectedIndex(e.target.value);
-  const onChangePos   = (e) => setSelectedPos(e.target.value);
+  // Vytvoř pole jen z platných (ne-null) a neprázdných sklenic
+  const filledGlasses = useMemo(() => {
+    return (glasses || []).filter(g => g && hasContent(g))
+  }, [glasses])
 
-  const handleStart = async () => {
-    if (!selectedOrder) {
-      setStatus('❌ Vyber drink');
-      return;
-    }
-    if (selectedPos === '') {
-      setStatus('❌ Vyber pozici sklenice');
-      return;
+  const anyGlass = filledGlasses.length > 0
+
+  const handleConfirm = async () => {
+    if (!anyGlass) {
+      setStatus('❌ Není připravena žádná sklenice')
+      return
     }
     try {
-      setStatus('⏳ Spouštím nalévání…');
-      await startPouring(selectedOrder.name, (Number(selectedPos)-1));
-      setStatus('✅ Nalévání spuštěno');
-      refreshQueueList();
+      setSaving(true)
+      setStatus('⏳ Odesílám požadavek na zahájení nalévání…')
+      await startPouring()
+      setStatus('✅ Nalévání spuštěno')
+      refreshGlassesList()
     } catch (err) {
-      console.error('Chyba při startu nalévání:', err);
-      setStatus('❌ Chyba při startu nalévání');
+      console.error('Chyba při startu nalévání:', err)
+      setStatus('❌ Chyba při startu nalévání')
+    } finally {
+      setSaving(false)
     }
-  };
-
-
-  // vybraná položka (nepovinné, když chceš s ní dál pracovat)
-  const selectedOrder = useMemo(
-    () => (selectedIndex !== '' ? queue[Number(selectedIndex)] : null),
-    [selectedIndex, queue]
-  );
+  }
 
   return (
     <div className="pages-centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
-      <h1>Výběr Nápoje</h1>
-      <p>Vyberte jeden z dostupných nápojů.</p>
+      <h1>Souhrn sklenic</h1>
       {status && <p>{status}</p>}
 
-      <select
-        value={selectedIndex}
-        onChange={onChangeDrink}
-        className="input-field"
-        disabled={disabled}
-      >
-        <option value="">--Název drinku--</option>
-        {queue.map((order, i) => (
-          <option key={`${order.name}-${i}`} value={i}>
-            {order.name || `Drink ${i + 1}`}
-          </option>
-        ))}
-      </select>
-
-      {selectedOrder && (
+      {isLoading ? (
+        <p>⏳ Načítám sklenice…</p>
+      ) : error ? (
+        <p>❌ Nepodařilo se načíst sklenice</p>
+      ) : !anyGlass ? (
+        <p>⚠️ Zatím nejsou připravené žádné sklenice.</p>
+      ) : (
         <>
-        <div className="drink-preview">
-          <h3>Vybráno: {selectedOrder.name}</h3>
-          <ul>
-            {selectedOrder.ingredients.map((ing, idx) => {
-              const vol = selectedOrder.volumes?.[idx] ?? 0;
-              if (!ing?.trim() || vol <= 0) return null;
-              return <li key={idx}>{ing}: {vol} ml</li>;
-            })}
-          </ul>
-        </div>
-
-        <div className="drink-preview">
-          <select
-            value={selectedPos}
-            onChange={onChangePos}
-            className="input-field"
-          >
-            <option value="">--Pozice sklenice--</option>
-            {POSITIONS.map(p => (
-              <option key={p} value={p}>Pozice {p}</option>
+          <div className="review-glasses-grid">
+            {filledGlasses.map((g, idx) => (
+              <div className="review-glass-card" key={idx}>
+                <div className="review-glass-header">
+                  <h3 className="review-glass-title">{g.name || `Sklenice ${idx + 1}`}</h3>
+                </div>
+                <ul className="review-ing-list">
+                  {g.ingredients.map((ing, i) => {
+                    const vol = g.volumes?.[i] ?? 0
+                    if (!ing?.trim() || vol <= 0) return null
+                    return <li key={i}>{ing} — {vol} ml</li>
+                  })}
+                </ul>
+              </div>
             ))}
-          </select>
+          </div>
 
-          <button 
-          className="start-button" 
-          onClick={handleStart} 
-          disabled={!selectedOrder || selectedPos === ''}
-          >
-            ZAČÍT NALÉVAT</button>
-        </div>
+          <div className="review-confirm-row">
+            <button
+              className="start-button"
+              onClick={handleConfirm}
+              disabled={!anyGlass || saving}
+            >
+              ✅ POTVRDIT A ZAČÍT NALÉVAT
+            </button>
+          </div>
         </>
       )}
     </div>

@@ -2,6 +2,7 @@ import serial
 import asyncio
 import platform
 import json
+import time
 
 from core.all_states import input_state
 
@@ -49,8 +50,10 @@ async def uart_listener_loop():
 
 
 # Asynchronní funkce pro poslouchání JSON zprávy po UARTu
+last_state_time = time.time()  # čas posledního STATE
+
 async def uart_JSON_listener_loop():
-    global uart_buffer
+    global uart_buffer, last_state_time
     if not ser:
         print("[UART ←] Není k dispozici UART port")
         return
@@ -75,7 +78,7 @@ async def uart_JSON_listener_loop():
                         input_state.update_from_json(msg)
                     except json.JSONDecodeError:
                         print("[UART JSON ERROR] Neplatný JSON:", json_str)
-                
+
                 # Zpracuj všechny kompletní bloky <STATE>...</STATE>
                 while "<STATE>" in uart_buffer and "</STATE>" in uart_buffer:
                     start = uart_buffer.find("<STATE>") + len("<STATE>")
@@ -85,10 +88,17 @@ async def uart_JSON_listener_loop():
 
                     try:
                         msg = json.loads(json_str)
-                        print("[UART ←]", msg)
+                        print("[UART ← STATE]", msg)
                         input_state.update_mode_from_json(msg)
-                    except Exception as e:
+                        last_state_time = time.time()  # aktualizace času
+                    except Exception:
                         print("[UART STATE ERROR] Neplatný JSON:", json_str)
+
+            # Kontrola timeoutu (5 sekund)
+            if time.time() - last_state_time > 5:
+                print("[UART STATE TIMEOUT] Žádný STATE >5s")
+                input_state.reset_mode()
+                last_state_time = time.time()  # reset, aby se neposílalo pořád dokola
 
         except Exception as e:
             print(f"[UART ← ERROR] Chyba při čtení: {e}")

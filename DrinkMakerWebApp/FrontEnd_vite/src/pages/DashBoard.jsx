@@ -85,7 +85,7 @@ function Dashboard() {
       </div>
 
       <div className="footer">
-        <h2>DrinkMaker © 2025</h2>
+        <h2>-- NIKDY TO NEKONČÍ U PRVNÍ RUNDY ;) --</h2>
       </div>
     </div>
   )

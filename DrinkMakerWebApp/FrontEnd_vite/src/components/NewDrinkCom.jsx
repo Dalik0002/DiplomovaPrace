@@ -5,6 +5,8 @@ import IngredientCard from './IngredientCard'
 import { useBottles } from '../hooks/useBottleData'
 import { useGlasses, useFreePosition } from '../hooks/useGlassesData'
 
+import './NewDrinkCom.css'
+
 
 function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState('')
@@ -15,7 +17,6 @@ function NewDrinkCom() {
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
 
-  // --- data z hooků
   const {
     isLoading,
     error,
@@ -45,6 +46,11 @@ function NewDrinkCom() {
   const addItem = () => {
     if (items.length >= 6) return
     setItems(prev => [...prev, { ingredient: '', volume: 0 }])
+  }
+
+  const removeItem = () => {
+    if (items.length <= 1) return
+    setItems(prev => prev.slice(0, -1))
   }
 
   const handleAdd = async () => {
@@ -118,7 +124,7 @@ function NewDrinkCom() {
 
   return (
     <div className="centered-page">
-      <h2>Přidání nového nápoje</h2>
+      <h2>PŘIDÁNÍ NOVÉHO NÁPOJE</h2>
       {status && <p>{status}</p>}
 
       {posLoading && <p>⏳ Zjišťuji volné pozice…</p>}
@@ -139,7 +145,7 @@ function NewDrinkCom() {
         <p>❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.</p>
       ) : (
         <>
-          <div className="field-row">
+          <div className="field-column">
             <label htmlFor="pos-select" style={{ marginRight: 8 }}>Pozice sklenice:</label>
             <select
               id="pos-select"
@@ -180,7 +186,6 @@ function NewDrinkCom() {
             ))}
           </div>
 
-          {/* Přidat ingredienci */}
           <div className="button-row">
             <button
               className="secondary-button"
@@ -189,6 +194,14 @@ function NewDrinkCom() {
               title={items.length >= 6 ? 'Maximálně 6 ingrediencí' : 'Přidat ingredienci'}
             >
               ➕ Přidat ingredienci ({items.length}/6)
+            </button>
+            <button
+              className="secondary-button"
+              onClick={removeItem}
+              disabled={saving || items.length == 1}
+              title={items.length >= 6 ? 'Maximálně 6 ingrediencí' : 'Přidat ingredienci'}
+            >
+              ➖ Odebrat ingredienci ({items.length}/6)
             </button>
           </div>
 
@@ -200,7 +213,7 @@ function NewDrinkCom() {
               disabled={saving || position === null}
               title={position === null ? 'Vyber nejdřív pozici' : 'Přidat drink'}
             >
-              ➕ Přiřadit nápoj kde sklenici
+              ➕ Přiřadit nápoj ke sklenici
             </button>
           </div>
         </>

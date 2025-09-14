@@ -18,7 +18,7 @@ function Glasses() {
   return (
     <div className="centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
-      <h1>Sklenice</h1>
+      <h1>SKLENICE</h1>
       <GlassesList />
       <button className="delete-button" onClick={clearGlasses}>
         Vymazat všechny sklenice

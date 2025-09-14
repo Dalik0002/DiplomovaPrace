@@ -59,7 +59,7 @@ function BottleSetUp() {
 
   return (
     <div className="centered-page">
-      <h2>Setup - Konfigurace lahví</h2>
+      <h2>KONFIGURACE LAHVÍ</h2>
       {status && <p>{status}</p>}
 
       {isLoading ? (

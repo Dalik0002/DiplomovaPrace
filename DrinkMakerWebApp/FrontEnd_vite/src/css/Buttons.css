@@ -30,6 +30,11 @@
   transition: transform 0.2s;
 }
 
+.start-button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
 .add-button:hover {
   transform: scale(1.05);
 }

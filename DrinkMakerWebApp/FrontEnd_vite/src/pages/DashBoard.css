@@ -71,11 +71,8 @@
   display: flex;
   flex-direction: column;
   height: fit-content;
-}
-
-.control-title {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .footer {
