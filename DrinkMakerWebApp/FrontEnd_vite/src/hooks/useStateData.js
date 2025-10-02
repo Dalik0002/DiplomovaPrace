@@ -12,8 +12,8 @@ export function useStateStatus() {
   });
 
   const isStop = !!(data?.data === "STOP");
-
   const isNone = !!(data?.data === null);
+  const isStandBy = !!(data?.data === "STAND BY");
 
   return {
     data,
@@ -22,6 +22,7 @@ export function useStateStatus() {
     refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
     isStop,
     isNone,
+    isStandBy,
   };
 }
 

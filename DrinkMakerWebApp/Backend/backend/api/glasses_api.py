@@ -7,7 +7,7 @@ import services.glasses_service as glasses_service
 
 router_glasses = APIRouter(prefix="/glasses", tags=["Glasses"])
 
-#Glasses
+
 @router_glasses.get("/glasses", response_model=List[Optional[Glass]])
 def get_glasses():
     print("Požadavek na sklenice")
@@ -19,9 +19,6 @@ def get_glasses_count():
 
 @router_glasses.get("/freePositions")
 def get_free_slots():
-    """
-    Vrátí seznam všech volných pozic.
-    """
     return {"free_positions": glasses_service.get_free_positions()}
 
 @router_glasses.post("/addGlassToPosition")
@@ -52,3 +49,13 @@ def delete_item_from_glasses(payload: DeleteGlassPayload):
 
     print(f"Sklenice na pozici {payload.position} smazána.")
     return {"status": "ok", "message": "Sklenice smazána", "position": payload.position}
+
+
+@router_glasses.post("/addGlassToHWState")
+def add_glass_to_HW_state():
+    try:
+        glasses_service.sync_to_hw_state()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    print("Synchronizace sklenic do HW stavu")
+    return {"status": "ok", "message": "Sklenice synchronizovány do HW stavu"}

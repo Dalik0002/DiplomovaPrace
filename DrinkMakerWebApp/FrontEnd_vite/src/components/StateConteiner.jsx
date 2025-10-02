@@ -43,7 +43,7 @@ function StateConteiner() {
     } 
   }
 
-  const openConfirmKvit = async () => { 
+  const openConfirmKvit = () => { 
     try { 
       setIsModalOpen(true) 
     } catch (err) { 
@@ -105,7 +105,7 @@ function StateConteiner() {
         </div>
       )}
 
-      {isModalOpen && (
+      {isModalOpen || isStop && (
         <div
           className="modal-backdrop"
           onClick={closeConfirm}

@@ -51,6 +51,12 @@ function BottleSetUp() {
     }
   };
 
+  const handleDelete = async (position, newName) => {
+    if (!isEditing || saving) return;
+    const next = rows.map(b => b.position === position ? { ...b, bottle: '' } : b);
+    refresh(next, false);
+  };
+
   const handleCancel = async () => {
     setIsEditing(false);
     setStatus('↩️ Změny zrušeny');
@@ -77,14 +83,17 @@ function BottleSetUp() {
                 <label className="bottle-pos">Pozice {position + 1}:</label>
 
                 {isEditing ? (
-                  <input
-                    type="text"
-                    value={bottle}
-                    onChange={(e) => handleChange(position, e.target.value)}
-                    className="input-field"
-                    placeholder="Název ingredience"
-                    disabled={saving}
-                  />
+                  <>
+                    <input
+                      type="text"
+                      value={bottle}
+                      onChange={(e) => handleChange(position, e.target.value)}
+                      className="input-field"
+                      placeholder="Název ingredience"
+                      disabled={saving}
+                    />
+                    <button className="delete-button" onClick={(e) => handleDelete(position, e.target.value)}> Smazat </button>
+                  </>
                 ) : (
                   <span className="bottle-name">
                     {bottle || <i style={{ color: '#888' }}>– nezadáno –</i>}

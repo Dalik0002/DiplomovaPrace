@@ -9,7 +9,6 @@ glass_glasses: List[Optional[Glass]] = [None] * 6
 
 
 def _check_pos(position: int) -> int:
-    """Normalizace a kontrola rozsahu pozice (0..5). Povolí i stringy s číslem."""
     try:
         p = int(position)
     except (TypeError, ValueError):
@@ -36,7 +35,6 @@ def get_glasses() -> List[Optional[Glass]]:
 
 
 def clear_glasses() -> None:
-    """Vymaže všechny pozice (nastaví None)."""
     for i in range(6):
         glass_glasses[i] = None
 
@@ -69,12 +67,13 @@ def get_free_positions() -> List[int]:
     return [i for i, g in enumerate(glass_glasses) if g is None]
 
 
-def sync_to_hw_state() -> dict:
+def set_from_temp_to_JSON() -> dict:
     """
     Propíše aktuální 6 slotů do GlassesState (JSON pro HW) a vrátí výsledek.
     Použij po každé změně slotů, těsně před odesláním na ESP32.
     """
-    glasses_state.set_from_slots(glass_glasses)
-    #return glasses_state.to_glasses_json()
+    glasses_state.set_to_glasses_state(glass_glasses)
+
+    return glasses_state.to_glasses_json()
 
 

@@ -1,5 +1,4 @@
 from fastapi import APIRouter
-from models.endpoints_classes import Order
 
 from services.uart_service import send_json
 from services.uart_service import send_uart_command

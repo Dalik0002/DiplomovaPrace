@@ -7,6 +7,7 @@
   text-align: center;
   border-radius: 0.75rem;
   border: #48b8c7 2px dashed;
+  gap: 1rem;
 }
 
 .centered-page {
@@ -28,11 +29,29 @@
 }
 
 .error {
+  display: flex;
+  flex: 1;
   color: red;
-  margin-top: 0.5rem;
   text-align: center;
   justify-content: center;
   align-items: center;
+  border: 2px solid red;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  flex-direction: column;
+}
+
+.loading {
+  display: flex;
+  flex: 1;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #48b8c7;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  flex-direction: column;
 }
 
 .field-column {

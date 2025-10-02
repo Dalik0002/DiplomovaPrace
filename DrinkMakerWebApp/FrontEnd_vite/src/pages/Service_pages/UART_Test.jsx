@@ -3,8 +3,6 @@ import { useState } from 'react'
 import { sendInfo, previewInfo, sendGlasses, previewGlasses, sendBottles, previewBottles } from '../../services/uartService'; 
 import './service.css'
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 function UART_Test() {
   const [preview, setPreview] = useState(null)
 

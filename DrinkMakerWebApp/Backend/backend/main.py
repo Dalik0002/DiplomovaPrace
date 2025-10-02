@@ -12,6 +12,7 @@ from api.uart_test_api import router_UART
 from api.queue_api import router_queue
 from api.service_api import router_service
 from api.glasses_api import router_glasses
+from api.pouring_api import router_pouring
 
 app = FastAPI(
     title="DrinkMaker API",
@@ -24,6 +25,7 @@ app = FastAPI(
         {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
         {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"},
         {"name": "Service", "description": "Správa zámku služby (service lock)"},
+        {"name": "Pouring", "description": "Řízení procesu nalévání drinků"},
     ]
 )
 
@@ -47,6 +49,7 @@ app.include_router(router_UART)
 app.include_router(router_queue)
 app.include_router(router_service)
 app.include_router(router_glasses)
+app.include_router(router_pouring)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -8,23 +8,24 @@ import { useStateStatus} from '../hooks/useStateData';
 import { useServiceStatus} from '../hooks/useServiceStatus';
 import { acquireService } from '../services/serviceLockService';
 
+import Loading from '../components/LoadingCom'
+import Error from '../components/ErrorCom'
+
 import './DashBoard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
 
   const {
-    data: state,
     isLoading: l_state,
-    error: e_state,
-    refresh: refreshState,
+    error: err_state,
+    isStandBy,
   } = useStateStatus();
 
   const {
-    data: service,
     isBusy,
     isLoading: l_service,
-    error: e_service,
+    error: err_service,
     refresh: refreshService,
   } = useServiceStatus();
 
@@ -32,21 +33,18 @@ function Dashboard() {
   const sendService = async () => {
     try {
       await acquireService();
-      // po úspěchu refreshni stav servisu (volitelné)
       refreshService();
       navigate('/service');
     } catch (err) {
       alert('Service je právě obsazený. Zkuste to později.');
-      // volitelně re-fetch
       refreshService();
     }
   };
 
-  const disableStart = state === "STAND BY"; // musí být: !==
 
-  if (l_state || l_service) return <p>Načítání…</p>;
-  if (e_state) return <p className="error">Chyba při získávání stavu: {e_state.message}</p>;
-  if (e_service) return <p className="error">Chyba služby: {e_service.message}</p>;
+  if (l_state || l_service) return <Loading/>
+  if (err_state) return <Error mess={"Chyba při získávání stavu: " + err_state.message}/>
+  if (err_service) return <Error mess={"Chyba služby: " + err_service.message} />
 
   return (
     <div className="dashboard-container">
@@ -67,7 +65,7 @@ function Dashboard() {
           <div className="control-container">
             <button
               className="start-button"
-              disabled={disableStart}
+              disabled={!isStandBy}                       //musí být "!"
               onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ 

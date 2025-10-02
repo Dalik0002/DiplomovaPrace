@@ -10,6 +10,7 @@ import './NewDrinkCom.css'
 
 function NewDrinkCom() {
   const [drinkName, setDrinkName] = useState('')
+  const [glassHeight, setGlassHeight] = useState('')
   const [items, setItems] = useState([
     { ingredient: '', volume: 0 },
     { ingredient: '', volume: 0 },
@@ -169,6 +170,18 @@ function NewDrinkCom() {
               className="input-field"
               value={drinkName}
               onChange={e => setDrinkName(e.target.value)}
+              disabled={saving}
+            />
+
+            <label htmlFor="pos-select" style={{ marginRight: 8 }}>Výška sklenice</label>
+            <input
+              type="number"
+              placeholder="Výška sklenice"
+              min="0"
+              max="250"
+              className="input-field"
+              value={glassHeight}
+              onChange={e => setGlassHeight(e.target.value)}
               disabled={saving}
             />
           </div>

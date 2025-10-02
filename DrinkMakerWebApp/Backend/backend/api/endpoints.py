@@ -12,19 +12,12 @@ import services.pouring_process_service as PoweringProcessService
 
 router = APIRouter()
 
-@router.post("/startPouring", tags=["General"])
-def start_pouring():
-    print(f"Požadavek na zahájení nalévání")
-    glasses_service.sync_to_hw_state()
-    #PoweringProcessService.start()
-    return {"status": "ok", "message": "Položka vybrána z fronty a přidána do sklenic zahajuji nalávání"}
-
 @router.get("/getState", tags=["General"])
 def get_state():
-    print(f"Požadavek na stav zařízení")
+    #print(f"Požadavek na stav zařízení")
     return {"status": "ok", "data": input_state.mode_return()}
 
-@router.post("/setState", tags=["General"])
+@router.post("/setStateToStandBy", tags=["General"])
 def set_state():
     print(f"Nastaven stav zařízení na STANDBY")
     return {"status": "ok", "data": input_state.set_standby_mode()}

@@ -3,19 +3,6 @@ from typing import List, Optional
 from models.endpoints_classes import Glass
 
 class GlassesState:
-    """
-    Udržuje JSON strukturu pro odeslání do HW:
-    {
-      "glasses": {
-        "pos_0": [ {"nm":"", "vol":0}, ... (6 položek) ],
-        ...
-        "pos_5": [ ... 6 položek ... ]
-      }
-    }
-    Každý slot (pozice 0..5) má přesně 6 položek (max 6 ingrediencí).
-    Prázdný slot = všech 6 položek {"nm":"", "vol":0}.
-    """
-
     def __init__(self):
         self.reset()
 
@@ -30,19 +17,14 @@ class GlassesState:
         return all((item["nm"] == "" and int(item["vol"]) == 0) for item in self.glasses[key])
 
     def _ensure_len6(self, arr: List, fill):
-        """Vrátí kopii `arr` přesně délky 6, doplní hodnotou `fill` nebo ořízne."""
         out = list(arr[:6])
         while len(out) < 6:
             out.append(fill)
         return out
 
-    def set_glass_full(self, pos: int, ingredients: List[str], volumes: List[int], drink_name: Optional[str] = None) -> None:
-        """
-        Naplní pozici `pos` (0..5) až 6 ingrediencemi a objemy.
-        `drink_name` je volitelné; pokud ho nepotřebuješ v HW protokolu, ignoruje se.
-        """
+    def set_glass_full(self, pos: int, ingredients: List[str], volumes: List[int]) -> None:
         if not (0 <= pos < 6):
-            raise ValueError("pos mimo rozsah (0..5)")
+            raise ValueError("Pozice mimo rozsah (0..5)")
 
         ing6 = self._ensure_len6(ingredients or [], "")
         vol6 = self._ensure_len6(volumes or [], 0)
@@ -56,11 +38,7 @@ class GlassesState:
             raise ValueError("pos mimo rozsah (0..5)")
         self.glasses[f"pos_{pos}"] = [{"nm": "", "vol": 0} for _ in range(6)]
 
-    def set_from_slots(self, slots: List[Optional[Glass]]) -> None:
-        """
-        Přijme 6-slotové pole (Glass nebo None) a naplní self.glasses.
-        Očekává, že Glass má vlastnosti: name, ingredients (List[str]), volumes (List[int]).
-        """
+    def set_to_glasses_state(self, slots: List[Optional[Glass]]) -> None:
         if len(slots) != 6:
             raise ValueError("slots musí mít délku 6")
 
@@ -78,3 +56,17 @@ class GlassesState:
 
     def to_glasses_json(self) -> dict:
         return {"glasses": self.glasses}
+
+    def get_glasses_in_list(self) -> List[Optional[Glass]]:
+        result = []
+        for pos in range(6):
+            key = f"pos_{pos}"
+            items = self.glasses[key]
+            if all(item["nm"] == "" and int(item["vol"]) == 0 for item in items):
+                result.append(None)
+            else:
+                ingredients = [item["nm"] for item in items if item["nm"] != ""]
+                volumes = [int(item["vol"]) for item in items if int(item["vol"]) > 0]
+                g = Glass(name="", ingredients=ingredients, volumes=volumes)
+                result.append(g)
+        return result

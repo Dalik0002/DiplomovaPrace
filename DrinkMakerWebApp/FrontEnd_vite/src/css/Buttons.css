@@ -5,6 +5,27 @@
   justify-content: center;
 }
 
+.nav-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.nav-buttons button {
+  padding: 0.5rem 1rem;
+  background: #aa44cc;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nav-buttons button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
+}
+
 .add-button {
   font-size: 1rem;
   padding: 0.8rem 2rem;
