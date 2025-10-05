@@ -33,6 +33,13 @@
   gap: 0.75rem;
 }
 
+/* Dvojice pod sebou */
+.service-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 /* CLEANING mřížka 2×3, na mobilu 1×6 */
 .clean-grid {
   display: grid;
@@ -56,6 +63,7 @@
 
 /* Tlačítka – přebereš své barvy/styly přes existující classy */
 .service-btn {
+  
   width: 100%;
   padding: 0.6rem 0.8rem;
   border-radius: 0.6rem;
@@ -71,7 +79,3 @@
   border-radius: 0.6rem;
 }
 
-/* Pro podstránky (UART atd.) */
-.service-outlet {
-  width: 100%;
-}

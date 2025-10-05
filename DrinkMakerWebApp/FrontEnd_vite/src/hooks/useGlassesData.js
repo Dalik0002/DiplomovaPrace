@@ -7,6 +7,7 @@ export function useGlasses() {
     dedupingInterval: 1000,
     errorRetryCount: 3,
     errorRetryInterval: 2000,
+    refreshInterval: 5000,
   });
 
   const raw = Array.isArray(data) ? data : [];

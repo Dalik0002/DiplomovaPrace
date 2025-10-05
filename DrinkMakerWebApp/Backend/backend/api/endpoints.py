@@ -14,17 +14,17 @@ router = APIRouter()
 
 @router.get("/getState", tags=["General"])
 def get_state():
-    #print(f"Požadavek na stav zařízení")
+    #print(f"[ENDPOINT] Požadavek na stav zařízení")
     return {"status": "ok", "data": input_state.mode_return()}
 
 @router.post("/setStateToStandBy", tags=["General"])
 def set_state():
-    print(f"Nastaven stav zařízení na STANDBY")
+    print(f"[ENDPOINT] Nastaven stav zařízení na STANDBY")
     return {"status": "ok", "data": input_state.set_standby_mode()}
 
 @router.post("/resetState", tags=["General"])
 def reset_state():
-    print(f"Restartovan stav zařízení zpět na none")
+    print(f"[ENDPOINT] Restartovan stav zařízení zpět na none")
     return {"status": "ok", "data": input_state.reset_mode()}
 
 @router.get("/inputState", tags=["General"])
@@ -39,28 +39,28 @@ def get_system_state():
 def set_service_mod():
     system_state.set_state(service=True)
     send_json(system_state.to_info_json())
-    print(f"Požadavek na servisní mód")
+    print(f"[ENDPOINT] Požadavek na servisní mód")
     return {"status": "ok", "message": "Servisní mód aktivován"}
 
 @router.post("/remote/resetService", tags=["General"])
 def reset_service_mod():
     system_state.set_state(standBy=True)
     send_json(system_state.to_info_json())
-    print(f"Požadavek na výstup ze servisního módu")
+    print(f"[ENDPOINT] Požadavek na výstup ze servisního módu")
     return {"status": "ok", "message": "Servisní mód deaktivován"}
 
 @router.post("/remote/setStop", tags=["General"])
 def set_stop_mod():
     system_state.set_state(stop=True)
     send_json(system_state.to_info_json())
-    print(f"Požadavek na stop mód")
+    print(f"[ENDPOINT] Požadavek na stop mód")
     return {"status": "ok", "message": "Stop mód aktivován"}
 
 @router.post("/remote/resetStop", tags=["General"])
 def reset_stop_mod():
     system_state.set_state(standBy=True,errorAcknowledgment=True)
     send_json(system_state.to_info_json())
-    print(f"Požadavek na výstup ze stop módu")
+    print(f"[ENDPOINT] Požadavek na výstup ze stop módu")
     return {"status": "ok", "message": "Stop mód deaktivován"}
 
 

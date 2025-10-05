@@ -23,9 +23,9 @@ function Dashboard() {
   } = useStateStatus();
 
   const {
-    isBusy,
     isLoading: l_service,
     error: err_service,
+    isBusy,
     refresh: refreshService,
   } = useServiceStatus();
 
@@ -34,7 +34,7 @@ function Dashboard() {
     try {
       await acquireService();
       refreshService();
-      navigate('/service');
+      navigate('/service/main');
     } catch (err) {
       alert('Service je právě obsazený. Zkuste to později.');
       refreshService();

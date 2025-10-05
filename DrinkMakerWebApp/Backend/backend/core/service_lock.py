@@ -34,24 +34,23 @@ def get_status() -> dict:
         return _status_locked()
 
 def acquire(owner_id: str) -> dict:
-    """Získání zámku, když je volno nebo zámek expiroval."""
     global _service_lock
-    print(f"Trying to acquire lock for owner_id={owner_id}")
+    print(f"[SERVICE] Trying to acquire lock for owner_id={owner_id}")
     with _lock_guard:
         if _service_lock and _service_lock.expires_at > _now() and _service_lock.owner_id != owner_id:
-            print(f"Lock is busy, owned by {_service_lock.owner_id} until {_service_lock.expires_at}")
+            print(f"[SERVICE] Lock is busy, owned by {_service_lock.owner_id} until {_service_lock.expires_at}")
             return {"ok": False, "reason": "busy", **_status_locked()}
-        # volno nebo reentry stejným klientem
+
         _service_lock = ServiceLock(owner_id=owner_id, acquired_at=_now(), expires_at=_now() + timedelta(seconds=LOCK_TTL_SECONDS))
-        print(f"Lock acquired by {owner_id} until {_service_lock.expires_at}")
+        print(f"[SERVICE] Lock acquired by {owner_id} until {_service_lock.expires_at}")
         return {"ok": True, **_status_locked()}
 
 def heartbeat(owner_id: str) -> dict:
-    """Prodluž život zámku, jen když vlastní stejný owner."""
     global _service_lock
     with _lock_guard:
         if not _service_lock or _service_lock.owner_id != owner_id:
             return {"ok": False, "reason": "not_owner", **_status_locked()}
+        
         _service_lock.expires_at = _now() + timedelta(seconds=LOCK_TTL_SECONDS)
         return {"ok": True, **_status_locked()}
 
@@ -61,4 +60,5 @@ def release(owner_id: str) -> dict:
         if _service_lock and _service_lock.owner_id == owner_id:
             _service_lock = None
             return {"ok": True, "locked": False}
+        
         return {"ok": False, "reason": "not_owner", **_status_locked()}

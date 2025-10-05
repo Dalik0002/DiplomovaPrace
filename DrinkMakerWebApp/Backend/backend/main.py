@@ -10,6 +10,7 @@ import asyncio
 from api.endpoints import router
 from api.uart_test_api import router_UART
 from api.queue_api import router_queue
+from api.service_lock_api import router_serviceLock
 from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
@@ -24,7 +25,8 @@ app = FastAPI(
         {"name": "Glasses", "description": "Správa sklenic"},
         {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
         {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"},
-        {"name": "Service", "description": "Správa zámku služby (service lock)"},
+        {"name": "Service Lock", "description": "Správa zámku služby (service lock)"},
+        {"name": "Service Services", "description": "Služby pro správu stavu služby"},
         {"name": "Pouring", "description": "Řízení procesu nalévání drinků"},
     ]
 )
@@ -48,6 +50,7 @@ app.include_router(router)
 app.include_router(router_UART)
 app.include_router(router_queue)
 app.include_router(router_service)
+app.include_router(router_serviceLock)
 app.include_router(router_glasses)
 app.include_router(router_pouring)
 

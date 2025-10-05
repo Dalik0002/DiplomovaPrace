@@ -5,6 +5,7 @@ import AddNewDrink from './pages/AddNewDrink'
 import Glasses from './pages/Glasses'
 import Bottles from './pages/Bottles'
 import UARTTest from './pages/ServicePages/UARTTest'
+import ServiceMainCom from './pages/ServicePages/ServiceMainCom'
 import OrderReview from './pages/OrderReview'
 
 function AppRouter() {
@@ -12,9 +13,8 @@ function AppRouter() {
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/service" element={<ServiceMain />}>
-        <Route path="uart" element={<UARTTest />} />
-        <Route path="clean" element={<UARTTest />} />
-        <Route path="reset" element={<UARTTest />} />
+        <Route path="main" element={<ServiceMainCom />}/>
+        <Route path="uart" element={<UARTTest />}/>
       </Route>
       <Route path="/bottles" element={<Bottles/>}></Route>
       <Route path="/editGlasses" element={<Glasses/>}></Route>

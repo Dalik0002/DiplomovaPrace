@@ -1,75 +1,68 @@
-import { useNavigate } from 'react-router-dom'
-import { Outlet } from 'react-router-dom'
+// src/pages/service/ServiceMain.jsx
+import { useNavigate, Outlet } from 'react-router-dom'
 import { useEffect } from 'react'
 import { heartbeatService, releaseService } from '../../services/serviceLockService'
+import { getClientId } from '../../services/clientId'     // kvůli keepalive fetchu
 import './service.css'
 
 function ServiceMain() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      heartbeatService().catch(() => {
-        releaseService().finally(() => navigate('/'))
-      })
-    }, 15_000)
+    let alive = true
 
-    const beforeUnload = () => {
+    const tick = async () => {
       try {
-        const base = import.meta.env.VITE_API_URL || ''
-        navigator.sendBeacon(`${base}/service/release`)
+        await heartbeatService()
+      } catch {
+        // Heartbeat selhal -> pokus o release a kopnout uživatele pryč
+        try { await releaseService() } catch {}
+        if (alive) navigate('/')
+      }
+    }
+
+    // první heartbeat hned po mountu
+    tick()
+    const interval = setInterval(tick, 15_000)
+
+    // release při zavření/odchodu (keepalive, aby proběhl i během unloadu)
+    const sendReleaseKeepalive = () => {
+      try {
+        releaseService()
       } catch {}
     }
-    window.addEventListener('beforeunload', beforeUnload)
+
+    // „Zpět/Vpřed“ v historii prohlížeče
+    const onPopState = () => { releaseService().catch(() => {}) }
+
+    window.addEventListener('beforeunload', sendReleaseKeepalive)
+    window.addEventListener('pagehide', sendReleaseKeepalive)
+    window.addEventListener('popstate', onPopState)
 
     return () => {
+      alive = false
       clearInterval(interval)
-      releaseService().catch(() => {})
-      window.removeEventListener('beforeunload', beforeUnload)
+      //releaseService().catch(() => {})
+      window.removeEventListener('beforeunload', sendReleaseKeepalive)
+      window.removeEventListener('pagehide', sendReleaseKeepalive)
+      window.removeEventListener('popstate', onPopState)
     }
   }, [navigate])
 
+  // „Zpět“ tlačítko – nejdřív release, pak domů
+  const onBackClick = async () => {
+    try { await releaseService() } catch {}
+    navigate('/')
+  }
+
   return (
     <div className="pages-centered-page">
-      {/* Top bar */}
       <div className="nav-buttons">
-        <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
+        <button className="back-button" onClick={onBackClick}>Zpět</button>
         <button onClick={() => navigate('/service/uart')}>UART Test</button>
       </div>
 
-      {/* RESET card */}
-      <section className="service-container">
-        <h2 className="service-container-title">RESET</h2>
-        <div className="service-row">
-          <button className="service-btn">RESET MAIN NODE</button>
-          <button className="service-btn">RESET CAROUSEL</button>
-        </div>
-      </section>
-
-      {/* MOTORS card */}
-      <section className="service-container">
-        <h2 className="service-container-title">MOTORS</h2>
-        <div className="service-row">
-          <button className="service-btn">RELEASE PLATFORM</button>
-          <button className="service-btn">RELEASE CAROUSEL</button>
-        </div>
-      </section>
-
-      {/* CLEANING card */}
-      <section className="service-container">
-        <h2 className="service-container-title">CLEANING</h2>
-        <div className="clean-grid">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div className="clean-cell" key={i}>
-              <div className="clean-title">POSITION {i + 1}</div>
-              <button className="service-btn">CLEAN</button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Místo pro podstránky (např. UART Test) */}
-      <div className="service-outlet">
+      <div>
         <Outlet />
       </div>
     </div>
