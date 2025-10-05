@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import { heartbeatService, releaseService } from '../../services/serviceLockService'
 import './service.css'
 
-function Service_main() {
+function ServiceMain() {
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -76,4 +76,4 @@ function Service_main() {
   )
 }
 
-export default Service_main
+export default ServiceMain

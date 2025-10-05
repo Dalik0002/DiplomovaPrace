@@ -1,3 +1,4 @@
+//api.js
 const BASE_URL = (() => {
   const local = import.meta.env.VITE_API_URL;
   const remote = import.meta.env.VITE_API_URL_REMOTE || local;

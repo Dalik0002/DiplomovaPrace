@@ -1,9 +1,9 @@
 # routers/pour.py
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from services.pouring_process_service import PourOrchestrator, PourError
+from services.pouring_process_service import PouringProcessService, PourError
 
 router_pouring = APIRouter(tags=["Pouring"])
-service = PourOrchestrator()
+service = PouringProcessService()
 
 def notify(stage: str, data: dict):
     # nahraď vlastním logem / WS broadcastem
