@@ -1,0 +1,130 @@
+.state-container {
+  flex: 1;
+  background: #3b1b4b;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+.state-container-error {
+  flex: 1;
+  background: #cf6868;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  border: 2px solid #fffb00;
+  animation: blink-border 1s infinite;
+}
+
+@keyframes blink-border {
+  0% {
+    border-color: #fffb00;
+  }
+  50% {
+    border-color: transparent;
+  }
+  100% {
+    border-color: #fffb00;
+  }
+}
+
+.state-title {
+  color: white;
+  font-size: 1.2rem;
+  margin-bottom: 0rem;
+  text-align: center;
+}
+
+.state-info {
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.state-standby {
+  color: green;
+}
+
+.state-stop {
+  color: red;
+}
+
+.state-checking {
+  color: orange;
+}
+
+.state-pouring {
+  color: rgb(224, 24, 224);
+}
+
+.state-service {
+  color: rgb(189, 131, 24);
+}
+
+.state-updating {
+  color: rgb(255, 255, 255);
+}
+
+.state-unknown {
+  color: rgb(255, 255, 255);
+}
+
+/* MODAL */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.modal {
+  width: min(520px, 92vw);
+  background: #1f1021;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 16px;
+  padding: 1.2rem 1.2rem 1rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+  text-align: center;
+}
+.modal h3 {
+  margin: 0 0 .5rem 0;
+  font-size: 1.25rem;
+}
+.modal p {
+  margin: 0 0 .75rem 0;
+  opacity: .9;
+}
+.ack-row {
+  display: flex;
+  gap: .6rem;
+  align-items: center;
+  margin: .5rem 0 1rem 0;
+  user-select: none;
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: .5rem;
+}
+.btn-danger {
+  padding: .55rem .9rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background: #dc2626;
+  color: #fff;
+}
+.btn-danger:disabled { opacity: .6; cursor: not-allowed; }
+

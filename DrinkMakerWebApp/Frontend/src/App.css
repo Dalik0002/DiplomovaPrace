@@ -1,0 +1,50 @@
+/*App.css*/
+.app-shell {
+  display: grid;
+  color: #fff;
+  height: 100vh;
+  border: #d0ff00 2px dashed;
+}
+
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  border: #ffffff 2px dashed;
+}
+
+.logo-static {
+  width: 350px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+
+.logo {
+  width: 300px;
+  height: auto;
+
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid white;
+  border-top: 4px solid rgb(255, 176, 250);
+  border-radius: 100%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+

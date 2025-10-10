@@ -1,0 +1,81 @@
+/* Top bar: home vlevo, UART vpravo */
+.service-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.service-topbar-gap {
+  flex: 1;
+}
+
+/* Karty sekcí */
+.service-container {
+  display: flex;
+  background: #3b1b4b;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  gap: 1rem;
+  height: fit-content;
+  justify-content: center;
+}
+
+.service-container-title {
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+/* Dvojice tlačítek vedle sebe */
+.service-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Dvojice pod sebou */
+.service-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* CLEANING mřížka 2×3, na mobilu 1×6 */
+.clean-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+@media (max-width: 640px) {
+  .clean-grid { grid-template-columns: 1fr; }
+}
+
+.clean-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.clean-title {
+  font-size: 0.9rem;
+}
+
+/* Tlačítka – přebereš své barvy/styly přes existující classy */
+.service-btn {
+  
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.6rem;
+}
+
+.icon-btn {
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+}
+
+.link-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.6rem;
+}
+

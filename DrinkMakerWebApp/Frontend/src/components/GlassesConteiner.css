@@ -1,0 +1,78 @@
+.glasses-container {
+  flex: 1;
+  background: #3b1b4b;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.glasses-container-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.glasses-container-list {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.glasses-container-list button {
+  margin-top: 0.75rem;
+}
+
+.glasses-container-list ul {
+  align-items: center;
+  padding: 0; 
+  margin: 0;
+}
+
+.glasses-container-list li {
+  background: #4d2a5e;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.5rem;
+  border: #7312f1 2px solid;
+  list-style: none;
+}
+
+.glasses-container-empty {
+  color: #ccc;
+}
+
+.glasses-container-info {
+  margin-top: 1rem;
+  font-size: 1rem;
+  text-align: center;
+  color: #ddd;
+  margin-bottom: 0.5rem;
+}
+
+.glass-container-item {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+  border-radius: 0.5rem;
+  background-color: #3b1e40;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  list-style-type: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.glass-container-empty {
+  padding: 0.5rem 1rem;
+  margin: 0.3rem 0;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+  color: #ccc;
+  font-size: 1rem;
+  font-style: italic;   
+  list-style-type: none;
+  opacity: 0.8;         
+}
+

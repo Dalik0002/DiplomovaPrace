@@ -1,0 +1,132 @@
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  justify-content: center;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+
+.nav-buttons button {
+  padding: 0.5rem 1rem;
+  background: #aa44cc;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nav-buttons button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
+}
+
+.add-button {
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  background: #948608;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;  
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
+  transition: transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.start-button {
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
+  transition: transform 0.2s;
+}
+
+.start-button:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+.add-button:hover {
+  transform: scale(1.05);
+}
+
+.start-button:hover {
+  transform: scale(1.05);
+}
+
+.start-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+
+.stop-button {
+  font-size: 1rem;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(229, 57, 53, 0.5);
+  transition: transform 0.2s;
+  width: 100%;
+}
+.stop-button:hover {
+  transform: scale(1.05);
+}
+
+
+.delete-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #d41919;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  transform: scale(1.05);
+}
+
+
+.back-button {
+  margin-bottom: 1rem;
+  padding: 0.4rem 1rem;
+  font-size: 1.2rem;
+  background: #aa44cc;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
+}
+
+.action-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background: #d68e22;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.action-button:hover {
+  background: #da952e;
+  transform: scale(1.05);
+}
+
