@@ -16,3 +16,21 @@ docker compose stop
 
 - Zastaví a smaže kontejnery, ale nesmaže image ani volumes.
 docker compose down
+
+----------------------------------
+
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+
+
+docker rmi $(docker images -q)
+
+
+docker compose up -d --build
+
+docker run -d \
+  --name dozzle \
+  -p 9999:8080 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  amir20/dozzle:latest
+
