@@ -12,7 +12,7 @@ function StateConteiner() {
   const {
     data: state,
     isLoading: l_state,
-    error: e_state,
+    error: err_state,
     refresh: refreshState,
     isStop,
     isNone,
@@ -81,8 +81,8 @@ function StateConteiner() {
     <div className={`state-container${isNone ? ' state-container-error' : ''}`}>
       {l_state ? (
         <p>Stahování...</p>
-      ) : e_state ? (
-        <p className="error-message">{e_state}</p>
+      ) : err_state ? (
+        <p className="error-message">{err_state.message}</p>
       ) : (
         <div className={`state-info ${getStateClass(state?.data)}`}>
           {isNone ? (

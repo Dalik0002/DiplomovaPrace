@@ -15,6 +15,7 @@ import './DashBoard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
+  const [status, setStatus] = useState('')
 
   const {
     isLoading: l_state,
@@ -43,8 +44,11 @@ function Dashboard() {
 
 
   if (l_state || l_service) return <Loading/>
-  if (err_state) return <Error mess={"Chyba při získávání stavu: " + err_state.message}/>
-  if (err_service) return <Error mess={"Chyba služby: " + err_service.message} />
+  //if (err_state) return <Error mess={"Chyba při získávání stavu: " + err_state.message}/>
+  //if (err_service) return <Error mess={"Chyba služby: " + err_service.message} />
+
+  //if (err_state) setStatus('❌ Chyba při získávání stavu.')
+  //if (err_service) setStatus('❌ Chyba při získávání informace o servisu.')
 
   return (
     <div className="dashboard-container">
@@ -52,11 +56,12 @@ function Dashboard() {
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
           <button onClick={() => navigate('/bottles')}>📦 Konfigurace lahví</button>
-          <button onClick={sendService} disabled={isBusy}>
-            {isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis'}
+          <button onClick={sendService} disabled={isBusy || err_service}>
+            {err_service ? '⚙️ Servis (Nedostupný)' : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')}
           </button>
         </div>
       </div>
+      {status && <p>{status}</p>}
 
       <div className="core-container">
         {/* Levý sloupec*/}
