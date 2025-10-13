@@ -21,6 +21,7 @@ export function setValve(id, open) {
   return apiPost('/service/setValve', { valve_id: id, open });;
 }
 
+
 export function restartESP32() {
   return apiPost('/service/restartESP32');
 }
