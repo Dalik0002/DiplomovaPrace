@@ -28,7 +28,14 @@ function OrderReview() {
     return (glasses || []).filter(g => g && hasContent(g))
   }, [glasses])
 
-  const anyGlass = filledGlasses.length > 0
+  // Vynutíme přesně 6 pozic (doplňujeme null)
+  const slots = useMemo(
+    () => Array.from({ length: 6 }, (_, i) => glasses?.[i] ?? null),
+    [glasses]
+  )
+
+  // Je aspoň jedna sklenice s obsahem?
+  const anyGlass = useMemo(() => slots.some(g => g && hasContent(g)), [slots])
 
   const handleConfirm = async () => {
     if (!anyGlass) {
@@ -59,23 +66,28 @@ function OrderReview() {
         <p>⏳ Načítám sklenice…</p>
       ) : error ? (
         <p>❌ Nepodařilo se načíst sklenice</p>
-      ) : !anyGlass ? (
-        <p>⚠️ Zatím nejsou připravené žádné sklenice.</p>
       ) : (
         <>
           <div className="review-glasses-grid">
-            {filledGlasses.map((g, idx) => (
+            {slots.map((g, idx) => (
               <div className="review-glass-card" key={idx}>
                 <div className="review-glass-header">
-                  <h3 className="review-glass-title">{g.name || `Sklenice ${idx + 1}`}</h3>
+                  <h3 className="review-glass-title">{`Pozice ${idx + 1}`}</h3>
                 </div>
-                <ul className="review-ing-list">
-                  {g.ingredients.map((ing, i) => {
-                    const vol = g.volumes?.[i] ?? 0
-                    if (!ing?.trim() || vol <= 0) return null
-                    return <li key={i}>{ing} — {vol} ml</li>
-                  })}
-                </ul>
+                {g === null ? (
+                  <p className="review-empty">není přiřazeno</p>
+                ) : hasContent(g) ? (
+                  <ul className="review-ing-list">
+                    <p>{g.name || `Sklenice ${idx + 1}`}</p>
+                    {g.ingredients.map((ing, i) => {
+                      const vol = g.volumes?.[i] ?? 0
+                      if (!ing?.trim() || vol <= 0) return null
+                      return <li key={i}>{ing} — {vol} ml</li>
+                    })}
+                  </ul>
+                ) : (
+                  <p className="review-empty">bez obsahu</p>
+                )}
               </div>
             ))}
           </div>

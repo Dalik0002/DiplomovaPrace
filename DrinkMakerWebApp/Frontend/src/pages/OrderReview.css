@@ -46,6 +46,12 @@
   justify-content: center;
 }
 
+.review-empty {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+
 /* 📱 Mobile responsive */
 @media (max-width: 768px) {
   .review-glasses-grid {

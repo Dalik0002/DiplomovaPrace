@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
+from starlette.responses import RedirectResponse
 
 from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
@@ -64,9 +64,9 @@ async def startup_event():
     #asyncio.create_task(uart_listener_loop())
     asyncio.create_task(uart_JSON_listener_loop())
 
-@app.get("/")
-def read_root():
-    return {"message": "DrinkMaker backend běží!"}
+@app.get("/", include_in_schema=False)
+def root_redirect():
+    return RedirectResponse(url="/docs")
 
 @app.get("/favicon.ico")
 async def favicon():
