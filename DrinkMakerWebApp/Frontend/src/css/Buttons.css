@@ -39,6 +39,10 @@
   margin-top: 0.5rem;
 }
 
+.add-button:hover {
+  transform: scale(1.05);
+}
+
 .start-button {
   font-size: 1rem;
   padding: 0.8rem 2rem;
@@ -54,10 +58,6 @@
 .start-button:disabled {
   background: #444;
   cursor: not-allowed;
-}
-
-.add-button:hover {
-  transform: scale(1.05);
 }
 
 .start-button:hover {
@@ -94,6 +94,7 @@
   color: white;
   border-radius: 0.5rem;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .delete-button:hover {
@@ -109,6 +110,7 @@
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .back-button:hover {
@@ -123,6 +125,7 @@
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .action-button:hover {

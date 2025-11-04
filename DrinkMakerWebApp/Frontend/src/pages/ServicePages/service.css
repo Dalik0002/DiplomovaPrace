@@ -1,4 +1,3 @@
-/* Top bar: home vlevo, UART vpravo */
 .service-topbar {
   display: flex;
   align-items: center;
@@ -8,7 +7,6 @@
   flex: 1;
 }
 
-/* Karty sekcí */
 .service-container {
   display: flex;
   background: #3b1b4b;
@@ -26,14 +24,12 @@
   letter-spacing: 0.06em;
 }
 
-/* Dvojice tlačítek vedle sebe */
 .service-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.75rem;
 }
 
-/* Dvojice pod sebou */
 .service-column {
   display: flex;
   flex-direction: column;
@@ -61,12 +57,19 @@
   font-size: 0.9rem;
 }
 
-/* Tlačítka – přebereš své barvy/styly přes existující classy */
+
 .service-btn {
-  
   width: 100%;
+  color: rgb(255, 255, 255);
   padding: 0.6rem 0.8rem;
   border-radius: 0.6rem;
+  transition: transform 0.2s;
+}
+
+.service-btn:hover {
+  background: #bbb8b4;
+  color: black;
+  transform: scale(1.05);
 }
 
 .icon-btn {
@@ -78,4 +81,3 @@
   padding: 0.4rem 0.8rem;
   border-radius: 0.6rem;
 }
-

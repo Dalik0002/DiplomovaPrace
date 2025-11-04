@@ -1,12 +1,13 @@
 // src/pages/service/ServiceMain.jsx
 import { useNavigate, Outlet } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { heartbeatService, releaseService } from '../../services/serviceLockService'
 import { getClientId } from '../../services/clientId'     // kvůli keepalive fetchu
 import './service.css'
 
 function ServiceMain() {
   const navigate = useNavigate()
+  const [buttonState, setButtonState] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -49,17 +50,27 @@ function ServiceMain() {
     }
   }, [navigate])
 
-  // „Zpět“ tlačítko – nejdřív release, pak domů
   const onBackClick = async () => {
     try { await releaseService() } catch {}
     navigate('/')
   }
 
+  const onButtonClick = () => {
+    const next = !buttonState
+    setButtonState(next)
+    if (next) {
+      navigate('/service/uart')
+    }else {
+      navigate('/service/main')
+    }     
+  }
+
+
   return (
     <div className="pages-centered-page">
       <div className="nav-buttons">
         <button className="back-button" onClick={onBackClick}>Zpět</button>
-        <button onClick={() => navigate('/service/uart')}>UART Test</button>
+        <button className="icon-btn" onClick={onButtonClick}>{buttonState ? 'Main' : 'UART Test'}</button>
       </div>
 
       <div>

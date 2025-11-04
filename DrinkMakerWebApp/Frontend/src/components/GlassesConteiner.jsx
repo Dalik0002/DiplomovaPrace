@@ -18,9 +18,6 @@ function GlassesConteiner() {
     isLoading: countLoading,
   } = useNumberOfGlasses()
 
-  const getStateClass = (state) => {
-
-  };
 
   const isLoading = glassesLoading || countLoading
 
@@ -32,7 +29,7 @@ function GlassesConteiner() {
         {isLoading ? (
           <p>Načítám…</p>
         ) : glassesError ? (
-          <p className="glasses-container-empty">Nepodařilo se načíst sklenice.</p>
+          <p className="error-message">Chyba při získávání dat.</p>
         ) : isAllEmpty ? (
           <p className="glasses-container-empty">Žádná sklenice navolena.</p>
         ) : (

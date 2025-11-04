@@ -7,7 +7,7 @@ export function useServiceStatus() {
     revalidateOnFocus: true,
     dedupingInterval: 1000,
     errorRetryCount: 3,
-    errorRetryInterval: 2000,
+    errorRetryInterval: 10000,
     refreshInterval: 5000,
   });
 
