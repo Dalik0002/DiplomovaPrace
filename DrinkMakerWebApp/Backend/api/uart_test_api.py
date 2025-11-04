@@ -7,7 +7,6 @@ from core.all_states import system_state, glasses_state, bottles_state
 
 router_UART = APIRouter(prefix="/uart", tags=["UART Tests"])
 
-#UART Tests
 @router_UART.post("/sendMess")
 def send_command(mess: str):
     send_uart_command(mess)

@@ -23,26 +23,28 @@ class SystemState:
         self.updateESP32 = False
         self.updateESP = [False] * 6
 
+    def set_restart_esps(self, value: bool):
+        for i in range(6):
+            self.restartESP[i] = value
+
     def set_state(self, **kwargs):
-        """
-        kwargs může obsahovat např. start=True, openValve2=True
-        """
         self.reset()
         for key, value in kwargs.items():
             if key.startswith("openValve"):
-                idx = int(key[-1])
+                idx = int(key.replace("openValve", ""))
                 self.openValve[idx] = value
-            elif key.startswith("restartESP_"):
-                idx = int(key[-1])
-                self.restartESP[idx] = value
-            elif key.startswith("updateESP_"):
-                idx = int(key[-1])
-                self.updateESP[idx] = value
+
+            elif key == "restartESPs" and value:
+              self.set_restart_esps(value)
+
             elif key == "pouringHeight":
                 self.pouringHeight = int(value)
+
             elif hasattr(self, key):
                 setattr(self, key, value)
-
+            else:
+              raise ValueError(f"Unknown state key: {key}")
+            
     def to_info_json(self):
         return {
             "info": [{

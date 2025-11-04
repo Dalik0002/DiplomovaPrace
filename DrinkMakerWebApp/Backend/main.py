@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
+from starlette.responses import RedirectResponse
 
 from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
@@ -14,6 +14,7 @@ from api.service_lock_api import router_serviceLock
 from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
+from api.rpi_api import router_rpi
 
 app = FastAPI(
     title="DrinkMaker API",
@@ -54,6 +55,7 @@ app.include_router(router_service)
 app.include_router(router_serviceLock)
 app.include_router(router_glasses)
 app.include_router(router_pouring)
+app.include_router(router_rpi)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -64,9 +66,9 @@ async def startup_event():
     #asyncio.create_task(uart_listener_loop())
     asyncio.create_task(uart_JSON_listener_loop())
 
-@app.get("/")
-def read_root():
-    return {"message": "DrinkMaker backend běží!"}
+@app.get("/", include_in_schema=False)
+def root_redirect():
+    return RedirectResponse(url="/docs")
 
 @app.get("/favicon.ico")
 async def favicon():
