@@ -14,6 +14,7 @@ from api.service_lock_api import router_serviceLock
 from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
+from api.rpi_api import router_rpi
 
 app = FastAPI(
     title="DrinkMaker API",
@@ -54,6 +55,7 @@ app.include_router(router_service)
 app.include_router(router_serviceLock)
 app.include_router(router_glasses)
 app.include_router(router_pouring)
+app.include_router(router_rpi)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")
