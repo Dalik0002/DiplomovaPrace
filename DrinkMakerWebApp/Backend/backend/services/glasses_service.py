@@ -1,7 +1,7 @@
 # services/glasses_service.py
 from typing import List, Optional
 
-from models.endpoints_classes import Glass
+from models.endpoints_schemas import Glass
 from core.all_states import glasses_state  # pokud používáš pro předání do HW
 
 # Pevné „stojany“ pro 6 sklenic; prázdné sloty = None

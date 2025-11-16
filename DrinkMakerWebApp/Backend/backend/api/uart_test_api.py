@@ -25,7 +25,6 @@ def preview_info():
     return msg
 
 
-
 @router_UART.post("/sendGlasses")
 def send_glasses():
     glasses_state.set_glass(pos=1, index=0, name="Rum", volume=100)
@@ -37,7 +36,6 @@ def send_glasses():
 def preview_glasses():
     msg = glasses_state.to_glasses_json()
     return msg
-
 
 
 @router_UART.post("/sendBottles")

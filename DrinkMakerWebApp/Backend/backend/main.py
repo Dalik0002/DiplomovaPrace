@@ -7,7 +7,7 @@ from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
 import asyncio
 
-from api.endpoints import router
+from api.endpoints_api import router
 from api.uart_test_api import router_UART
 from api.queue_api import router_queue
 from api.service_lock_api import router_serviceLock
@@ -15,6 +15,8 @@ from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
 from api.rpi_api import router_rpi
+from api.bottles_api import router_bottles
+from api.locks_api import router_lock
 
 app = FastAPI(
     title="DrinkMaker API",
@@ -22,13 +24,15 @@ app = FastAPI(
     version="0.0.1",
     openapi_tags=[
         {"name": "General", "description": "Obecná funkce API"},
-        {"name": "Queue", "description": "Správa fronty objednávek"},
+        {"name": "Bottle Management", "description": "Správa láhví s ingrediencemi"},
+        #{"name": "Queue", "description": "Správa fronty objednávek"},
         {"name": "Glasses", "description": "Správa sklenic"},
         {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
-        {"name": "Bottles", "description": "Správa ingrediencí (láhví) pro drinky"},
-        {"name": "Service Lock", "description": "Správa zámku služby (service lock)"},
+        #{"name": "Service Lock", "description": "Správa zámku služby (service lock)"},
         {"name": "Service Services", "description": "Služby pro správu stavu služby"},
         {"name": "Pouring", "description": "Řízení procesu nalévání drinků"},
+        {"name": "RPI", "description": "Specifické funkce pro Raspberry Pi"},
+        {"name": "Lock", "description": "Distributed lock management API"},
     ]
 )
 
@@ -50,12 +54,14 @@ app.add_middleware(
 
 app.include_router(router)
 app.include_router(router_UART)
-app.include_router(router_queue)
+#app.include_router(router_queue)
 app.include_router(router_service)
-app.include_router(router_serviceLock)
+#app.include_router(router_serviceLock)
 app.include_router(router_glasses)
 app.include_router(router_pouring)
 app.include_router(router_rpi)
+app.include_router(router_bottles)
+app.include_router(router_lock)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")

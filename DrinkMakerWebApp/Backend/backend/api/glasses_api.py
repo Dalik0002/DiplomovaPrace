@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import List,Optional
 
-from models.endpoints_classes import Glass, GlassAtPosition, DeleteGlassPayload
+from models.endpoints_schemas import Glass, GlassAtPosition, DeleteGlassPayload
 import services.glasses_service as glasses_service
 
 

@@ -1,6 +1,6 @@
 # services/glasses_state.py
 from typing import List, Optional
-from models.endpoints_classes import Glass
+from models.endpoints_schemas import Glass
 
 class GlassesState:
     def __init__(self):

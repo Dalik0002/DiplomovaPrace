@@ -1,4 +1,4 @@
-// src/pages/service/ServiceMainCom.jsx
+// src/pages/service/ServiceRemote.jsx
 import './service.css'
 import { useState, useRef } from 'react'
 import {
@@ -11,7 +11,7 @@ import {
   setValve
 } from '../../services/servicesService'
 
-function ServiceMainCom() {
+function ServiceRemote() {
   const [valveOn, setValveOn] = useState(Array(6).fill(false))
   const [plexiReleased, setPlexiReleased] = useState(false)
   const [carouselReleased, setCarouselReleased] = useState(false)
@@ -130,4 +130,4 @@ function ServiceMainCom() {
   )
 }
 
-export default ServiceMainCom
+export default ServiceRemote

@@ -1,4 +1,4 @@
-from models.endpoints_classes import Order
+from models.endpoints_schemas import Order
 from typing import List, Optional
 
 from core.all_states import glasses_state
