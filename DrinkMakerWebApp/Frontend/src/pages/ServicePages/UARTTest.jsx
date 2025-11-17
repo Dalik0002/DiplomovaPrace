@@ -1,6 +1,6 @@
 
 import { useState } from 'react'
-import { sendInfo, previewInfo, sendGlasses, previewGlasses, sendBottles, previewBottles } from '../../services/uartService'; 
+import { sendUARTMessage, previewInfo, previewGlasses, previewBottles } from '../../services/uartService'; 
 import './service.css'
 
 function UART_Test() {
@@ -14,10 +14,7 @@ function UART_Test() {
   return (
     <div className="centered-page">
       <h2>UART Test Panel</h2>
-      <button onClick={() => send('sendMess?mess=Hello')}>Send Message</button>
-      <button onClick={() => sendInfo()}>Send Info</button>
-      <button onClick={() => sendGlasses()}>Send Glasses</button>
-      <button onClick={() => sendBottles()}>Send Bottles</button>
+      <button onClick={() => sendUARTMessage("Hello, World !!")}>Send Message</button>
 
       <button onClick={() => previewFun(previewInfo)}>Preview Info</button>
       <button onClick={() => previewFun(previewGlasses)}>Preview Glasses</button>

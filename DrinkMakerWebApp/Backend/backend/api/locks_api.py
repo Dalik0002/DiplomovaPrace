@@ -102,3 +102,9 @@ def release_lock(name: str, req: LockRequest):
 
     del locks[name]
     return {"ok": True}
+
+@router_lock.post("/clear_all")
+def clear_all_locks():
+    count = len(locks)
+    locks.clear()
+    return {"ok": True, "deleted": count}

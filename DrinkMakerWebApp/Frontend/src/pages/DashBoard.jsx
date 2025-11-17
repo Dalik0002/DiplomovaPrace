@@ -6,9 +6,8 @@ import GlassesConteiner from '../components/GlassesConteiner'
 
 import { useStateStatus} from '../hooks/useStateData';
 import { useServiceStatus} from '../hooks/useServiceStatus';
-import { acquireService } from '../services/serviceLockService';
 
-import { requestServiceLock } from '../services/lockService';
+import { acquireServiceLock } from '../services/lockService';
 
 import Loading from '../components/LoadingCom'
 import Error from '../components/ErrorCom'
@@ -48,7 +47,7 @@ function Dashboard() {
     setStatus("");
 
     try {
-      const res = await requestServiceLock();
+      const res = await acquireServiceLock();
 
       if (res.ok) {
         // Lock získán → přechod na servisní stránku
@@ -92,7 +91,7 @@ function Dashboard() {
           <div className="control-container">
             <button
               className="start-button"
-              disabled={!isStandBy}                       //musí být "!"
+              disabled={!isStandBy}                       //musí být "!" pro simulaci bez
               onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ 

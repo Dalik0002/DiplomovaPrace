@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
+from fastapi.openapi.docs import get_swagger_ui_html
 
 from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
@@ -33,7 +34,9 @@ app = FastAPI(
         {"name": "Pouring", "description": "Řízení procesu nalévání drinků"},
         {"name": "RPI", "description": "Specifické funkce pro Raspberry Pi"},
         {"name": "Lock", "description": "Distributed lock management API"},
-    ]
+    ],
+    docs_url=None, 
+    redoc_url=None,
 )
 
 # Povolené originy
@@ -66,6 +69,15 @@ app.include_router(router_lock)
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+@app.get("/docs", include_in_schema=False)
+async def custom_swagger_ui_html():
+    return get_swagger_ui_html(
+        openapi_url=app.openapi_url,
+        title="DrinkMaker API - Docs",
+        swagger_js_url="/static/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui.css",     
+        swagger_favicon_url="/static/piano.ico",      
+    )
 
 @app.on_event("startup")
 async def startup_event():
@@ -79,4 +91,4 @@ def root_redirect():
 @app.get("/favicon.ico")
 async def favicon():
     from fastapi.responses import FileResponse
-    return FileResponse("static/favicon.ico")
+    return FileResponse("static/logo_small.ico")

@@ -22,7 +22,7 @@ function getClientId() {
  * 
  * Vyhazuje error při síťové chybě.
  */
-export async function requestServiceLock() {
+export async function acquireServiceLock() {
   const clientId = getClientId();
 
   const res = await apiPost("/lock/acquire/service", {
@@ -34,7 +34,7 @@ export async function requestServiceLock() {
 }
 
 // Heartbeat pro "service" – voláno periodicky v ServiceMain
-export async function heartbeatService() {
+export async function heartbeatServiceLock() {
   const clientId = getClientId();
 
   const res = await apiPost("/lock/heartbeat/service", {
@@ -45,7 +45,7 @@ export async function heartbeatService() {
 }
 
 // Uvolnění locku pro "service"
-export async function releaseService() {
+export async function releaseServiceLock() {
   const clientId = getClientId();
 
   const res = await apiPost("/lock/release/service", {

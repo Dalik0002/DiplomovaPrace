@@ -27,6 +27,7 @@ def add_glass(payload: GlassAtPosition):
         glasses_service.add_glass_to_position(payload.glass, payload.position)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
     print(f"[GLASS] Přidání sklenice '{payload.glass.name}' na pozici: {payload.position}")
     return {"status": "ok", "message": "Sklenice uložena", "position": payload.position}
 

@@ -1,16 +1,15 @@
 .state-container {
   flex: 1;
-  background: #3b1b4b;
   border-radius: 0.75rem;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   text-align: center;
   justify-content: center;
+  background: #3b1b4b;
 }
 
 .state-container-error {
-  flex: 1;
   background: #cf6868;
   border-radius: 0.75rem;
   padding: 1rem;
@@ -44,34 +43,36 @@
   font-size: 1.3rem;
   text-align: center;
   font-weight: bold;
+  color: white; /* default barva textu */
 }
 
+/* Stavové barvy pro celý container */
 .state-standby {
-  color: green;
+  background: #18ce61;
 }
 
 .state-stop {
-  color: red;
+  background: #cb2626;
 }
 
 .state-checking {
-  color: orange;
+  background: #ffb700;
 }
 
 .state-pouring {
-  color: rgb(224, 24, 224);
+  background: #9a58cd;
 }
 
 .state-service {
-  color: rgb(189, 131, 24);
+  background: #dbee09;
 }
 
 .state-updating {
-  color: rgb(255, 255, 255);
+  background: #334155;
 }
 
 .state-unknown {
-  color: rgb(255, 255, 255);
+  background: #3b1b4b;
 }
 
 /* MODAL */

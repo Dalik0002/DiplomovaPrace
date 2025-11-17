@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { addGlass } from '../services/glassesService'
 import IngredientCard from './IngredientCard'
+import { useNavigate } from 'react-router-dom'
 
 import { useBottles } from '../hooks/useBottleData'
 import { useGlasses, useFreePosition } from '../hooks/useGlassesData'
@@ -9,8 +10,9 @@ import './NewDrinkCom.css'
 
 
 function NewDrinkCom() {
+  const navigate = useNavigate()
   const [drinkName, setDrinkName] = useState('')
-  const [glassHeight, setGlassHeight] = useState('')
+
   const [items, setItems] = useState([
     { ingredient: '', volume: 0 },
     { ingredient: '', volume: 0 },
@@ -22,7 +24,7 @@ function NewDrinkCom() {
     isLoading,
     error,
     availableIngredients,
-    isNoIngradience,
+    isNoIngredient,
   } = useBottles()
 
   const {
@@ -37,7 +39,6 @@ function NewDrinkCom() {
     refresh: refreshFreePosition,
   } = useFreePosition() || {}
 
-  // --- stav zvolené pozice
   const [position, setPosition] = useState(null)
 
   const updateItem = (idx, newVal) => {
@@ -110,7 +111,8 @@ function NewDrinkCom() {
         { ingredient: '', volume: 0 },
         { ingredient: '', volume: 0 },
       ])
-      // po úspěchu může být pozice obsazena → refrešni seznam i volné pozice
+
+      setPosition(null)
       refreshGlassesList()
     } catch (err) {
       console.error(err)
@@ -118,6 +120,7 @@ function NewDrinkCom() {
     } finally {
       refreshFreePosition()
       setSaving(false)
+      navigate('/')
     }
   }
 
@@ -141,8 +144,8 @@ function NewDrinkCom() {
           </div>
         </>
       ) : error ? (
-        <p>❌ Nepodařilo se načíst ingredience z backendu</p>
-      ) : isNoIngradience && !error ? (
+        <p>❌ Nepodařilo se načíst data z backendu</p>
+      ) : isNoIngredient && !error ? (
         <p>❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.</p>
       ) : (
         <>
@@ -170,18 +173,6 @@ function NewDrinkCom() {
               className="input-field"
               value={drinkName}
               onChange={e => setDrinkName(e.target.value)}
-              disabled={saving}
-            />
-
-            <label htmlFor="pos-select" style={{ marginRight: 8 }}>Výška sklenice</label>
-            <input
-              type="number"
-              placeholder="Výška sklenice"
-              min="0"
-              max="250"
-              className="input-field"
-              value={glassHeight}
-              onChange={e => setGlassHeight(e.target.value)}
               disabled={saving}
             />
           </div>
@@ -212,13 +203,12 @@ function NewDrinkCom() {
               className="secondary-button"
               onClick={removeItem}
               disabled={saving || items.length == 1}
-              title={items.length >= 6 ? 'Maximálně 6 ingrediencí' : 'Přidat ingredienci'}
+              title={items.length <= 1 ? 'Musí zůstat alespoň 1 ingredience' : 'Odebrat ingredienci'}
             >
               ➖ Odebrat ingredienci ({items.length}/6)
             </button>
           </div>
 
-          {/* Odeslat do fronty */}
           <div className="button-row">
             <button
               className="add-button"

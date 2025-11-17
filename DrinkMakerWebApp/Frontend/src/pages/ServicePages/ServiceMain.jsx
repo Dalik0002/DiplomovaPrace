@@ -2,7 +2,7 @@
 import { useNavigate, Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
-import { heartbeatService, releaseService } from '../../services/serviceLockService'
+import { heartbeatServiceLock, releaseServiceLock } from '../../services/lockService'
 import './service.css'
 
 function ServiceMain() {
@@ -15,12 +15,12 @@ function ServiceMain() {
     const tick = async () => {
       try {
         // nový heartbeat na REST /lock/heartbeat/service
-        await heartbeatService()
+        await heartbeatServiceLock()
       } catch (err) {
         console.error("Heartbeat selhal", err)
         // Heartbeat selhal -> pokus o release a kopnout uživatele pryč
         try {
-          await releaseService()
+          await releaseServiceLock()
         } catch (e) {
           console.error("Release po heartbeat chybě selhal", e)
         }
@@ -36,33 +36,34 @@ function ServiceMain() {
     // release při zavření/odchodu (best-effort)
     const sendReleaseKeepalive = () => {
       try {
-        releaseService().catch(() => {})
+        releaseServiceLock().catch(() => {})
       } catch {}
     }
 
     // „Zpět/Vpřed“ v historii prohlížeče
     const onPopState = () => {
-      releaseService().catch(() => {})
+      releaseServiceLock().catch(() => {})
     }
 
-    window.addEventListener('beforeunload', sendReleaseKeepalive)
-    window.addEventListener('pagehide', sendReleaseKeepalive)
-    window.addEventListener('popstate', onPopState)
+    //window.addEventListener('beforeunload', sendReleaseKeepalive)
+    //window.addEventListener('pagehide', sendReleaseKeepalive)
+    //window.addEventListener('popstate', onPopState)
 
     return () => {
       alive = false
       clearInterval(interval)
       // při unmountu uvolnit lock (když to stihneme)
-      releaseService().catch(() => {})
-      window.removeEventListener('beforeunload', sendReleaseKeepalive)
-      window.removeEventListener('pagehide', sendReleaseKeepalive)
-      window.removeEventListener('popstate', onPopState)
+      //releaseServiceLock().catch(() => {})
+      //window.removeEventListener('beforeunload', sendReleaseKeepalive)
+      //window.removeEventListener('pagehide', sendReleaseKeepalive)
+      //window.removeEventListener('popstate', onPopState)
     }
   }, [navigate])
 
+
   const onBackClick = async () => {
     try {
-      await releaseService()
+      await releaseServiceLock()
     } catch (e) {
       console.error("Release při návratu selhal", e)
     }

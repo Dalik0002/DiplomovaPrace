@@ -74,7 +74,7 @@ function BottleSetUp() {
           <div className="loading-block"><div className="spinner" aria-hidden="true" /></div>
         </>
       ) : error ? (
-        <p>❌ Chyba: {String(error.message || error)}</p>
+        <p>❌ Nepodařilo se načíst data z backendu</p>
       ) : (
         <>
           <div className={`bottle-list ${!isEditing ? 'read-only' : ''}`}>
