@@ -1,5 +1,5 @@
 from typing import List
-from models.endpoints_classes import BottleAssignment
+from models.endpoints_schemas import BottleAssignment
 
 class BottlesState:
     def __init__(self):

@@ -18,7 +18,6 @@ export function useBottles(pause = false) {
 
   const isNoIngredient = availableIngredients.length === 0;
 
-  // ✅ Vždy vrať pole – i když data nejsou nebo jsou omylem jiného typu
   const list = Array.isArray(data) ? data : [];
 
   return { 

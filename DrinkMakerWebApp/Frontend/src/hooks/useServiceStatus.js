@@ -3,7 +3,7 @@ import useSWR from 'swr';
 import { apiGet } from '../services/api';
 
 export function useServiceStatus() {
-  const { data, error, isLoading, mutate } = useSWR('/service/status', () => apiGet('/service/status'), {
+  const { data, error, isLoading, mutate } = useSWR('/lock/status/service', () => apiGet('/lock/status/service'), {
     revalidateOnFocus: true,
     dedupingInterval: 1000,
     errorRetryCount: 3,

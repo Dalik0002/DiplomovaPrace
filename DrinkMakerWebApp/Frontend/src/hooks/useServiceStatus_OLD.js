@@ -1,9 +1,9 @@
-// src/hooks/useStateData.js
+// src/hooks/useServiceStatus.js
 import useSWR from 'swr';
 import { apiGet } from '../services/api';
 
-export function useStateStatus() {
-  const { data, error, isLoading, mutate } = useSWR('/get/Mode', () => apiGet('/getMode'), {
+export function useServiceStatus() {
+  const { data, error, isLoading, mutate } = useSWR('/service/status', () => apiGet('/service/status'), {
     revalidateOnFocus: true,
     dedupingInterval: 1000,
     errorRetryCount: 3,
@@ -11,18 +11,13 @@ export function useStateStatus() {
     refreshInterval: 5000,
   });
 
-  const isStop = !!(data?.data === "STOP");
-  const isNone = !!(data?.data === null);
-  const isStandBy = !!(data?.data === "STAND BY");
+  const isBusy = !!data?.locked;
 
   return {
     data,
     error,
     isLoading,
     refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
-    isStop,
-    isNone,
-    isStandBy,
+    isBusy,
   };
 }
-

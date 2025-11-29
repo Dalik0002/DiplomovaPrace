@@ -3,7 +3,7 @@ import subprocess
 import platform
 import psutil
 
-router_rpi = APIRouter(prefix="/system", tags=["Raspberry Pi System"])
+router_rpi = APIRouter(prefix="/system", tags=["RPI"])
 
 def get_cpu_temperature() -> float:
     try:
@@ -40,19 +40,3 @@ def get_disk_usage():
         "free_gb": usage.free / (1024 ** 3),
         "percent": usage.percent,
     }
-
-@router_rpi.get("/throttle")
-def get_throttle_status():
-    try:
-        output = subprocess.check_output(["vcgencmd", "get_throttled"]).decode("utf-8")
-        hex_val = output.split("=")[1]
-        val = int(hex_val, 16)
-        return {
-            "raw": output,
-            "under_voltage": bool(val & 1),
-            "freq_capped": bool(val & 2),
-            "throttled": bool(val & 4),
-            "temp_limit": bool(val & 8),
-        }
-    except Exception as e:
-        return {"error": str(e)}

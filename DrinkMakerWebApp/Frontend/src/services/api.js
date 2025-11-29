@@ -12,7 +12,7 @@ const BASE_URL = (() => {
 })();
 
 
-// Pomocná funkce pro jednotné chyby
+
 async function parseOrThrow(res) {
   const text = await res.text();
   if (!res.ok) {
@@ -43,7 +43,7 @@ export async function apiPost(path, body) {
 }
 
 export async function apiPostRaw(path, headers = {}) {
-  // pro acquire/heartbeat/release s vlastními headery (X-Client-Id)
+
   const res = await fetch(`${BASE_URL}${path}`, {
     method: 'POST',
     headers,

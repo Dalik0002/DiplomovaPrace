@@ -39,3 +39,7 @@ class ChoosedDrink(BaseModel):
 class ValveID(BaseModel):
     valve_id: conint(ge=0, le=5)
     open: bool
+
+# LOCKS
+class LockRequest(BaseModel):
+    client_id: str

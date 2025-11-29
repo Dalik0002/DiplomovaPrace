@@ -6,7 +6,8 @@ import GlassesConteiner from '../components/GlassesConteiner'
 
 import { useStateStatus} from '../hooks/useStateData';
 import { useServiceStatus} from '../hooks/useServiceStatus';
-import { acquireService } from '../services/serviceLockService';
+
+import { acquireServiceLock } from '../services/lockService';
 
 import Loading from '../components/LoadingCom'
 import Error from '../components/ErrorCom'
@@ -42,6 +43,26 @@ function Dashboard() {
     }
   };
 
+    const handleServiceClick = async () => {
+    setStatus("");
+
+    try {
+      const res = await acquireServiceLock();
+
+      if (res.ok) {
+        // Lock získán → přechod na servisní stránku
+        navigate("/service/serviceRemote");
+      } else {
+        alert("Service je právě obsazený. Zkuste to později.");
+        refreshService();
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Nepodařilo se ověřit lock servisu. Zkuste to později.");
+      refreshService();
+    }
+  };
+
 
   if (l_state || l_service) return <Loading/>
   //if (err_state) return <Error mess={"Chyba při získávání stavu: " + err_state.message}/>
@@ -56,7 +77,7 @@ function Dashboard() {
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
           <button onClick={() => navigate('/bottles')}>📦 Konfigurace lahví</button>
-          <button onClick={sendService} disabled={isBusy || err_service}>
+          <button onClick={handleServiceClick} disabled={isBusy || err_service}>
             {err_service ? '⚙️ Servis (Nedostupný)' : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')}
           </button>
         </div>
@@ -70,7 +91,7 @@ function Dashboard() {
           <div className="control-container">
             <button
               className="start-button"
-              disabled={!isStandBy}                       //musí být "!"
+              disabled={!isStandBy}                       //musí být "!" pro simulaci bez
               onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ 

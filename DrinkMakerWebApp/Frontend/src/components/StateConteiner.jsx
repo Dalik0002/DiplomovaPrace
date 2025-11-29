@@ -78,18 +78,18 @@ function StateConteiner() {
 };
 
   return (
-    <div className={`state-container${isNone ? ' state-container-error' : ''}`}>
+    <div className={`state-container ` + (isNone ? 'state-container-error' : getStateClass(state?.data))}>
       {l_state ? (
         <p>Stahování...</p>
       ) : err_state ? (
         <p className="error-message">{err_state.message}</p>
       ) : (
-        <div className={`state-info ${getStateClass(state?.data)}`}>
+        <div className="state-info">
           {isNone ? (
             <p>ZAŘÍZENÍ NEDOSTUPNÉ</p>
           ) : (
             <>
-              <h2 className="state-title">Stav</h2>
+              <h2 className="state-title">AKTUALNÍ REŽIM</h2>
               <p>{state.data}</p>
               {isStop ? (
                 <button className="stop-button" onClick={openConfirmKvit}>

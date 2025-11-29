@@ -2,8 +2,8 @@ from fastapi import APIRouter
 from typing import List
 from fastapi import HTTPException
 
-from models.endpoints_classes import Order
-from models.endpoints_classes import DrinkName
+from models.endpoints_schemas import Order
+from models.endpoints_schemas import DrinkName
 
 import services.OLD_queue_service as OLD_queue_service
 
