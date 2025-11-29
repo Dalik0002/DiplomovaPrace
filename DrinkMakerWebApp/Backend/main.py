@@ -11,7 +11,6 @@ import asyncio
 from api.endpoints_api import router
 from api.uart_test_api import router_UART
 from api.queue_api import router_queue
-from api.service_lock_api import router_serviceLock
 from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
