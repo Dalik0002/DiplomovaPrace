@@ -4,6 +4,18 @@
   color: #fff;
   height: 100vh;
   border: #d0ff00 2px dashed;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Omezení pro mobilní telefony */
+@media (max-width: 480px) {
+  .app-shell {
+    max-width: 390px;
+    max-height: 840px;
+    margin: 0;
+    border-width: 1px;
+  }
 }
 
 
@@ -21,7 +33,6 @@
   height: auto;
   margin-bottom: 30px;
 }
-
 
 .logo {
   width: 300px;

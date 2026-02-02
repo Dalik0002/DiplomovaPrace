@@ -9,6 +9,10 @@ class BottlesState:
         for item in assignments:
             if 0 <= item.position < 6:
                 self.bottles[item.position] = item.bottle
+    
+    def delete_bottle_at_position(self, position: int):
+        if 0 <= position < 6:
+            self.bottles[position] = ""
 
     def get_bottles(self) -> List[str]:
         return self.bottles

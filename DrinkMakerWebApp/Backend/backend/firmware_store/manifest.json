@@ -1,0 +1,9 @@
+{
+  "esp32": {
+    "version": "29_01_2062",
+    "sha256": "9c2ab8da54b6274ede612b0c41386b51972829f78e57e4faa52a4643a6b08907",
+    "size": 892720,
+    "path": "/fw/bin?target=esp32"
+  },
+  "esp32c3": {}
+}

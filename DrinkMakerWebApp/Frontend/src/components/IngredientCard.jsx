@@ -21,6 +21,7 @@ function IngredientCard({ index, value, onChange, available, disabled }) {
         onChange={handleSelect}
         className="input-field"
         disabled={disabled}
+        style={{ width: '200px'}}
       >
         <option value="">--Ingredience--</option>
         {available.map((ing, i) => (
@@ -32,8 +33,9 @@ function IngredientCard({ index, value, onChange, available, disabled }) {
         type="number"
         className="input-field"
         placeholder="Objem (ml)"
-        min="0"
+        min=""
         max="250"
+        style={{ width: '50px'}}
         value={value.volume}
         onChange={handleVolume}
         disabled={disabled || !value.ingredient}

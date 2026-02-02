@@ -1,12 +1,4 @@
-.service-topbar {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.service-topbar-gap {
-  flex: 1;
-}
-
+/* --- GLOBÁLNÍ A SPOLEČNÉ STYLY --- */
 .service-container {
   display: flex;
   background: #3b1b4b;
@@ -24,60 +16,350 @@
   letter-spacing: 0.06em;
 }
 
-.service-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-}
-
 .service-column {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
 }
 
-/* CLEANING mřížka 2×3, na mobilu 1×6 */
-.clean-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-@media (max-width: 640px) {
-  .clean-grid { grid-template-columns: 1fr; }
-}
-
-.clean-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.clean-title {
-  font-size: 0.9rem;
-}
-
-
 .service-btn {
   width: 100%;
   color: rgb(255, 255, 255);
   padding: 0.6rem 0.8rem;
   border-radius: 0.6rem;
-  transition: transform 0.2s;
+  transition: transform 0.2s, background 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1); /* Jemný okraj pro konzistenci */
 }
 
-.service-btn:hover {
-  background: #bbb8b4;
-  color: black;
-  transform: scale(1.05);
+.service-btn:focus,
+.service-btn:focus-visible,
+.service-btn:active {
+  outline: none;
+  box-shadow: none;
 }
 
-.icon-btn {
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.6rem;
+.service-btn:focus:not(.is-on),
+.service-btn:focus-visible:not(.is-on) {
+  background: transparent;
+  color: rgb(255, 255, 255);
 }
 
-.link-btn {
-  padding: 0.4rem 0.8rem;
-  border-radius: 0.6rem;
+@media (hover: hover) and (pointer: fine) {
+  .service-btn:hover {
+    background: #bbb8b4;
+    color: black;
+    transform: scale(1.05);
+  }
 }
+
+/* --- NAVIGACE A BADGE (ServiceMain) --- */
+.service-badge {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 18px;
+  background: rgba(255, 140, 0, 0.95);
+  color: #111;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+/* --- KOMPONENTA: STATIONS (Jednotlivá stanoviště) --- */
+.stations-tabs {
+  display: grid;
+  grid-template-columns: repeat(6, 48px);
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.stations-tab {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.35);
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.stations-tab.is-active {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+  background-color: rgb(149, 41, 138);
+  color: rgb(255, 255, 255);
+}
+
+.stations-tab.has-problem {
+  background: rgba(255, 140, 0, 0.22);
+  border-color: rgba(255, 140, 0, 0.75);
+}
+
+.stations-tab.is-disabled {
+  background: rgba(255, 70, 0, 0.22);
+  border-color: rgba(255, 70, 0, 0.85);
+  color: #ffb347;
+}
+
+.tab-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 12px;
+  background: rgba(255, 140, 0, 0.95);
+  color: #111;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+.stations-tab.is-disabled .tab-badge {
+  background: rgba(255, 70, 0, 0.95);
+}
+
+/* Status box pod výběrem stanoviště */
+.station-status {
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 10px 0 14px 0;
+  border: 2px solid rgba(255,255,255,0.18);
+}
+
+.station-status.ok { opacity: 0.9; }
+
+.station-status.has-problem {
+  background: rgba(255, 140, 0, 0.16);
+  border-color: rgba(255, 140, 0, 0.55);
+}
+
+.station-status-title { font-weight: 800; margin-bottom: 6px; }
+
+.station-status-list { display: flex; flex-direction: column; gap: 4px; }
+
+/* Tlačítko Toggle (Zakázat/Povolit) */
+.service-btn.is-on {
+  background: rgba(255, 140, 0, 0.28);
+  border-color: rgba(255, 140, 0, 0.85);
+  color: #ffb347;
+  font-weight: 800;
+}
+
+/* --- KOMPONENTA: SERVICE REMOTE (Servisní obrazovka) --- */
+.service-remote {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.service-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.service-tab {
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.service-tab.is-active {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+}
+
+.service-card {
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,0.12);
+  padding: 12px;
+}
+
+.service-subtitle {
+  margin: 0 0 10px 0;
+  font-weight: 900;
+  opacity: 0.9;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  margin: 14px 0;
+}
+
+/* Mřížky pro akce a senzory */
+.mini-grid {
+  display: grid;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 400px) {
+  /* Pokud je aspoň trochu místa, zkusíme je dát vedle sebe s menším písmem */
+  .mini-grid {
+    flex-direction: row;
+  }
+  .mini-grid .service-btn {
+    font-size: 0.75rem; /* Velmi malé písmo pro zachování jednoho řádku */
+  }
+}
+
+.station-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .mini-grid { grid-template-columns: 1fr 1fr; }
+  .station-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* Dlaždice (Ventily a Tenzometry) */
+.station-tile, .sensor-tile {
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: inherit;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.station-tile { cursor: pointer; gap: 4px; }
+
+.station-tile.is-on {
+  background: rgba(255, 140, 0, 0.18);
+  border-color: rgba(255, 140, 0, 0.65);
+}
+
+.station-tile-top {
+  font-weight: 900;
+  opacity: 0.9;
+  margin-bottom: 6px;
+}
+
+.sensor-value {
+  font-size: 18px;
+  font-weight: 900;
+  padding-top: 6px;
+  opacity: 0.95;
+} 
+
+
+/* Kontejner pro kruhové rozmístění */
+.station-circle-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 40px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pomyslný podkresový kruh */
+.station-circle-track {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Jednotlivé body (kolečka) */
+.circle-node {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #3b1b4b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+
+  /* Matematika pro umístění: 
+     - 360 / 6 stanovišť = 60 stupňů mezi nimi
+     - Přičítáme 90 stupňů, aby index 0 (stanoviště 1) bylo dole uprostřed 
+  */
+  --angle: calc(var(--index) * 60deg + 90deg);
+  left: calc(50% + cos(var(--angle)) * 140px - 35px);
+  top: calc(50% + sin(var(--angle)) * 140px - 35px);
+}
+
+.circle-node.is-on {
+  background: rgba(255, 140, 0, 0.9);
+  border-color: white;
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+}
+
+.circle-node:hover {
+  transform: scale(1.1);
+  border-color: white;
+}
+
+/* Specifické úpravy pro vnitřek koleček */
+.node-label {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.node-status {
+  font-size: 0.65rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.node-value {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #ffb347;
+}
+
+/* Varianta pro senzory (bez kursoru pointer) */
+.circle-node.sensor {
+  cursor: default;
+  border-style: solid;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Responzivita pro menší mobily */
+@media (max-width: 400px) {
+  .station-circle-container {
+    width: 220px;
+    height: 220px;
+  }
+  .circle-node {
+    width: 60px;
+    height: 60px;
+    left: calc(50% + cos(var(--angle)) * 110px - 30px);
+    top: calc(50% + sin(var(--angle)) * 110px - 30px);
+  }
+}
+

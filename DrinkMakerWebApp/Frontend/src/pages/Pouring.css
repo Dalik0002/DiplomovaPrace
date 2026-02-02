@@ -1,0 +1,221 @@
+.pouring-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+
+  background: #2a0f35; /* tmavý základ (ladí s #3b1b4b) */
+}
+
+.pouring-card {
+  width: min(520px, 100%);
+  border-radius: 0.75rem;
+  padding: 1rem;
+
+  background: #3b1b4b;            /* stejné jako container */
+  border: #7312f1 2px solid;      /* stejné border */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+
+  text-align: center;
+  color: #fff;
+}
+
+.pouring-title {
+  margin: 0 0 10px 0;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.pouring-status {
+  font-size: 1rem;
+  margin: 0 0 14px 0;
+  color: #ddd;
+}
+
+/* upozornění a chyba – v theme */
+.pouring-warn,
+.pouring-error {
+  margin: 10px 0;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+}
+
+.pouring-warn {
+  background: #4d2a5e;
+  border: rgba(255, 214, 102, 0.35) 1px solid;
+  color: #ffe9a6;
+}
+
+.pouring-error {
+  background: #4d2a5e;
+  border: rgba(255, 100, 100, 0.35) 1px solid;
+  color: #ffb3b3;
+}
+
+/* tlačítka */
+.stop-button,
+.home-button {
+  width: 100%;
+  padding: 14px 16px;
+  font-size: 1.05rem;
+  border-radius: 0.7rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+/* STOP (červený) */
+.stop-button {
+  background: #8b1e1e;
+  color: #fff;
+}
+
+.stop-button:active {
+  transform: scale(0.99);
+}
+
+.stop-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* HOME (fialový jako theme) */
+.home-button {
+  background: #4d2a5e;
+  color: #fff;
+  border: #7312f1 2px solid;
+}
+
+.home-button:active {
+  transform: scale(0.99);
+}
+
+.pouring-hint {
+  margin-top: 12px;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  color: #ddd;
+}
+
+/* menší mobily */
+@media (max-width: 420px) {
+  .pouring-card {
+    padding: 0.9rem;
+  }
+
+  .pouring-title {
+    font-size: 1.45rem;
+  }
+
+  .stop-button,
+  .home-button {
+    font-size: 1rem;
+    padding: 13px 14px;
+  }
+}
+
+
+.pouring-spinner-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 14px;
+}
+
+.pouring-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  border: 3px solid #4d2a5e;   /* theme barva */
+  border-top-color: #7312f1;  /* zvýraznění */
+
+  animation: pouring-spin 0.9s linear infinite;
+}
+
+@keyframes pouring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+/* =======================
+   DONE – oslavnější verze
+   ======================= */
+
+.pouring-done-card {
+  position: relative;
+  overflow: hidden;
+  animation: done-pop 0.4s ease-out;
+}
+
+/* zeleno-fialový check v kroužku */
+.pouring-done-icon {
+  width: 72px;
+  height: 72px;
+  margin: 4px auto 8px;
+
+  border-radius: 50%;
+  border: 3px solid #7312f1;
+  background: #4d2a5e;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 36px;
+  font-weight: 900;
+  color: #b7ffcf;
+
+  box-shadow: 0 0 0 rgba(115, 18, 241, 0.7);
+  animation:
+    done-scale 0.45s ease-out,
+    done-pulse 1.8s ease-out infinite;
+}
+
+.pouring-done-title {
+  color: #b7ffcf;
+  letter-spacing: 0.03em;
+}
+
+/* jemný náběh celé karty */
+@keyframes done-pop {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* rychlé zvětšení ikony */
+@keyframes done-scale {
+  from {
+    transform: scale(0.4);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* jemné pulzování kroužku */
+@keyframes done-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(115, 18, 241, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(115, 18, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(115, 18, 241, 0);
+  }
+}

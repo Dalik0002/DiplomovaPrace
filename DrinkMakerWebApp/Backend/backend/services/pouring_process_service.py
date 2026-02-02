@@ -3,6 +3,7 @@ import asyncio
 from typing import Optional, Callable, Dict, Any
 
 # --- Sdílené stavy a util funkce z tvého projektu ---
+#from api.pouring_api import notify
 from core.all_states import system_state, input_state, glasses_state
 import services.glasses_service as glasses_service
 
@@ -28,6 +29,7 @@ class PouringProcessService:
         self.timeout_check = 20.0
         self.timeout_pour = 600.0
         self.timeout_pickup = 120.0
+        self.timeout_pour_start = 30.0
 
         # Poll perioda, ať nezatěžujeme CPU/serial
         self.poll_dt = 0.05
@@ -41,14 +43,14 @@ class PouringProcessService:
         if self._task and not self._task.done():
             self._task.cancel()
 
-    def start_bg(self, glass_slots: dict, pouring_height: int = 150, notify: Optional[NotifyFn] = None) -> None:
+    def start_bg(self, notify: Optional[NotifyFn] = None) -> None:
         if self.running():
             raise PourError("guard", "Proces již běží.", self._snapshot())
-        self._task = asyncio.create_task(self.start(pouring_height, notify))
+        self._task = asyncio.create_task(self.start(notify))
 
     # --------- Hlavní scénář ----------
 
-    async def start(self, glass_slots: dict, pouring_height: int = 150, notify: Optional[NotifyFn] = None) -> Dict[str, Any]:
+    async def start(self, notify: Optional[NotifyFn] = None) -> Dict[str, Any]:
         """
         Jednoduchý scénář:
           1) SYNC sklenic do HW (GlassesState) a odeslat
@@ -61,7 +63,7 @@ class PouringProcessService:
             notify = lambda stage, data: None
 
         async with self._lock:
-            notify("init", {"msg": "Zahajuji proces nalévání.", "pourH": pouring_height})
+            notify("init", {"msg": "Zahajuji proces nalévání."})
 
             # 1) SYNC -> odeslat seznam sklenic/ingrediencí na ESP
             await self._sync_glasses_and_send(notify)
@@ -70,8 +72,9 @@ class PouringProcessService:
             await self._send_check(True, notify)
             await self._wait_for_check_ok("check", self.timeout_check, notify)
 
-            # 3) POUR -> nastavit výšku + start
-            await self._send_start_pouring(pouring_height, notify)
+            # 3) POUR -> start
+            await self._send_start_pouring(notify)
+            await self._wait_for_pouring_started("pour_start", self.timeout_pour_start, notify)
             await self._wait_for_pouring_done("pour", self.timeout_pour, notify)
 
             # 4) PICKUP -> počkat na vyzvednutí (sklenice nejsou na místě)
@@ -96,10 +99,13 @@ class PouringProcessService:
         notify("uart", {"msg": f"CHECK => {enabled}"})
 
 
-    async def _send_start_pouring(self, pouring_height: int, notify: NotifyFn) -> None:
-        system_state.set_state(start=True, pouringHeight=int(pouring_height))
+    async def _send_start_pouring(self, notify: NotifyFn) -> None:
+        input_state.pouring_done = False
+        input_state.process_pouring_started = False
+
+        system_state.set_state(start=True)
         send_json(system_state.to_info_json())
-        notify("uart", {"msg": "START POUR", "pourH": pouring_height})
+        notify("uart", {"msg": "START POUR"})
 
 
     # --------- Čekací podmínky ----------
@@ -127,6 +133,10 @@ class PouringProcessService:
             return False
 
         await self._wait_until(pickup_cond, timeout, stage)
+
+    async def _wait_for_pouring_started(self, stage: str, timeout: float, notify: NotifyFn) -> None:
+      notify("wait", {"stage": "pour_start", "msg": "Čekám na potvrzení, že nalévání začalo..."})
+      await self._wait_until(lambda: bool(getattr(input_state, "process_pouring_started", False)), timeout, stage)
 
     # --------- Defenzivní kontroly + společná wait smyčka ----------
 
@@ -194,5 +204,6 @@ class PouringProcessService:
                 "cannot_set_mode": getattr(input_state, "cannot_set_mode", None),
                 "emergency_stop": getattr(input_state, "emergency_stop", None),
                 "mode": getattr(input_state, "current_mode", None),
+                "process_pouring_started": getattr(input_state, "process_pouring_started", None)
             }
         }

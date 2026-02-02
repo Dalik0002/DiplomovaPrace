@@ -1,13 +1,18 @@
+#services/uart_service.py
 import serial
 import asyncio
 import platform
 import json
 import time
 
-from core.all_states import input_state
+from core.all_states import input_state, system_state
 
 # Bufr pro vstup
 uart_buffer = ""
+
+last_sent_json = None
+last_sent_raw = None
+
 
 # Nastavení UART portu (na Raspberry Pi obvykle /dev/serial0)
 SERIAL_PORT = '/dev/serial0'
@@ -74,9 +79,21 @@ async def uart_JSON_listener_loop():
 
                     try:
                         msg = json.loads(json_str)
-                        print("[UART ←]", msg)
+                        print("[UART ← JSON]", msg)
                         input_state.update_from_json(msg)
+                        # po update_from_json(msg)
+                        if input_state.mess_error_rising_edge():
+                            print("[UART] messErr=true → resend last JSON")
+                            if last_sent_json is not None:
+                                send_json(last_sent_json)
+                            elif last_sent_raw is not None:
+                                send_uart_command(last_sent_raw)
+                            else:
+                                print("[UART] messErr, ale není co poslat (cache prázdná)")
+
                     except json.JSONDecodeError:
+                        system_state.set_state(messErrfromESP32=True)
+                        send_json(system_state.to_info_json())
                         print("[UART JSON ERROR] Neplatný JSON:", json_str)
 
 
@@ -92,6 +109,8 @@ async def uart_JSON_listener_loop():
                         input_state.update_mode_from_json(msg)
                         last_state_time = time.time()
                     except Exception:
+                        system_state.set_state(messErrfromESP32=True)
+                        send_json(system_state.to_info_json())
                         print("[UART STATE ERROR] Neplatný JSON:", json_str)
 
             if time.time() - last_state_time > 5:
@@ -100,6 +119,8 @@ async def uart_JSON_listener_loop():
                 last_state_time = time.time()
 
         except Exception as e:
+            system_state.set_state(messErrfromESP32=True)
+            send_json(system_state.to_info_json())
             print(f"[UART ← ERROR] Chyba při čtení: {e}")
 
         await asyncio.sleep(0.1)
@@ -109,8 +130,10 @@ async def uart_JSON_listener_loop():
 #################################################
 # Funkce pro odesílání zpráv přes UART
 def send_uart_command(msg: str):
+    global last_sent_raw
     if ser:
         try:
+            last_sent_raw = msg
             msg = msg + '\n'
             ser.write(msg.encode('utf-8'))
             print(f"[UART →] Odesláno: {msg}")
@@ -121,8 +144,10 @@ def send_uart_command(msg: str):
         
 
 def send_json(json_obj):
+    global last_sent_json
     if ser:
         try:
+            last_sent_json = json_obj
             data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
             ser.write(data.encode("utf-8"))
             print(f"[UART →] Odesláno", data.strip())

@@ -23,7 +23,7 @@ function GlassesConteiner() {
 
   return (
     <div className="glasses-container">
-      <h2 className="glasses-container-title">Pozice se skleničkami</h2>
+      <h2 className="glasses-container-title">STANOVIŠTĚ</h2>
 
       <div className="glasses-container-list">
         {isLoading ? (
@@ -31,29 +31,32 @@ function GlassesConteiner() {
         ) : glassesError ? (
           <p className="error-message">Chyba při získávání dat.</p>
         ) : isAllEmpty ? (
-          <p className="glasses-container-empty">Žádná sklenice navolena.</p>
+          <p className="glasses-container-empty">Žádná sklenice není navolena.</p>
         ) : (
-          <ul>
+          <ul className="glasses-grid">
             {glasses.map((glass, index) => {
-              const isEmpty = glass == null;
+              const isEmpty = glass == null
               return (
                 <li
                   key={index}
-                  className={isEmpty ? 'glass-container-empty' : 'glass-container-item'}
+                  className={`glass-tile ${isEmpty ? 'glass-tile--empty' : ''}`}
                 >
+                  <div className="glass-tile-title">STANOVIŠTĚ {index + 1}:</div>
+
                   {isEmpty ? (
-                    <em>Pozice sklenice {index + 1} volná</em>
+                    <div className="glass-tile-sub">Volné</div>
                   ) : (
-                    <>
-                      <strong>Pozice {index + 1}:</strong> {glass?.name || `Drink ${index + 1}`}
-                    </>
+                    <div className="glass-tile-name">
+                      {glass?.name || `Drink ${index + 1}`}
+                    </div>
                   )}
                 </li>
-              );
+              )
             })}
           </ul>
         )}
       </div>
+
 
       <div className="glasses-container-info">
         Obsazeno: {glassesCount}/6 sklenic

@@ -5,13 +5,31 @@
   justify-content: center;
 }
 
+.icon-btn {
+  position: relative;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+  white-space: normal;
+}
+
 .nav-buttons {
   display: flex;
   gap: 0.5rem;
-  justify-content: space-between;
+  width: 100%; /* Vyplní šířku žlutého rámečku */
+  box-sizing: border-box; /* Započítá padding do šířky */
+  border: #08b335 2px dashed;
 }
 
 .nav-buttons button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  white-space: nowrap;
+
+  align-self: stretch;
   padding: 0.5rem 1rem;
   background: #aa44cc;
   color: white;
@@ -95,10 +113,16 @@
   border-radius: 0.5rem;
   cursor: pointer;
   transition: transform 0.2s;
+  align-self: center;
 }
 
 .delete-button:hover {
   transform: scale(1.05);
+}
+
+.delete-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
 

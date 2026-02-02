@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+//NewDrinkCom.jsx
+import { useState } from 'react'
 import { addGlass } from '../services/glassesService'
 import IngredientCard from './IngredientCard'
 import { useNavigate } from 'react-router-dom'
@@ -23,7 +24,7 @@ function NewDrinkCom() {
   const {
     isLoading,
     error,
-    availableIngredients,
+    availableIngredients, 
     isNoIngredient,
   } = useBottles()
 
@@ -126,6 +127,8 @@ function NewDrinkCom() {
 
   const noFree = !posLoading && !posError && freePositions.length === 0
 
+  const isFree = (i) => freePositions.includes(i)
+
   return (
     <div className="centered-page">
       <h2>PŘIDÁNÍ NOVÉHO NÁPOJE</h2>
@@ -135,7 +138,7 @@ function NewDrinkCom() {
       {posError && <p>❌ Nepodařilo se načíst volné pozice</p>}
 
       {noFree ? (
-        <p>⚠️ Žádná volná pozice pro sklenici. Uvolni nejdříve místo.</p>
+        <p>⚠️ Již si zaplnil všechny volné pozice.</p>
       ) : isLoading ? (
         <>
           <p>⏳ Načítám ingredience…</p>
@@ -149,31 +152,58 @@ function NewDrinkCom() {
         <p>❌ Žádné ingredience k dispozici. Nejprve je nastav v „Konfigurace lahví“.</p>
       ) : (
         <>
+          {/* --- výběr pozice pomocí 6 čtverečků --- */}
           <div className="field-column">
-            <label htmlFor="pos-select" style={{ marginRight: 8 }}>Pozice sklenice:</label>
-            <select
-              id="pos-select"
-              className="input-field"
-              value={position ?? ''}
-              onChange={e => setPosition(Number(e.target.value))}
-              disabled={saving || posLoading}
-            >
-              <option value="" disabled>Vyber pozici…</option>
-              {freePositions.map(p => (
-                <option key={p} value={p}>
-                  {p + 1}
-                </option>
-              ))}
-            </select>
-          
-            <label htmlFor="pos-select" style={{ marginRight: 8 }}>Název nápoje:</label>
+            <label style={{ marginBottom: 8, fontWeight: 700 }}>Stanoviště:</label>
+
+            <div className="pos-grid" role="tablist" aria-label="Výběr pozice sklenice">
+              {Array.from({ length: 6 }, (_, i) => {
+                const active = position === i
+                const free = isFree(i)
+                const occupied = !free
+
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    className={[
+                      'pos-tile',
+                      active ? 'is-active' : '',
+                      occupied ? 'is-occupied' : '',
+                    ].join(' ')}
+                    onClick={() => {
+                      if (saving || posLoading || !free) return
+                      setPosition(i)
+                      setStatus('')
+                    }}
+                    disabled={saving || posLoading || !free}
+                    title={
+                      occupied
+                        ? `Pozice ${i + 1} je obsazená`
+                        : `Vybrat pozici ${i + 1}`
+                    }
+                  >
+                    {i + 1}
+                  </button>
+                )
+              })}
+            </div>
+
+            <label htmlFor="drink-name" style={{ marginTop: 14, marginBottom: 8, fontWeight: 700 }}>
+              Název nápoje (max 10 znaků):
+            </label>
             <input
+              id="drink-name"
               type="text"
-              placeholder="Název drinku"
+              style={{ width: '100px'}}
+              placeholder="Název nápoje"
               className="input-field"
               value={drinkName}
-              onChange={e => setDrinkName(e.target.value)}
+              onChange={(e) => setDrinkName(e.target.value)}
               disabled={saving}
+              maxLength={10}
             />
           </div>
 
@@ -202,7 +232,7 @@ function NewDrinkCom() {
             <button
               className="secondary-button"
               onClick={removeItem}
-              disabled={saving || items.length == 1}
+              disabled={saving || items.length === 1}
               title={items.length <= 1 ? 'Musí zůstat alespoň 1 ingredience' : 'Odebrat ingredienci'}
             >
               ➖ Odebrat ingredienci ({items.length}/6)

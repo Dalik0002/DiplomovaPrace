@@ -10,29 +10,28 @@ import asyncio
 
 from api.endpoints_api import router
 from api.uart_test_api import router_UART
-from api.queue_api import router_queue
 from api.service_api import router_service
 from api.glasses_api import router_glasses
 from api.pouring_api import router_pouring
 from api.rpi_api import router_rpi
 from api.bottles_api import router_bottles
 from api.locks_api import router_lock
+from api.firmware_api import firmware_router
 
 app = FastAPI(
     title="DrinkMaker API",
     description="Ovládací REST API pro DrinkMaker backend.",
     version="0.0.1",
     openapi_tags=[
+        {"name": "RPI", "description": "Specifické funkce pro Raspberry Pi"},
         {"name": "General", "description": "Obecná funkce API"},
+        {"name": "Firmware", "description": "Firmware management API"},
         {"name": "Bottle Management", "description": "Správa láhví s ingrediencemi"},
-        #{"name": "Queue", "description": "Správa fronty objednávek"},
         {"name": "Glasses", "description": "Správa sklenic"},
-        {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
-        #{"name": "Service Lock", "description": "Správa zámku služby (service lock)"},
         {"name": "Service Services", "description": "Služby pro správu stavu služby"},
         {"name": "Pouring", "description": "Řízení procesu nalévání drinků"},
-        {"name": "RPI", "description": "Specifické funkce pro Raspberry Pi"},
         {"name": "Lock", "description": "Distributed lock management API"},
+        {"name": "UART Tests", "description": "Odesílání zpráv na ESP32 přes UART"},
     ],
     docs_url=None, 
     redoc_url=None,
@@ -56,14 +55,13 @@ app.add_middleware(
 
 app.include_router(router)
 app.include_router(router_UART)
-#app.include_router(router_queue)
 app.include_router(router_service)
-#app.include_router(router_serviceLock)
 app.include_router(router_glasses)
 app.include_router(router_pouring)
 app.include_router(router_rpi)
 app.include_router(router_bottles)
 app.include_router(router_lock)
+app.include_router(firmware_router)
 
 # Přidání složky se statickými soubory
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -90,4 +88,4 @@ def root_redirect():
 @app.get("/favicon.ico")
 async def favicon():
     from fastapi.responses import FileResponse
-    return FileResponse("static/logo_small.ico")
+    return FileResponse("static/logo_small.png")

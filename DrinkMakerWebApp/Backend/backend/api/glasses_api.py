@@ -50,13 +50,3 @@ def delete_item_from_glasses(payload: DeleteGlassPayload):
 
     print(f"[GLASS] Sklenice na pozici {payload.position} smazána.")
     return {"status": "ok", "message": "Sklenice smazána", "position": payload.position}
-
-
-@router_glasses.post("/addGlassToHWState")
-def add_glass_to_HW_state():
-    try:
-        glasses_service.sync_to_hw_state()
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    print("[GLASS] Synchronizace sklenic do HW stavu")
-    return {"status": "ok", "message": "Sklenice synchronizovány do HW stavu"}

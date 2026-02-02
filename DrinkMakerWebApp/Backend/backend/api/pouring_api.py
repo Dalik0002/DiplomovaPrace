@@ -9,16 +9,18 @@ def notify(stage: str, data: dict):
     # nahraď vlastním logem / WS broadcastem
     print(f"[{stage}] {data}")
 
+
 @router_pouring.post("/pour/start")
-async def pour_start(background: BackgroundTasks, pour_height: int = 150):
+async def pour_start(background: BackgroundTasks):
     try:
         # nespouštět paralelně dvakrát
         if service.running():
             raise HTTPException(status_code=409, detail="Proces již běží.")
-        background.add_task(service.start, pour_height, notify)
-        return {"status": "started", "height": pour_height}
+        background.add_task(service.start, notify)
+        return {"status": "started"}
     except PourError as e:
         raise HTTPException(status_code=409, detail={"stage": e.stage, "msg": str(e), "snapshot": e.snapshot})
+
 
 @router_pouring.post("/pour/cancel")
 async def pour_cancel():

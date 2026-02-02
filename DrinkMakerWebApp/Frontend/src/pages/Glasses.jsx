@@ -16,13 +16,15 @@ function Glasses() {
   }
 
   return (
-    <div className="centered-page">
+    <div className="pages-centered-page">
       <button className="back-button" onClick={() => navigate('/')}>Zpět</button>
-      <h1>SKLENICE</h1>
-      <GlassesList />
-      <button className="delete-button" onClick={clearGlasses}>
-        Vymazat všechny sklenice
-      </button>
+      <div className="centered-page">
+        <h2>SKLENICE</h2>
+        <GlassesList />
+        <button className="delete-button" onClick={clearGlasses}>
+          Vymazat všechny sklenice
+        </button>
+      </div>
     </div>
   )
 }

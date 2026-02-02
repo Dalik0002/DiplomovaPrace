@@ -6,6 +6,8 @@ import GlassesConteiner from '../components/GlassesConteiner'
 
 import { useStateStatus} from '../hooks/useStateData';
 import { useServiceStatus} from '../hooks/useServiceStatus';
+import { useInputData } from '../hooks/useInputData'
+import { setService } from '../services/stateService'
 
 import { acquireServiceLock } from '../services/lockService';
 
@@ -31,27 +33,29 @@ function Dashboard() {
     refresh: refreshService,
   } = useServiceStatus();
 
-  
-  const sendService = async () => {
-    try {
-      await acquireService();
-      refreshService();
-      navigate('/service/main');
-    } catch (err) {
-      alert('Service je právě obsazený. Zkuste to později.');
-      refreshService();
-    }
-  };
+  const { totalProblemsCount, processPouringStarted } = useInputData()
 
-    const handleServiceClick = async () => {
-    setStatus("");
+  useEffect(() => {
+    if (processPouringStarted) {
+      navigate('/pouring');
+    }
+  }, [processPouringStarted, navigate]);
+
+  const handleServiceClick = async () => {
+  setStatus("");
 
     try {
       const res = await acquireServiceLock();
 
       if (res.ok) {
         // Lock získán → přechod na servisní stránku
+        try {
+          await setService()
+        } catch (e) {
+          console.error("Set service modu selhal", e)
+        }
         navigate("/service/serviceRemote");
+
       } else {
         alert("Service je právě obsazený. Zkuste to později.");
         refreshService();
@@ -79,6 +83,11 @@ function Dashboard() {
           <button onClick={() => navigate('/bottles')}>📦 Konfigurace lahví</button>
           <button onClick={handleServiceClick} disabled={isBusy || err_service}>
             {err_service ? '⚙️ Servis (Nedostupný)' : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')}
+            {!!totalProblemsCount && !err_service && (
+              <span className="service-badge" aria-label={`Počet problémů: ${totalProblemsCount}`}>
+                ! {totalProblemsCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -97,7 +106,7 @@ function Dashboard() {
               ZAHÁJIT NALÉVÁNÍ 
             </button>
             <button
-              className="add-button"onClick={() => navigate('/newDrink')}> PŘIDAT NOVÝ DRINK 
+              className="add-button"onClick={() => navigate('/newDrink')}> PŘIDAT NOVÝ NÁPOJ 
             </button>
           </div>
         </div>
@@ -107,10 +116,12 @@ function Dashboard() {
           <GlassesConteiner />
         </div>
       </div>
-
+      
+      {/*
       <div className="footer">
         <h2>-- NIKDY TO NEKONČÍ U PRVNÍ RUNDY ;) --</h2>
       </div>
+      */}
     </div>
   )
 }

@@ -23,7 +23,34 @@
   font-weight: bold;
 }
 
+/* tag v read-only módu: "– ZAKÁZÁNO" */
+.disabled-tag {
+  color: rgba(255, 70, 70, 0.95);
+  font-weight: 500;
+}
 
+/* edit módu: celý text červeně */
+.disabled-edit {
+  color: rgba(255, 70, 70, 0.95);
+  font-weight: 900;
+}
+
+/* volitelně: celý řádek lehce podbarvit */
+.bottle-row.pos-disabled {
+  background: rgba(255, 70, 70, 0.06);
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.disabled-full-width {
+  width: 100%;
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 8px 0;
+  grid-column: 1 / -1; /* Pokud používáš v bottle-row grid, toto to roztáhne */
+  color: rgba(255, 70, 70, 0.95);
+}
 
 
 

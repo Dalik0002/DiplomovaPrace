@@ -49,6 +49,7 @@ function OrderReview() {
       await startPouring()
       setStatus('✅ Nalévání spuštěno')
       refreshGlassesList()
+      navigate("/pouring")
     } catch (err) {
       console.error('Chyba při startu nalévání:', err)
       setStatus('❌ Chyba při startu nalévání')

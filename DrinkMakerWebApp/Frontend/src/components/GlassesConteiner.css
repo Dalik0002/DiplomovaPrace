@@ -2,77 +2,87 @@
   flex: 1;
   background: #3b1b4b;
   border-radius: 0.75rem;
-  padding: 1rem;
+  padding: 0.9rem;               /* menší */
   display: flex;
   flex-direction: column;
   text-align: center;
 }
 
 .glasses-container-title {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.05rem;            /* menší */
+  margin-bottom: 0.35rem;
 }
 
+/* místo center listu uděláme grid */
 .glasses-container-list {
-  margin-top: 0.75rem;
+  margin-top: 0.6rem;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.glasses-grid {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* ← jen 2 sloupce */
+  gap: 0.5rem;
+  align-content: start;
+}
+
+/* jedna “dlaždice” */
+.glass-tile {
+  background: #4d2a5e;
+  border: #7312f1 2px solid;
+  border-radius: 0.6rem;
+  padding: 0.45rem 0.5rem;       /* menší */
+  min-height: 56px;              /* kompaktní výška */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1;
+  justify-content: center;
+  gap: 0.25rem;
 }
 
-.glasses-container-list button {
-  margin-top: 0.75rem;
+/* hlavička v tile */
+.glass-tile-title {
+  font-size: 0.8rem;
+  opacity: 0.85;
 }
 
-.glasses-container-list ul {
-  align-items: center;
-  padding: 0; 
-  margin: 0;
+/* název drinku */
+.glass-tile-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.1;
+  word-break: break-word;
 }
 
-.glasses-container-list li {
-  background: #4d2a5e;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.5rem;
-  border: #7312f1 2px solid;
-  list-style: none;
-}
-
-.glasses-container-empty {
+/* empty tile */
+.glass-tile--empty {
+  background-color: #2a2a2a;
+  border-color: #444;
   color: #ccc;
+  opacity: 0.9;
+}
+
+.glass-tile-sub {
+  font-size: 0.9rem;
+  font-style: italic;
+  opacity: 0.9;
 }
 
 .glasses-container-info {
-  margin-top: 1rem;
-  font-size: 1rem;
+  margin-top: 0.75rem;
+  font-size: 0.95rem;            /* menší */
   text-align: center;
   color: #ddd;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
 }
 
-.glass-container-item {
-  padding: 0.5rem 1rem;
-  margin: 0.3rem 0;
-  border-radius: 0.5rem;
-  background-color: #3b1e40;
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 500;
-  list-style-type: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.glass-container-empty {
-  padding: 0.5rem 1rem;
-  margin: 0.3rem 0;
-  border-radius: 8px;
-  background-color: #2a2a2a;
+.glasses-container-empty{
   color: #ccc;
-  font-size: 1rem;
-  font-style: italic;   
-  list-style-type: none;
-  opacity: 0.8;         
+  text-align: center;
 }
-

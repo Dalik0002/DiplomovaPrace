@@ -1,12 +1,6 @@
 from pydantic import BaseModel, conint
 from typing import List, Optional
 
-# QUEUES
-class Order(BaseModel):
-    name: str
-    ingredients: List[str]
-    volumes: List[int]
-
 # GLASSES
 class Glass(BaseModel):
     name: str
@@ -35,10 +29,12 @@ class ChoosedDrink(BaseModel):
     name: str
     position: int
 
+
 # SERVICE
 class ValveID(BaseModel):
     valve_id: conint(ge=0, le=5)
     open: bool
+
 
 # LOCKS
 class LockRequest(BaseModel):

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { assignBottles } from '../services/bottleService';
 import './BottleSetUp.css';
 import { useBottles} from '../hooks/useBottleData';
+import { useInputData } from '../hooks/useInputData';
 
 function BottleSetUp() {
   const [isEditing, setIsEditing] = useState(false);
@@ -16,6 +17,9 @@ function BottleSetUp() {
     refresh, 
     mutate,
   } = useBottles(isEditing);
+
+  const { positionDisabled = [] } = useInputData();
+  const isPosDisabled = (pos) => !!positionDisabled?.[pos];
 
   // Odvozený seznam 6 pozic (bez lokálního stavu)
   const rows = Array.from({ length: 6 }, (_, i) => {
@@ -76,31 +80,60 @@ function BottleSetUp() {
       ) : error ? (
         <p>❌ Nepodařilo se načíst data z backendu</p>
       ) : (
-        <>
+<>
           <div className={`bottle-list ${!isEditing ? 'read-only' : ''}`}>
-            {rows.map(({ position, bottle }) => (
-              <div key={position} className="bottle-row">
-                <label className="bottle-pos">Pozice {position + 1}:</label>
+            {rows.map(({ position, bottle }) => {
+              const disabled = isPosDisabled(position);
 
-                {isEditing ? (
-                  <>
-                    <input
-                      type="text"
-                      value={bottle}
-                      onChange={(e) => handleChange(position, e.target.value)}
-                      className="input-field"
-                      placeholder="Název ingredience"
-                      disabled={saving}
-                    />
-                    <button className="delete-button" onClick={(e) => handleDelete(position, e.target.value)}> Smazat </button>
-                  </>
-                ) : (
-                  <span className="bottle-name">
-                    {bottle || <i style={{ color: '#888' }}>– nezadáno –</i>}
-                  </span>
-                )}
-              </div>
-            ))}
+              return (
+                <div key={position} className={`bottle-row ${disabled ? 'pos-disabled' : ''}`}>
+                  
+                  {/* LOGIKA PRO EDIT MOD */}
+                  {isEditing ? (
+                    disabled ? (
+                      /* ✅ Zakázané stanoviště v EDIT módu - roztažené na střed */
+                      <div className="disabled-full-width">
+                        Stanoviště {position + 1} je zakázáno
+                      </div>
+                    ) : (
+                      /* ✅ Normální stanoviště v EDIT módu */
+                      <>
+                        <label className="bottle-pos">Stanoviště {position + 1}:</label>
+                        <input
+                          type="text"
+                          value={bottle}
+                          onChange={(e) => handleChange(position, e.target.value)}
+                          className="input-field"
+                          placeholder="Název ingredience"
+                          disabled={saving}
+                          maxLength={15}
+                        />
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDelete(position)}
+                          disabled={saving}
+                          title="Smazat"
+                        >
+                          🗑️
+                        </button>
+                      </>
+                    )
+                  ) : (
+                    /* LOGIKA PRO VIEW MOD (Beze změny) */
+                    <>
+                      <label className="bottle-pos">Stanoviště {position + 1}:</label>
+                      {disabled ? (
+                        <i className="disabled-tag">– ZAKÁZÁNO –</i>
+                      ) : (
+                        <span className="bottle-name">
+                          {bottle || <i style={{ color: '#888' }}>– nezadáno –</i>}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className="button-row">

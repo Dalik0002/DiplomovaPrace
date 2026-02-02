@@ -4,11 +4,11 @@
   font-family: 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  padding: 0.5rem;
   box-sizing: border-box;
   align-items: center;
   justify-content: center;
-  /*border: #ffffff 2px dashed;*/
+  border: #48b8c7 2px dashed;
 }
 
 .top-bar {
@@ -21,7 +21,7 @@
 }
 
 .title {
-  font-size: 1.8rem;
+  font-size: 2.3rem;
   font-weight: bold;
   margin: 0;
   color: #ffffff;
@@ -40,6 +40,7 @@
   border-radius: 0.5rem;
   font-size: 1rem;
   cursor: pointer;
+  position: relative;
 }
 
 .nav-buttons button:hover {
@@ -47,12 +48,29 @@
   transform: scale(1.05);
 }
 
+/* badge vpravo nahoře */
+.service-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 18px;
+
+  background: rgba(255, 140, 0, 0.95);
+  color: #111;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
 .core-container {
   display: flex;
   gap: 1rem;
   margin: 0 auto;
   width: 100%;
-  align-items: stretch; 
+  align-items: stretch;
+  border: #48b8c7 2px dashed;
 }
 
 .left-column,

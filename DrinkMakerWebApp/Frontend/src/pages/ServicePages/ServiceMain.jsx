@@ -3,11 +3,20 @@ import { useNavigate, Outlet } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 
 import { heartbeatServiceLock, releaseServiceLock } from '../../services/lockService'
+import { resetService } from '../../services/stateService'
+import { useInputData } from '../../hooks/useInputData'
 import './service.css'
+import { setService } from '../../services/stateService'
 
 function ServiceMain() {
   const navigate = useNavigate()
   const [buttonState, setButtonState] = useState(false)
+
+  const {
+    totalProblemsCount = 0,
+    error: inputErr,
+    isLoading: inputLoading,
+  } = useInputData()
 
   useEffect(() => {
     let alive = true
@@ -24,7 +33,14 @@ function ServiceMain() {
         } catch (e) {
           console.error("Release po heartbeat chybě selhal", e)
         }
-        if (alive) navigate('/')
+        if (alive){
+          try {
+            await resetService()
+          } catch (e) {
+            console.error("Reset service modu selhal", e)
+          }
+          navigate('/')
+        } 
       }
     }
 
@@ -67,6 +83,11 @@ function ServiceMain() {
     } catch (e) {
       console.error("Release při návratu selhal", e)
     }
+    try {
+      await resetService()
+    } catch (e) {
+      console.error("Reset service modu selhal", e)
+    }
     navigate('/')
   }
 
@@ -74,18 +95,31 @@ function ServiceMain() {
     const next = !buttonState
     setButtonState(next)
     if (next) {
-      navigate('/service/uart')
+      navigate('/service/serviceStations')
     } else {
       navigate('/service/serviceRemote')
     }
   }
+
+  const showStationsBadge = !buttonState && !inputLoading && !inputErr && totalProblemsCount > 0
+
+//{buttonState ? <>Servisní<br />obrazovka</> : <>Jednotlivá<br />stanoviště</>}
 
   return (
     <div className="pages-centered-page">
       <div className="nav-buttons">
         <button className="back-button" onClick={onBackClick}>Zpět</button>
         <button className="icon-btn" onClick={onButtonClick}>
-          {buttonState ? 'Main' : 'UART Test'}
+          {buttonState ? 'Servisní obrazovka' : 'Jednotlivá stanoviště'}
+          {showStationsBadge && (
+            <span
+              className="service-badge"
+              aria-label={`Počet problémů: ${totalProblemsCount}`}
+              title={`Počet problémů: ${totalProblemsCount}`}
+            >
+              ! {totalProblemsCount}
+            </span>
+          )}
         </button>
       </div>
 
