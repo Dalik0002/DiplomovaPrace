@@ -197,9 +197,8 @@ function NewDrinkCom() {
             <input
               id="drink-name"
               type="text"
-              style={{ width: '100px'}}
               placeholder="Název nápoje"
-              className="input-field"
+              className="input-field drink-name-input"
               value={drinkName}
               onChange={(e) => setDrinkName(e.target.value)}
               disabled={saving}

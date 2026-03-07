@@ -1,24 +1,29 @@
 .pages-centered-page {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
   border-radius: 0.75rem;
-  border: #ff00b7 2px dashed;
   gap: 1rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
 .centered-page {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   background: #3b1b4b;
   text-align: center;
   padding: 1rem;
   border-radius: 0.75rem;
-  border: #44ff00 2px dashed;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .error-message {
@@ -69,7 +74,9 @@
   margin-bottom: 0.5rem;
 }
 
-.input-field{
+.input-field {
   text-align: center;
+  font-size: 1rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
 }
-
