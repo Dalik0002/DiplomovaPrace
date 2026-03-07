@@ -94,13 +94,6 @@
   transform: scale(0.99);
 }
 
-.pouring-hint {
-  margin-top: 12px;
-  font-size: 0.8rem;
-  opacity: 0.75;
-  color: #ddd;
-}
-
 /* menší mobily */
 @media (max-width: 420px) {
   .pouring-card {
@@ -142,13 +135,17 @@
   }
 }
 
-
-
-
-
-/* =======================
-   DONE – oslavnější verze
-   ======================= */
+.pouring-stage-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-family: monospace;
+  color: #aaa;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
 
 .pouring-done-card {
   position: relative;

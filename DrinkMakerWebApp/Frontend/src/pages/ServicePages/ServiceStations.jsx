@@ -45,6 +45,7 @@ function ServiceStations() {
   const restartCarouselESPAtPosition = async (position) => {
     try {
       await restartCarouselESP(position)
+      console.log(`ESP na pozici ${position} úspěšně restartováno`)
     } catch (err) {
       console.error(`Chyba při restartu ESP na pozici ${position}:`, err)
     }
@@ -184,17 +185,15 @@ function ServiceStations() {
               {isDisabled ? 'Povolit stanoviště' : 'Zakázat stanoviště'}
             </button>
 
-            {/* 2. Doplněno */}
             <button
-              className="service-btn"
+              className={`service-btn ${posProblems.emptyBottle ? 'is-on' : ''}`}
               onClick={() => fillBottleAtPosition(selected)}
               type="button"
-              disabled={isLoading}
+              disabled={isLoading || !posProblems.emptyBottle}
             >
-              Doplněno
+              {posProblems.emptyBottle ? 'Doplnit láhev' : 'Doplněno'}
             </button>
 
-            {/* 3. Restart */}
             <button
               className="service-btn"
               onClick={() => restartCarouselESPAtPosition(selected)}
@@ -204,7 +203,6 @@ function ServiceStations() {
               Restartovat
             </button>
 
-            {/* 4. Kalibrace */}
             <button
               className="service-btn"
               onClick={() => calibrateLoadCellAtPosition(selected)}
@@ -213,17 +211,6 @@ function ServiceStations() {
             >
               Kalibrovat
             </button>
-
-            {/* 5. Aktualizace */}
-            <button
-              className="service-btn"
-              onClick={() => updateCarouselESPAtPosition(selected)}
-              type="button"
-              disabled={isLoading}
-            >
-              Aktualizovat
-            </button>
-
           </div>
         </div>
 

@@ -43,36 +43,47 @@
   font-size: 1.3rem;
   text-align: center;
   font-weight: bold;
-  color: white; /* default barva textu */
 }
 
 /* Stavové barvy pro celý container */
 .state-standby {
   background: #18ce61;
+  color: white;
 }
 
 .state-stop {
   background: #cb2626;
+  color: white;
 }
 
 .state-checking {
   background: #ffb700;
+  color: white;
 }
 
 .state-pouring {
   background: #9a58cd;
+  color: white;
 }
 
 .state-service {
-  background: #dbee09;
+  background: #c97a34;
+  color: black;
 }
 
 .state-updating {
   background: #334155;
+  color: white;
+}
+
+.state-party {
+  background: #da218c;
+  color: white;
 }
 
 .state-unknown {
   background: #3b1b4b;
+  color: white;
 }
 
 /* MODAL */

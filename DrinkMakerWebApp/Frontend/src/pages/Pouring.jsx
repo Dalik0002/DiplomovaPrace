@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useInputData } from "../hooks/useInputData";
+import { usePouringStatus } from "../hooks/usePouringStatus";
 import Loading from "../components/LoadingCom";
 import Error from "../components/ErrorCom";
 
@@ -12,21 +13,43 @@ export default function Pouring() {
   const navigate = useNavigate();
   const [stopping, setStopping] = useState(false);
   const [localErr, setLocalErr] = useState("");
+  
+  const { 
+    stage, 
+    message: stageMessage, 
+    isRunning: isProcessRunning, 
+    isDone: isProcessDone
+   } = usePouringStatus();
 
+  useEffect(() => {
+    console.log(`[PROCESS] Stage: ${stage} | Msg: ${stageMessage} | Running: ${isProcessRunning}`);
+  }, [stage, stageMessage, isProcessRunning]);
+  
   const {
     isLoading,
     error,
-
     pouringDone,
     emergencyStop,
     processPouringStarted,
-
-    // volitelné: když chceš zobrazit i chyby
     messError,
     cannotProcessPosition,
     cannotProcessGlass,
     cannotSetMode,
   } = useInputData();
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(`[HW DATA] Started: ${processPouringStarted}, Done: ${pouringDone}, Emergency: ${emergencyStop}`);
+      if (messError || cannotProcessPosition || cannotProcessGlass) {
+        console.log(`[HW ERROR] Mess: ${messError}, Pos: ${cannotProcessPosition}, Glass: ${cannotProcessGlass}`);
+      }
+    }
+  }, [isLoading, processPouringStarted, pouringDone, emergencyStop, messError, cannotProcessPosition, cannotProcessGlass])
+
+  const goHome = () => {
+    navigate("/", { replace: true });
+  };
+  
 
   // Emergency stop => okamžitě pryč
   useEffect(() => {
@@ -35,16 +58,16 @@ export default function Pouring() {
       navigate("/", { replace: true });
     }
   }, [emergencyStop, navigate]);
-
-  const goHome = () => navigate("/", { replace: true });
+  
   const handleStop = async () => {
+    console.log("[ACTION] Uživatel klikl na STOP.");
     setLocalErr("");
     setStopping(true);
     try {
       await setStop();
       goHome();
     } catch (e) {
-      console.error(e);
+      console.error("[ACTION] Chyba při odesílání STOP:", e);
       setLocalErr("Nepodařilo se odeslat STOP. Zkuste to znovu.");
     } finally {
       setStopping(false);
@@ -52,39 +75,39 @@ export default function Pouring() {
   };
 
   if (isLoading) return <Loading />;
-  if (error) return <Error mess={"Chyba při získávání InputData: " + error.message} />;
+  if (error) return <Error mess={"Chyba: " + error.message} />;
 
   // HOTOVO screen
-if (pouringDone) {
-  return (
-    <div className="pouring-page">
-      <div className="pouring-card pouring-done-card">
+  if (pouringDone) {
+    return (
+      <div className="pouring-page">
+        <div className="pouring-card pouring-done-card">
 
-        <div className="pouring-done-icon">
-          ✓
+          <div className="pouring-done-icon">
+            ✓
+          </div>
+
+          <h1 className="pouring-title pouring-done-title">
+            Hotovo!
+          </h1>
+
+          <p className="pouring-status">
+            Nápoj byl úspěšně připraven.
+          </p>
+
+          <button className="home-button" onClick={goHome}>
+            Zpět na hlavní stránku
+          </button>
+
         </div>
-
-        <h1 className="pouring-title pouring-done-title">
-          Hotovo!
-        </h1>
-
-        <p className="pouring-status">
-          Nápoj byl úspěšně připraven.
-        </p>
-
-        <button className="home-button" onClick={goHome}>
-          Zpět na hlavní stránku
-        </button>
-
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   // PROBÍHÁ / čekám
   const statusText = processPouringStarted
     ? "Probíhá nalávání vašich nápojů..."
-    : "Čekám, až se nalévání opravdu spustí...";
+    : "Připravuji zařízení k nalévání...";
 
   // volitelné: jednoduchá chyba do UI (když nechceš, smaž)
   const processErr =
@@ -97,16 +120,30 @@ if (pouringDone) {
   return (
     <div className="pouring-page">
       <div className="pouring-card">
-        <h1 className="pouring-title">🍹 Nalévání</h1>
+        {/* Dynamický titulek podle fáze */}
+        <h1 className="pouring-title">
+          {stage.includes("CHECK") ? "🔍 Kontrola" : "🍹 Nalévání"}
+        </h1>
 
-        <p className="pouring-status">{statusText}</p>
-        {processPouringStarted && !pouringDone && (
-            <div className="pouring-spinner-wrap">
-              <div className="pouring-spinner" />
-            </div>
+        {/* Zobrazení aktuální zprávy z Pythonu */}
+        <p className="pouring-status">
+          {stageMessage || "Připravuji zařízení..."}
+        </p>
+        
+        <div className="pouring-spinner-wrap">
+          <div className={`pouring-spinner ${stage.includes("WAIT") ? "spinner-slow" : ""}`} />
+        </div>
+
+        {/* Zobrazení technické fáze (badge) */}
+        <div className="pouring-stage-badge">{stage}</div>
+
+        {/* Chybové hlášky z HW */}
+        {(messError || cannotProcessPosition || cannotProcessGlass || cannotSetMode) && (
+          <p className="pouring-warn">
+            ⚠️ {(messError && "Chyba mechanismu") || "Problém s pozicí/sklenicí"}
+          </p>
         )}
 
-        {processErr && <p className="pouring-warn">⚠️ {processErr}</p>}
         {localErr && <p className="pouring-error">❌ {localErr}</p>}
 
         <button
@@ -116,10 +153,6 @@ if (pouringDone) {
         >
           {stopping ? "Odesílám STOP..." : "STOP"}
         </button>
-
-        <p className="pouring-hint">
-          Stav se aktualizuje každých 5 s (SWR refreshInterval).
-        </p>
       </div>
     </div>
   );

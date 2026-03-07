@@ -17,3 +17,11 @@ export function resetStop() {
   return apiPost('/remote/resetStop');
 }
 
+export function setParty() {
+  return apiPost('/remote/setParty');
+}
+
+export function resetParty() {
+  return apiPost('/remote/resetParty');
+}
+

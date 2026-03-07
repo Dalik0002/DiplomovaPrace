@@ -2,6 +2,8 @@
 .service-container {
   display: flex;
   background: #3b1b4b;
+  color: #ffffff;
+  color-scheme: dark;
   flex-direction: column;
   padding: 1rem;
   border-radius: 0.75rem;
@@ -29,7 +31,16 @@
   border-radius: 0.6rem;
   transition: transform 0.2s, background 0.2s;
   cursor: pointer;
-  border: 1px solid rgba(255,255,255,0.1); /* Jemný okraj pro konzistenci */
+  border: 1px solid rgba(255,255,255,0.1);
+
+  font-size: 0.75rem; 
+  font-weight: 700;
+  text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .service-btn:focus,
@@ -45,15 +56,62 @@
   color: rgb(255, 255, 255);
 }
 
+.service-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (hover: hover) and (pointer: fine) {
-  .service-btn:hover {
+  .service-btn:not(:disabled):hover {
     background: #bbb8b4;
     color: black;
     transform: scale(1.05);
   }
 }
 
-/* --- NAVIGACE A BADGE (ServiceMain) --- */
+/* Tlačítko Toggle (Zakázat/Povolit) */
+.service-btn.is-on {
+  background: rgba(255, 140, 0, 0.28);
+  border-color: rgba(255, 140, 0, 0.85);
+  color: #ffb347;
+  font-weight: 800;
+}
+
+/* --- HLAVNÍ NAVIGACE (ServiceMain) --- */
+.service-top-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.service-nav-btn {
+  position: relative;
+  background: #3b1b4b;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  padding: 0.8rem 0.5rem;
+  border-radius: 0.75rem;
+  font-weight: 800;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.service-nav-btn.is-active {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Badge v navigaci */
 .service-badge {
   position: absolute;
   top: -10px;
@@ -66,6 +124,12 @@
   background: rgba(255, 140, 0, 0.95);
   color: #111;
   border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 400px) {
+  .service-nav-btn {
+    font-size: 0.7rem;
+  }
 }
 
 /* --- KOMPONENTA: STATIONS (Jednotlivá stanoviště) --- */
@@ -145,16 +209,15 @@
   border-color: rgba(255, 140, 0, 0.55);
 }
 
-.station-status-title { font-weight: 800; margin-bottom: 6px; }
-
-.station-status-list { display: flex; flex-direction: column; gap: 4px; }
-
-/* Tlačítko Toggle (Zakázat/Povolit) */
-.service-btn.is-on {
-  background: rgba(255, 140, 0, 0.28);
-  border-color: rgba(255, 140, 0, 0.85);
-  color: #ffb347;
+.station-status-title {
   font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.station-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* --- KOMPONENTA: SERVICE REMOTE (Servisní obrazovka) --- */
@@ -204,69 +267,17 @@
   margin: 14px 0;
 }
 
-/* Mřížky pro akce a senzory */
+/* Mřížky pro akce */
 .mini-grid {
   display: grid;
-  flex-direction: column;
-  gap: 10px;
-}
-
-@media (min-width: 400px) {
-  /* Pokud je aspoň trochu místa, zkusíme je dát vedle sebe s menším písmem */
-  .mini-grid {
-    flex-direction: row;
-  }
-  .mini-grid .service-btn {
-    font-size: 0.75rem; /* Velmi malé písmo pro zachování jednoho řádku */
-  }
-}
-
-.station-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
 @media (min-width: 520px) {
   .mini-grid { grid-template-columns: 1fr 1fr; }
-  .station-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Dlaždice (Ventily a Tenzometry) */
-.station-tile, .sensor-tile {
-  border-radius: 14px;
-  border: 2px solid rgba(255,255,255,0.25);
-  background: transparent;
-  color: inherit;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.station-tile { cursor: pointer; gap: 4px; }
-
-.station-tile.is-on {
-  background: rgba(255, 140, 0, 0.18);
-  border-color: rgba(255, 140, 0, 0.65);
-}
-
-.station-tile-top {
-  font-weight: 900;
-  opacity: 0.9;
-  margin-bottom: 6px;
-}
-
-.sensor-value {
-  font-size: 18px;
-  font-weight: 900;
-  padding-top: 6px;
-  opacity: 0.95;
-} 
-
-
-/* Kontejner pro kruhové rozmístění */
+/* --- KRUH: Ventily / Tenzometry --- */
 .station-circle-container {
   position: relative;
   width: 280px;
@@ -277,7 +288,6 @@
   justify-content: center;
 }
 
-/* Pomyslný podkresový kruh */
 .station-circle-track {
   position: absolute;
   width: 100%;
@@ -287,7 +297,6 @@
   pointer-events: none;
 }
 
-/* Jednotlivé body (kolečka) */
 .circle-node {
   position: absolute;
   width: 70px;
@@ -304,10 +313,6 @@
   transition: all 0.2s ease;
   z-index: 2;
 
-  /* Matematika pro umístění: 
-     - 360 / 6 stanovišť = 60 stupňů mezi nimi
-     - Přičítáme 90 stupňů, aby index 0 (stanoviště 1) bylo dole uprostřed 
-  */
   --angle: calc(var(--index) * 60deg + 90deg);
   left: calc(50% + cos(var(--angle)) * 140px - 35px);
   top: calc(50% + sin(var(--angle)) * 140px - 35px);
@@ -324,7 +329,6 @@
   border-color: white;
 }
 
-/* Specifické úpravy pro vnitřek koleček */
 .node-label {
   font-weight: 900;
   font-size: 1.1rem;
@@ -342,19 +346,26 @@
   color: #ffb347;
 }
 
-/* Varianta pro senzory (bez kursoru pointer) */
 .circle-node.sensor {
   cursor: default;
   border-style: solid;
-  background: rgba(255, 255, 255, 0.05);
+  background: #3b1b4b;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  pointer-events: none;
 }
 
-/* Responzivita pro menší mobily */
+.circle-node.sensor:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 @media (max-width: 400px) {
   .station-circle-container {
     width: 220px;
     height: 220px;
   }
+
   .circle-node {
     width: 60px;
     height: 60px;
@@ -362,4 +373,3 @@
     top: calc(50% + sin(var(--angle)) * 110px - 30px);
   }
 }
-

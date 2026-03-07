@@ -6,38 +6,38 @@ import os
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, Optional
+from services.uart_service import send_json
+from core.all_states import system_state
+from models.endpoints_schemas import ESPPosition
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 from fastapi.responses import FileResponse
 
+from core.storages import FIRM_STORE_DIR, FIRM_MANIFEST_PATH
+
 firmware_router = APIRouter(prefix="/fw", tags=["Firmware"] )
 
-# ---------- Swagger dropdown (Enum) ----------
 class FirmwareTarget(str, Enum):
     esp32 = "esp32"
     esp32c3 = "esp32c3"
 
-# ---------- Storage ----------
-STORE_DIR = Path(os.getenv("FIRMWARE_STORE_DIR", "./firmware_store"))
-MANIFEST_PATH = STORE_DIR / "manifest.json"
-
 def _ensure_store() -> None:
-    STORE_DIR.mkdir(parents=True, exist_ok=True)
-    if not MANIFEST_PATH.exists():
-        MANIFEST_PATH.write_text(json.dumps({"esp32": {}, "esp32c3": {}}, indent=2), encoding="utf-8")
+    FIRM_STORE_DIR.mkdir(parents=True, exist_ok=True)
+    if not FIRM_MANIFEST_PATH.exists():
+        FIRM_MANIFEST_PATH.write_text(json.dumps({"esp32": {}, "esp32c3": {}}, indent=2), encoding="utf-8")
 
 def _load_manifest() -> Dict[str, Any]:
     _ensure_store()
-    return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    return json.loads(FIRM_MANIFEST_PATH.read_text(encoding="utf-8"))
 
 def _save_manifest(m: Dict[str, Any]) -> None:
-    tmp = MANIFEST_PATH.with_suffix(".tmp")
+    tmp = FIRM_MANIFEST_PATH.with_suffix(".tmp")
     tmp.write_text(json.dumps(m, indent=2, ensure_ascii=False), encoding="utf-8")
-    os.replace(tmp, MANIFEST_PATH)
+    os.replace(tmp, FIRM_MANIFEST_PATH)
 
 def _bin_path(target: FirmwareTarget) -> Path:
     # one file per target
-    return STORE_DIR / f"{target.value}.bin"
+    return FIRM_STORE_DIR / f"{target.value}.bin"
 
 def _sha256(path: Path) -> str:
     h = hashlib.sha256()
@@ -47,11 +47,36 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 # ---------- Endpoints ----------
+@firmware_router.post("/updateESP32")
+async def update_esp32():
+    payload = system_state.set_state(update=True, updateESP32=True)
+    send_json(payload)
+    print("[SERVICE] Update ESP32")
+    return {"status": "ok", "message": "ESP32 aktualizováno"}
+
+@firmware_router.post("/updateCarouselESP")
+async def update_carousel(data: ESPPosition):
+    position = data.position
+    if position not in range(6):
+        raise HTTPException(status_code=400, detail="Invalid position for ESP update")
+
+    payload = system_state.set_state(update=True, **{f"updateESP32C3{position}": True})
+    send_json(payload)
+    print(f"[SERVICE] Update ESP na pozici {position}")
+    return {"status": "ok", "message": f"ESP na pozici {position} aktualizováno"}
+
+@firmware_router.post("/updateAllCarouselESPs")
+async def update_all_carousel_esps():
+    payload = system_state.set_state(update=True, updateAllESP32C3=True)
+    send_json(payload)
+    print("[SERVICE] Update všech ESP32-C3")
+    return {"status": "ok", "message": "Všechna ESP32-C3 aktualizována"}
+
 
 @firmware_router.post("/upload")
 async def upload_firmware(
     target: FirmwareTarget = Query(..., description="Select firmware target"),
-    version: str = Query(..., description="Firmware version e.g., 'Vx_28_01_2026'"),
+    version: str = Query(..., description="Firmware version e.g., 'vX_28_01_2026'"),
     file: UploadFile = File(..., description="Compiled firmware .bin"),
 ):
     """
@@ -60,7 +85,7 @@ async def upload_firmware(
     """
     _ensure_store()
 
-    tmp = STORE_DIR / f"{target.value}.bin.uploading"
+    tmp = FIRM_STORE_DIR / f"{target.value}.bin.uploading"
     final = _bin_path(target)
 
     # save upload
@@ -136,7 +161,14 @@ def report(payload: Dict[str, Any]):
     Optional: ESP reports OTA result.
     """
     _ensure_store()
-    reports_path = STORE_DIR / "reports.jsonl"
+    reports_path = FIRM_STORE_DIR / "reports.jsonl"
     with reports_path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
     return {"ok": True}
+
+@firmware_router.get("/reports/show")
+def get_reports():
+    reports_path = FIRM_STORE_DIR / "reports.jsonl"
+    if not reports_path.exists():
+        return {"msg": "Zatím žádné reporty."}
+    return FileResponse(reports_path)

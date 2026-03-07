@@ -3,7 +3,7 @@ from typing import List
 
 from core.all_states import bottles_state
 
-from models.endpoints_schemas import BottleAssignment
+from models.endpoints_schemas import BottleAssignment, BottleStatus
 
 router_bottles = APIRouter(tags=["Bottle Management"])
 
@@ -19,6 +19,6 @@ def delete_bottle_at_position(position: int):
     bottles_state.delete_bottle_at_position(position)
     return {"status": "ok", "message": f"Bottle at position {position} deleted"}
 
-@router_bottles.get("/bottles/getBottles", response_model=List[BottleAssignment])
+@router_bottles.get("/bottles/getBottles", response_model=List[BottleStatus])
 def get_bottles():
     return bottles_state.get_bottle_assignments()

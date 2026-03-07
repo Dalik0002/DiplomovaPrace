@@ -8,24 +8,37 @@ export function useBottles(pause = false) {
       dedupingInterval: 1000,
       errorRetryCount: 3,
       errorRetryInterval: 2000,
-      refreshInterval: pause ? 0 : 5000, // auto-refresh, ale ne při editaci
+      refreshInterval: pause ? 0 : 5000,
     }
   );
 
-  const availableIngredients = (data ?? [])
-    .map(b => b.name || b.bottle)
-    .filter(name => name?.trim());
+  const list = Array.isArray(data) ? data : []
 
-  const isNoIngredient = availableIngredients.length === 0;
+  const enabledRows = list.filter(b =>
+    !b?.disabled && !b?.empty_bottle && (b?.bottle || b?.name)?.trim()
+  )
 
-  const list = Array.isArray(data) ? data : [];
+  const availableIngredients = enabledRows
+    .map(b => (b?.name || b?.bottle || '').trim())
+    .filter(Boolean)
+
+  const uniqueAvailableIngredients = Array.from(new Set(availableIngredients))
+
+  const isNoIngredient = uniqueAvailableIngredients.length === 0
+
+  const isPosDisabled = (pos) => !!list.find(x => x.position === pos)?.disabled
+  const isPosEmptyBottle = (pos) => !!list.find(x => x.position === pos)?.empty_bottle
 
   return { 
     data: list, 
     error, 
     isLoading, 
     refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
-    availableIngredients, 
+
+    availableIngredients: uniqueAvailableIngredients,
     isNoIngredient, 
+
+    isPosDisabled,
+    isPosEmptyBottle,
   };
 }

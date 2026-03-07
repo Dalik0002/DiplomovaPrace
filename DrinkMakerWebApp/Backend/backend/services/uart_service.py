@@ -13,10 +13,8 @@ uart_buffer = ""
 last_sent_json = None
 last_sent_raw = None
 
-
-# Nastavení UART portu (na Raspberry Pi obvykle /dev/serial0)
 SERIAL_PORT = '/dev/serial0'
-BAUDRATE = 9600
+BAUDRATE = 115200
 
 IS_LINUX = platform.system() == "Linux"
 ser = None
@@ -40,18 +38,18 @@ else:
 # Asynchronní smyčka pro čtení dat z UART
 async def uart_listener_loop():
     if not ser:
-        print("[UART ←] Není Linux → automatické přijímaní není spuštěno")
+        print("[[UART RECEIVING] Není Linux → automatické přijímaní není spuštěno")
         return
 
-    print("[UART ←] Přijímání spuštěno")
+    print("[[UART RECEIVING] Přijímání spuštěno")
     while True:
         try:
             if ser.in_waiting:
                 data = ser.readline().decode('utf-8', errors='ignore').strip()
                 if data:
-                    print(f"[UART ←] Příchozí data: {data}")
+                    print(f"[[UART RECEIVING] Příchozí data: {data}")
         except Exception as e:
-            print(f"[UART ←] Chyba při čtení: {e}")
+            print(f"[[UART RECEIVING] Chyba při čtení: {e}")
         await asyncio.sleep(0.1)
 
 
@@ -61,7 +59,7 @@ last_state_time = time.time()
 async def uart_JSON_listener_loop():
     global uart_buffer, last_state_time
     if not ser:
-        print("[UART ←] Není k dispozici UART port")
+        print("[[UART RECEIVING] Není k dispozici UART port")
         return
 
     print("[UART] Přijímání spuštěno")
@@ -79,8 +77,10 @@ async def uart_JSON_listener_loop():
 
                     try:
                         msg = json.loads(json_str)
-                        print("[UART ← JSON]", msg)
-                        input_state.update_from_json(msg)
+                        print("[UART RECEIVING JSON]", msg)
+                        if "mess" in msg and isinstance(msg["mess"], list) and msg["mess"]:
+                          input_state.update_from_json(msg["mess"][0])
+
                         # po update_from_json(msg)
                         if input_state.mess_error_rising_edge():
                             print("[UART] messErr=true → resend last JSON")
@@ -105,7 +105,7 @@ async def uart_JSON_listener_loop():
 
                     try:
                         msg = json.loads(json_str)
-                        print("[UART ← STATE]", msg)
+                        print("[[UART RECEIVING STATE]", msg)
                         input_state.update_mode_from_json(msg)
                         last_state_time = time.time()
                     except Exception:
@@ -113,15 +113,15 @@ async def uart_JSON_listener_loop():
                         send_json(system_state.to_info_json())
                         print("[UART STATE ERROR] Neplatný JSON:", json_str)
 
-            if time.time() - last_state_time > 5:
-                print("[UART STATE TIMEOUT] Žádný STATE >5s")
+            if time.time() - last_state_time > 10:
+                print("[UART STATE TIMEOUT] Žádný STATE >10s")
                 input_state.reset_mode()
                 last_state_time = time.time()
 
         except Exception as e:
             system_state.set_state(messErrfromESP32=True)
             send_json(system_state.to_info_json())
-            print(f"[UART ← ERROR] Chyba při čtení: {e}")
+            print(f"[[UART RECEIVING ERROR] Chyba při čtení: {e}")
 
         await asyncio.sleep(0.1)
 
@@ -129,29 +129,36 @@ async def uart_JSON_listener_loop():
 
 #################################################
 # Funkce pro odesílání zpráv přes UART
-def send_uart_command(msg: str):
-    global last_sent_raw
-    if ser:
-        try:
-            last_sent_raw = msg
-            msg = msg + '\n'
-            ser.write(msg.encode('utf-8'))
-            print(f"[UART →] Odesláno: {msg}")
-        except Exception as e:
-            print(f"[UART → ERROR] Chyba při odesílání: {e}")
-    else:
-        print(f"[UART →] Není Linux → odesílání ignorováno")
+send_queue = asyncio.Queue()
+
+async def uart_sender_loop():
+    while True:
+        data = await send_queue.get()
+        if not ser:
+            print(f"[UART SENDING] Není Linux → odesílání ignorováno")
+            continue
         
+        try:
+            ser.write(data.encode("utf-8"))
+            print(f"[UART SENDING] Odesláno", data.strip())
+            await asyncio.sleep(0.05) 
+        except Exception as e:
+             print(f"[UART SENDING ERROR] Chyba při odesílání: {e}")
+        finally:
+            send_queue.task_done()    
 
 def send_json(json_obj):
     global last_sent_json
-    if ser:
-        try:
-            last_sent_json = json_obj
-            data = "<JSON>" + json.dumps(json_obj) + "</JSON>"
-            ser.write(data.encode("utf-8"))
-            print(f"[UART →] Odesláno", data.strip())
-        except Exception as e:
-            print(f"[UART → ERROR] Chyba při odesílání: {e}")
-    else:
-        print(f"[UART →] Není Linux → odesílání ignorováno")
+    last_sent_json = json_obj
+    data = "<JSON>" + json.dumps(json_obj) + "</JSON>\n"
+    # Místo ser.write dáme do fronty
+    asyncio.create_task(send_queue.put(data))
+    print(f"[UART → QUEUED] {json.dumps(json_obj)}")
+
+
+def send_uart_command(msg: str):
+    global last_sent_raw
+    last_sent_raw = msg
+    # Přidáme do stejné fronty jako JSONy
+    asyncio.create_task(send_queue.put(msg + '\n'))
+    print(f"[UART → QUEUED RAW] {msg}")

@@ -77,3 +77,35 @@ def set_from_temp_to_JSON() -> dict:
     return glasses_state.to_glasses_json()
 
 
+def set_from_temp_to_JSON_compact() -> dict:
+    """
+    Compact varianta: vrací pouze pos_X, kde je aspoň jedna ingredience s vol>0 nebo nm != "".
+    """
+    # 1) Přepiš do GlassesState (máš už hotové)
+    glasses_state.set_to_glasses_state(glass_glasses)
+
+    full = glasses_state.to_glasses_json()  # {"glasses": {...}} (plná verze)
+    g = full.get("glasses", {})
+
+    compact_glasses = {}
+    for pos_key, items in g.items():
+        # items má být list objektů {"nm":..., "vol":...}
+        if not isinstance(items, list):
+            continue
+
+        active = False
+        for it in items:
+            if not isinstance(it, dict):
+                continue
+            nm = (it.get("nm") or "").strip()
+            vol = it.get("vol") or 0
+            if nm != "" or vol > 0:
+                active = True
+                break
+
+        if active:
+            compact_glasses[pos_key] = items
+
+    # Přidáme flag, že je to "compact update"
+    return {"glasses": compact_glasses}
+

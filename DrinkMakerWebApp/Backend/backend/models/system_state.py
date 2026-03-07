@@ -4,6 +4,98 @@ class SystemState:
 
     def __init__(self):
         self.reset()
+        self._current_values = {}
+
+
+    def set_state(self, **kwargs) -> dict:
+        payload = {}
+
+        mapping = {
+            "start": "strt", "stop": "stp", "check": "chck",
+            "service": "srvc", "standBy": "stnd", "update": "updt", "party": "prty",
+            "releaseCarouselMotor": "relsCarMtr",
+            "releasePlexiMotor": "relsPlxMtr",
+            "homeCarousel": "homeCarousel",
+            "homePlexi": "homePlexi",
+            "errorAcknowledgment": "errAcknow",
+            "messErrfromESP32": "messErrfromESP32",
+            "restartESP32": "resESP32",
+            "updateESP32": "updESP32",
+            "movePlexi": "movePlexi",
+            "moveCarousel": "moveCarousel",
+            "percentHeight": "percentHeight",
+        }
+
+        for key, raw in kwargs.items():
+            # --- 1) percentHeight je číslo, ne bool ---
+            if key == "percentHeight":
+                try:
+                    v_int = int(raw)
+                except (TypeError, ValueError):
+                    raise ValueError(f"percentHeight must be int (0..100), got: {raw!r}")
+
+                if v_int < 0 or v_int > 100:
+                    raise ValueError(f"percentHeight out of range: {v_int} (0..100)")
+
+                self._current_values[key] = v_int
+                payload[mapping[key]] = v_int
+                continue
+
+            # ostatní jsou logické příkazy
+            value = bool(raw)
+            self._current_values[key] = value
+
+            # --- 2) indexované příkazy ---
+            if key.startswith("openValve"):
+                idx = key[len("openValve"):]
+                if not idx.isdigit():
+                    raise ValueError(f"Invalid key: {key} (expected openValve0..5)")
+                payload[f"opnVlvOnPos{idx}"] = value
+                continue
+
+            if key.startswith("restartESP32C3"):
+                idx = key[len("restartESP32C3"):]
+                if not idx.isdigit():
+                    raise ValueError(f"Invalid key: {key} (expected restartESP32C30..5)")
+                payload[f"resESP_{idx}"] = value
+                continue
+
+            if key.startswith("updateESP32C3"):
+                idx = key[len("updateESP32C3"):]
+                if not idx.isdigit():
+                    raise ValueError(f"Invalid key: {key} (expected updateESP32C30..5)")
+                payload[f"updESP_{idx}"] = value
+                continue
+
+            if key.startswith("calibratePosition"):
+                idx = key[len("calibratePosition"):]
+                if not idx.isdigit():
+                    raise ValueError(f"Invalid key: {key} (expected calibratePosition0..5)")
+                payload[f"calibPos_{idx}"] = value
+                continue
+
+            # --- 3) hromadné příkazy ---
+            if key == "restartAllESP32C3":
+                if value:
+                    for i in range(6):
+                        payload[f"resESP_{i}"] = True
+                continue
+
+            if key == "updateAllESP32C3":
+                if value:
+                    for i in range(6):
+                        payload[f"updESP_{i}"] = True
+                continue
+
+            # --- 4) mapované jednoduché příkazy ---
+            if key in mapping:
+                payload[mapping[key]] = value
+                continue
+
+            # --- 5) neznámý klíč ---
+            raise ValueError(f"Unknown state key in set_state(): {key}")
+
+        return {"info": [payload]}
 
     def reset(self):
         self.start = False
@@ -12,12 +104,16 @@ class SystemState:
         self.service = False
         self.standBy = False
         self.update = False
+        self.party = False
 
         self.openValve = [False] * 6
         self.releaseCarouselMotor = False
         self.releasePlexiMotor = False
         self.homeCarousel = False
+        self.moveCarousel = False
         self.homePlexi = False
+        self.movePlexi = False
+        self.percentHeight = 0
         self.errorAcknowledgment = False
         self.messErrfromESP32 = False
 
@@ -25,9 +121,7 @@ class SystemState:
         self.restartESP32C3 = [False] * 6
         self.updateESP32 = False
         self.updateESP32C3 = [False] * 6
-        self.disablePosition = [False] * 6
         self.calibratePosition = [False] * 6
-        self.markBottleFilled = [False] * 6
 
     def _parse_index(self, key: str, prefix: str) -> int:
         suffix = key[len(prefix):]
@@ -38,7 +132,8 @@ class SystemState:
             raise ValueError(f"Index out of range in '{key}': {idx} (0..{6-1})")
         return idx
 
-    def set_state(self, **kwargs):
+
+    def set_state_OLD(self, **kwargs):
         self.reset()
 
         for key, value in kwargs.items():
@@ -72,17 +167,9 @@ class SystemState:
                 for i in range(6):
                     self.updateESP32C3[i] = True
 
-            elif key.startswith("disablePosition"):
-                idx = self._parse_index(key, "disablePosition")
-                self.disablePosition[idx] = value
-
             elif key.startswith("calibratePosition"):
                 idx = self._parse_index(key, "calibratePosition")
                 self.calibratePosition[idx] = value
-
-            elif key.startswith("markBottleFilled"):
-                idx = self._parse_index(key, "markBottleFilled")
-                self.markBottleFilled[idx] = value
 
             elif key == "homeCarousel":
                 self.homeCarousel = value
@@ -108,7 +195,8 @@ class SystemState:
                 "chck": self.check,
                 "srvc": self.service,
                 "stnd": self.standBy,
-                "upd": self.update,
+                "updt": self.update,
+                "prty": self.party,
 
                 "opnVlvOnPos0": self.openValve[0],
                 "opnVlvOnPos1": self.openValve[1],
@@ -119,8 +207,11 @@ class SystemState:
 
                 "relsCarMtr": self.releaseCarouselMotor,
                 "relsPlxMtr": self.releasePlexiMotor,
-                "homeCarusel": self.homeCarousel,
+                "homeCarousel": self.homeCarousel,
                 "homePlexi": self.homePlexi,
+                "movePlexi": self.movePlexi,
+                "percentHeight": self.percentHeight,
+                
                 "errAcknow": self.errorAcknowledgment,
                 "messErrfromESP32": self.messErrfromESP32,
 
@@ -140,25 +231,11 @@ class SystemState:
                 "updESP_4": self.updateESP32C3[4],
                 "updESP_5": self.updateESP32C3[5],
 
-                "disblPos_0": self.disablePosition[0],
-                "disblPos_1": self.disablePosition[1],
-                "disblPos_2": self.disablePosition[2],
-                "disblPos_3": self.disablePosition[3],
-                "disblPos_4": self.disablePosition[4],
-                "disblPos_5": self.disablePosition[5],
-
                 "calibPos_0": self.calibratePosition[0],
                 "calibPos_1": self.calibratePosition[1],
                 "calibPos_2": self.calibratePosition[2],
                 "calibPos_3": self.calibratePosition[3],
                 "calibPos_4": self.calibratePosition[4],
                 "calibPos_5": self.calibratePosition[5],
-
-                "markBot_0": self.markBottleFilled[0],
-                "markBot_1": self.markBottleFilled[1],
-                "markBot_2": self.markBottleFilled[2],
-                "markBot_3": self.markBottleFilled[3],
-                "markBot_4": self.markBottleFilled[4],
-                "markBot_5": self.markBottleFilled[5]
             }]
         }

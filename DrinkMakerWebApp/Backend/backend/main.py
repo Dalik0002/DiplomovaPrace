@@ -6,6 +6,7 @@ from fastapi.openapi.docs import get_swagger_ui_html
 
 from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
+from services.uart_service import uart_sender_loop
 import asyncio
 
 from api.endpoints_api import router
@@ -80,6 +81,7 @@ async def custom_swagger_ui_html():
 async def startup_event():
     #asyncio.create_task(uart_listener_loop())
     asyncio.create_task(uart_JSON_listener_loop())
+    asyncio.create_task(uart_sender_loop())
 
 @app.get("/", include_in_schema=False)
 def root_redirect():

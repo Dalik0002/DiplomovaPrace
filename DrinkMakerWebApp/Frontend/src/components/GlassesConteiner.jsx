@@ -27,7 +27,7 @@ function GlassesConteiner() {
 
       <div className="glasses-container-list">
         {isLoading ? (
-          <p>Načítám…</p>
+          <p>Stahování...</p>
         ) : glassesError ? (
           <p className="error-message">Chyba při získávání dat.</p>
         ) : isAllEmpty ? (

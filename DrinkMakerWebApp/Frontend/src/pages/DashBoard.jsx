@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 
 import StateConteiner from '../components/StateConteiner'
 import GlassesConteiner from '../components/GlassesConteiner'
@@ -9,7 +9,7 @@ import { useServiceStatus} from '../hooks/useServiceStatus';
 import { useInputData } from '../hooks/useInputData'
 import { setService } from '../services/stateService'
 
-import { acquireServiceLock } from '../services/lockService';
+import { acquireServiceLock, releaseServiceLock } from '../services/lockService';
 
 import Loading from '../components/LoadingCom'
 import Error from '../components/ErrorCom'
@@ -18,12 +18,13 @@ import './DashBoard.css'
 
 function Dashboard() {
   const navigate = useNavigate()
-  const [status, setStatus] = useState('')
 
   const {
     isLoading: l_state,
     error: err_state,
     isStandBy,
+    isService,
+    refresh: refreshState,
   } = useStateStatus();
 
   const {
@@ -35,31 +36,77 @@ function Dashboard() {
 
   const { totalProblemsCount, processPouringStarted } = useInputData()
 
+  const [pendingServiceNav, setPendingServiceNav] = useState(false)
+  const serviceTimeoutRef = useRef(null)
+
   useEffect(() => {
     if (processPouringStarted) {
       navigate('/pouring');
     }
   }, [processPouringStarted, navigate]);
 
+  useEffect(() => {
+    if (pendingServiceNav && isService) {
+      if (serviceTimeoutRef.current) {
+        clearTimeout(serviceTimeoutRef.current)
+        serviceTimeoutRef.current = null
+      }
+
+      setPendingServiceNav(false)
+      navigate('/service/serviceRemote')
+    }
+  }, [pendingServiceNav, isService, navigate])
+
+  useEffect(() => {
+    return () => {
+      if (serviceTimeoutRef.current) {
+        clearTimeout(serviceTimeoutRef.current)
+        serviceTimeoutRef.current = null
+      }
+    }
+  }, [])
+
   const handleServiceClick = async () => {
-  setStatus("");
+    if (pendingServiceNav) return
 
     try {
       const res = await acquireServiceLock();
-
+      
       if (res.ok) {
         // Lock získán → přechod na servisní stránku
         try {
           await setService()
         } catch (e) {
           console.error("Set service modu selhal", e)
+          try { await releaseServiceLock() } catch {}
+
+          refreshService()
+          alert("Nepodařilo se přepnout do SERVICE.")
+          return 
         }
-        navigate("/service/serviceRemote");
+
+        setPendingServiceNav(true)
+        refreshState()
+
+        if (serviceTimeoutRef.current) clearTimeout(serviceTimeoutRef.current)
+
+        serviceTimeoutRef.current = setTimeout(async () => {
+          serviceTimeoutRef.current = null
+          setPendingServiceNav(false)
+          refreshState()
+
+          try { await releaseServiceLock() } catch {}
+          refreshService()
+
+          alert('Nepodařilo se přepnout do SERVICE (timeout). Zkuste to prosím znovu.')
+        }, 10000)
 
       } else {
         alert("Service je právě obsazený. Zkuste to později.");
         refreshService();
+        return
       }
+
     } catch (err) {
       console.error(err);
       alert("Nepodařilo se ověřit lock servisu. Zkuste to později.");
@@ -67,13 +114,18 @@ function Dashboard() {
     }
   };
 
+  const serviceLabel = err_service
+  ? '⚙️ Servis (Nedostupný)'
+  : pendingServiceNav
+    ? '⚙️ Servis (přepínám...)'
+    : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')
 
-  if (l_state || l_service) return <Loading/>
+  const serviceDisabled = !!err_service || pendingServiceNav || (isBusy && !pendingServiceNav)
+
+
+  //if (l_state || l_service) return <Loading/>
   //if (err_state) return <Error mess={"Chyba při získávání stavu: " + err_state.message}/>
   //if (err_service) return <Error mess={"Chyba služby: " + err_service.message} />
-
-  //if (err_state) setStatus('❌ Chyba při získávání stavu.')
-  //if (err_service) setStatus('❌ Chyba při získávání informace o servisu.')
 
   return (
     <div className="dashboard-container">
@@ -81,9 +133,9 @@ function Dashboard() {
         <h1 className="title">DrinkMaker</h1>
         <div className="nav-buttons">
           <button onClick={() => navigate('/bottles')}>📦 Konfigurace lahví</button>
-          <button onClick={handleServiceClick} disabled={isBusy || err_service}>
-            {err_service ? '⚙️ Servis (Nedostupný)' : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')}
-            {!!totalProblemsCount && !err_service && (
+          <button onClick={handleServiceClick} disabled={serviceDisabled}>
+            {serviceLabel}
+            {!!totalProblemsCount && !err_service && !pendingServiceNav && (
               <span className="service-badge" aria-label={`Počet problémů: ${totalProblemsCount}`}>
                 ! {totalProblemsCount}
               </span>
@@ -91,7 +143,6 @@ function Dashboard() {
           </button>
         </div>
       </div>
-      {status && <p>{status}</p>}
 
       <div className="core-container">
         {/* Levý sloupec*/}

@@ -14,6 +14,10 @@ export function homeCarousel() {
   return apiPost('/service/homeCarousel');
 }
 
+export function moveCarousel() {
+  return apiPost('/service/moveCarousel');
+}
+
 export function releasePlexiMotor() {
   return apiPost('/service/motorPlexiRelease');
 }
@@ -26,9 +30,14 @@ export function homePlexi() {
   return apiPost('/service/homePlexi');
 }
 
+export function movePlexi(percentHeight) {
+  return apiPost('/service/movePlexi', { height: percentHeight});
+}
+
+
 //Valve Control
 export function setValve(id, open) {
-  return apiPost('/service/setValve', { valve_id: id, open });;
+  return apiPost('/service/setValve', { valve_id: id, open });
 }
 
 //Restart ESPs 
@@ -46,15 +55,15 @@ export function restartCarouselESP(position) {
 
 //Update ESPs
 export function updateESP32() {
-  return apiPost('/service/updateESP32');
+  return apiPost('/fw/updateESP32');
 }
 
 export function updateESPs() {
-  return apiPost('/service/updateAllCarouselESPs');
+  return apiPost('/fw/updateAllCarouselESPs');
 }
 
 export function updateCarouselESP(position) {
-  return apiPost('/service/updateCarouselESP', { position });
+  return apiPost('/fw/updateCarouselESP', { position });
 }
 
 //Calibration

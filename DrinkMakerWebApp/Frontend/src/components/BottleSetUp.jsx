@@ -15,16 +15,16 @@ function BottleSetUp() {
     error, 
     isLoading,
     refresh, 
+    isPosDisabled,
     mutate,
   } = useBottles(isEditing);
 
-  const { positionDisabled = [] } = useInputData();
-  const isPosDisabled = (pos) => !!positionDisabled?.[pos];
-
-  // Odvozený seznam 6 pozic (bez lokálního stavu)
   const rows = Array.from({ length: 6 }, (_, i) => {
     const match = data?.find(b => b.position === i);
-    return match ? { position: i, bottle: match.bottle || '' } : { position: i, bottle: '' };
+
+    return match 
+      ? { ...match, position: i, bottle: match.bottle || '' } 
+      : { position: i, bottle: '' };
   });
 
   const handleEdit = () => {
@@ -91,14 +91,14 @@ function BottleSetUp() {
                   {/* LOGIKA PRO EDIT MOD */}
                   {isEditing ? (
                     disabled ? (
-                      /* ✅ Zakázané stanoviště v EDIT módu - roztažené na střed */
+                      /* ✅ Zakázané lahve v EDIT módu - roztažené na střed */
                       <div className="disabled-full-width">
-                        Stanoviště {position + 1} je zakázáno
+                        Láhev {position + 1} je zakázána
                       </div>
                     ) : (
-                      /* ✅ Normální stanoviště v EDIT módu */
+                      /* ✅ Normální lahve v EDIT módu */
                       <>
-                        <label className="bottle-pos">Stanoviště {position + 1}:</label>
+                        <label className="bottle-pos">Láhev {position + 1}:</label>
                         <input
                           type="text"
                           value={bottle}
@@ -121,9 +121,9 @@ function BottleSetUp() {
                   ) : (
                     /* LOGIKA PRO VIEW MOD (Beze změny) */
                     <>
-                      <label className="bottle-pos">Stanoviště {position + 1}:</label>
+                      <label className="bottle-pos">Láhev {position + 1}:</label>
                       {disabled ? (
-                        <i className="disabled-tag">– ZAKÁZÁNO –</i>
+                        <i className="disabled-tag">– ZAKÁZÁNA –</i>
                       ) : (
                         <span className="bottle-name">
                           {bottle || <i style={{ color: '#888' }}>– nezadáno –</i>}

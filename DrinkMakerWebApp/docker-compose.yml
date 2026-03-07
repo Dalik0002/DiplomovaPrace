@@ -11,8 +11,10 @@ services:
       - ./Backend/.env
     environment:
       - FIRMWARE_STORE_DIR=/data/firmware_store
+      - APP_DATA_DIR=/app/data
     volumes:
       - ./firmware_store:/data/firmware_store
+      - drinkmaker_data:/app/data
 
     restart: unless-stopped
     healthcheck:
@@ -31,3 +33,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+    
+volumes:
+  drinkmaker_data:

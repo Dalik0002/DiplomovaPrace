@@ -20,6 +20,15 @@ async def pour_start(background: BackgroundTasks):
         return {"status": "started"}
     except PourError as e:
         raise HTTPException(status_code=409, detail={"stage": e.stage, "msg": str(e), "snapshot": e.snapshot})
+    
+@router_pouring.get("/pour/status")
+async def get_pour_status():
+    # service je instance PouringProcessService
+    return {
+        "running": service.running(),
+        "stage": getattr(service, 'current_stage', 'IDLE'),
+        "message": getattr(service, 'last_message', ''),
+    }
 
 
 @router_pouring.post("/pour/cancel")

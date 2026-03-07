@@ -21,6 +21,13 @@ class BottleAssignment(BaseModel):
     position: int
     bottle: str
 
+
+class BottleStatus(BaseModel):
+    position: int
+    bottle: str
+    disabled: bool = False
+    empty_bottle: bool = False
+
 class DrinkName(BaseModel):
     name: str
     position: int
@@ -29,6 +36,12 @@ class ChoosedDrink(BaseModel):
     name: str
     position: int
 
+class ESPPosition(BaseModel):
+    position: int
+
+# MOTOR
+class HeightPlexi(BaseModel):
+    height: conint(ge=0, le=100)
 
 # SERVICE
 class ValveID(BaseModel):

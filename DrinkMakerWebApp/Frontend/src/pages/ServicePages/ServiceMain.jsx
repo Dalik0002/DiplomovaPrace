@@ -1,16 +1,16 @@
 // src/pages/service/ServiceMain.jsx
-import { useNavigate, Outlet } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useNavigate, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 
 import { heartbeatServiceLock, releaseServiceLock } from '../../services/lockService'
 import { resetService } from '../../services/stateService'
 import { useInputData } from '../../hooks/useInputData'
+import { useStateStatus } from '../../hooks/useStateData'
 import './service.css'
-import { setService } from '../../services/stateService'
 
 function ServiceMain() {
   const navigate = useNavigate()
-  const [buttonState, setButtonState] = useState(false)
+  const location = useLocation() // Pro zjištění, kde zrovna jsme
 
   const {
     totalProblemsCount = 0,
@@ -18,16 +18,49 @@ function ServiceMain() {
     isLoading: inputLoading,
   } = useInputData()
 
+  const {
+    isService,
+    error: stateErr,
+    isLoading: stateLoading,
+    refresh: refreshState,
+  } = useStateStatus()
+
+  const notServiceStreakRef = useRef(0)
+
+  // Zjistíme aktivní sekci podle URL adresy
+  const isStationsActive = location.pathname.includes('serviceStations')
+
+  useEffect(() => {
+    if (stateLoading) return
+    if (stateErr) return
+    if (isService) {
+      notServiceStreakRef.current = 0
+      return
+    }
+
+    notServiceStreakRef.current += 1
+
+    if (notServiceStreakRef.current < 2) return
+
+    const kick = async () => {
+      try { await releaseServiceLock() } catch (e) { console.error('Release při kicku selhal', e) }
+      try { await resetService() } catch (e) { console.error('Reset service modu při kicku selhal', e) }
+      navigate('/')
+    }
+
+    kick()
+  }, [isService, stateLoading, stateErr, navigate])
+
+
   useEffect(() => {
     let alive = true
 
     const tick = async () => {
       try {
-        // nový heartbeat na REST /lock/heartbeat/service
         await heartbeatServiceLock()
+        refreshState()
       } catch (err) {
         console.error("Heartbeat selhal", err)
-        // Heartbeat selhal -> pokus o release a kopnout uživatele pryč
         try {
           await releaseServiceLock()
         } catch (e) {
@@ -44,37 +77,14 @@ function ServiceMain() {
       }
     }
 
-    // první heartbeat hned po mountu
     tick()
-    // interval musí být kratší než TTL locku na backendu
-    const interval = setInterval(tick, 5000) // např. TTL = 15s → HB = 5s
-
-    // release při zavření/odchodu (best-effort)
-    const sendReleaseKeepalive = () => {
-      try {
-        releaseServiceLock().catch(() => {})
-      } catch {}
-    }
-
-    // „Zpět/Vpřed“ v historii prohlížeče
-    const onPopState = () => {
-      releaseServiceLock().catch(() => {})
-    }
-
-    //window.addEventListener('beforeunload', sendReleaseKeepalive)
-    //window.addEventListener('pagehide', sendReleaseKeepalive)
-    //window.addEventListener('popstate', onPopState)
+    const interval = setInterval(tick, 5000)
 
     return () => {
       alive = false
       clearInterval(interval)
-      // při unmountu uvolnit lock (když to stihneme)
-      //releaseServiceLock().catch(() => {})
-      //window.removeEventListener('beforeunload', sendReleaseKeepalive)
-      //window.removeEventListener('pagehide', sendReleaseKeepalive)
-      //window.removeEventListener('popstate', onPopState)
     }
-  }, [navigate])
+  }, [navigate, refreshState])
 
 
   const onBackClick = async () => {
@@ -91,26 +101,24 @@ function ServiceMain() {
     navigate('/')
   }
 
-  const onButtonClick = () => {
-    const next = !buttonState
-    setButtonState(next)
-    if (next) {
-      navigate('/service/serviceStations')
-    } else {
-      navigate('/service/serviceRemote')
-    }
-  }
-
-  const showStationsBadge = !buttonState && !inputLoading && !inputErr && totalProblemsCount > 0
-
-//{buttonState ? <>Servisní<br />obrazovka</> : <>Jednotlivá<br />stanoviště</>}
+  const showStationsBadge = !isStationsActive && !inputLoading && !inputErr && totalProblemsCount > 0
 
   return (
     <div className="pages-centered-page">
-      <div className="nav-buttons">
-        <button className="back-button" onClick={onBackClick}>Zpět</button>
-        <button className="icon-btn" onClick={onButtonClick}>
-          {buttonState ? 'Servisní obrazovka' : 'Jednotlivá stanoviště'}
+      <button className="back-button" onClick={onBackClick}>Zpět</button>
+      <div className="service-top-nav">
+        <button
+          className={`service-nav-btn ${!isStationsActive ? 'is-active' : ''}`}
+          onClick={() => navigate('/service/serviceRemote')}
+        >
+          Servisní obrazovka
+        </button>
+        
+        <button
+          className={`service-nav-btn ${isStationsActive ? 'is-active' : ''}`}
+          onClick={() => navigate('/service/serviceStations')}
+        >
+          Jednotlivá stanoviště
           {showStationsBadge && (
             <span
               className="service-badge"
@@ -123,7 +131,7 @@ function ServiceMain() {
         </button>
       </div>
 
-      <div>
+      <div style={{ width: '100%' }}>
         <Outlet />
       </div>
     </div>

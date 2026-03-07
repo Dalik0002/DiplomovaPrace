@@ -72,6 +72,8 @@ function StateConteiner() {
       return "state-service"; 
     case "UPDATING":
       return "state-updating";
+    case "PARTY":
+      return "state-party";
     default:
       return "state-unknown"; 
   }
@@ -82,7 +84,9 @@ function StateConteiner() {
       {l_state ? (
         <p>Stahování...</p>
       ) : err_state ? (
-        <p className="error-message">{err_state.message}</p>
+        <div className="error-container">
+          <p className="error-message">Chyba při získávání dat.</p>
+        </div>
       ) : (
         <div className="state-info">
           {isNone ? (
