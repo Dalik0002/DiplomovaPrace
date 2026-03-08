@@ -1,60 +1,216 @@
-.review-glasses-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 sloupce */
-  gap: 1rem;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Karty sklenic */
-.review-glass-card {
-  background: #3c1a3c; /* tmavý fialový podklad (můžeš změnit) */
-  border-radius: 1rem;
+.orderreview-page {
+  min-height: 100vh;
+  background: #28092b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 1rem;
+  box-sizing: border-box;
+}
+
+.orderreview-shell {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-button {
+  align-self: center;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
   color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.15s ease;
 }
 
-.review-glass-card:hover {
-  transform: scale(1.02);
+.back-button:hover {
+  background: rgba(255,255,255,0.2);
 }
 
-.review-glass-header {
-  margin-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-  padding-bottom: 0.5rem;
+.orderreview-card {
+  width: 100%;
+  background: #3b1b4b;
+  border-radius: 1rem;
+  padding: 0.85rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
-.review-glass-title {
+.orderreview-title {
   margin: 0;
-  font-size: 1.2rem;
-  font-weight: bold;
+  text-align: center;
+  font-size: 1.35rem;
 }
 
-.review-ing-list {
-  list-style: none;
-  padding: 0;
-  margin: 0.5rem 0 0 0;
+.orderreview-status,
+.orderreview-info {
+  margin: 0;
+  text-align: center;
+}
+
+.orderreview-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem;
+}
+
+.orderreview-item {
+  width: 100%;
+  height: 100%;
+  padding: 0.6rem;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-left: 4px solid rgba(255,255,255,0.15); /* přidané */
+  background: #34153f;
+  border-radius: 0.9rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.orderreview-item.filled {
+  border-left: 4px solid #18ce61;
+}
+
+.orderreview-item-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.orderreview-item-head h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.25);
+  padding-bottom: 2px;
+  width: fit-content;
+}
+
+.orderreview-ing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.orderreview-ing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
   font-size: 0.95rem;
 }
 
-.review-confirm-row {
-  margin-top: 2rem;
-  display: flex;
-  justify-content: center;
+.orderreview-ing-row strong {
+  white-space: nowrap;
 }
 
-.review-empty {
+.orderreview-empty {
+  margin: 0;
   opacity: 0.7;
   font-style: italic;
 }
 
+.orderreview-actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 0.25rem;
+}
 
-/* 📱 Mobile responsive */
-@media (max-width: 768px) {
-  .review-glasses-grid {
-    grid-template-columns: 1fr; /* 1 sloupec */
+.start-button {
+  width: 100%;
+  border: none;
+  border-radius: 0.85rem;
+  padding: 0.9rem 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-sizing: border-box;
+  background: #b0a000;
+  color: white;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #c4b300;
+}
+
+.start-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+
+  .orderreview-card {
+    padding: 0.8rem;
+    gap: 0.6rem;
+  }
+
+  .orderreview-title {
+    font-size: 1.15rem;
+  }
+
+  .orderreview-list {
+    gap: 0.5rem;
+  }
+
+  .orderreview-item {
+    padding: 0.55rem;
+    gap: 0.35rem;
+  }
+
+  .orderreview-item-head h3 {
+    font-size: 0.85rem;
+  }
+
+  .orderreview-badge {
+    font-size: 0.65rem;
+    padding: 0.18rem 0.4rem;
+  }
+
+  .orderreview-ing-list {
+    gap: 0.25rem;
+  }
+
+  .orderreview-ing-row {
+    font-size: 0.8rem;
+  }
+
+  .orderreview-empty {
+    font-size: 0.8rem;
+  }
+
+  .start-button {
+    padding: 0.75rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .back-button {
+    font-size: 0.8rem;
+    padding: 0.45rem 0.7rem;
+  }
+
+}
+
+@media (min-width: 900px) {
+  .orderreview-shell {
+    max-width: 900px;
+  }
+
+  .orderreview-list {
+    grid-template-columns: repeat(3, 1fr);
   }
 }

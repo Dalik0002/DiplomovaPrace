@@ -93,7 +93,6 @@ function StateConteiner() {
             <p>ZAŘÍZENÍ NEDOSTUPNÉ</p>
           ) : (
             <>
-              <h2 className="state-title">AKTUALNÍ REŽIM</h2>
               <p>{state.data}</p>
               {isStop ? (
                 <button className="stop-button" onClick={openConfirmKvit}>

@@ -3,7 +3,6 @@ from typing import List, Optional
 
 # GLASSES
 class Glass(BaseModel):
-    name: str
     ingredients: List[str]
     volumes: List[int]
 
@@ -13,14 +12,12 @@ class GlassAtPosition(BaseModel):
 
 class DeleteGlassPayload(BaseModel):
     position: conint(ge=0, le=5)
-    name: Optional[str] = None
 
 
 # BOTTLES
 class BottleAssignment(BaseModel):
     position: int
     bottle: str
-
 
 class BottleStatus(BaseModel):
     position: int

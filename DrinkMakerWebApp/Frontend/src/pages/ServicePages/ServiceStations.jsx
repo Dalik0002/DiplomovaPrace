@@ -182,7 +182,7 @@ function ServiceStations() {
               type="button"
               disabled={isLoading}
             >
-              {isDisabled ? 'Povolit stanoviště' : 'Zakázat stanoviště'}
+              {isDisabled ? 'Povolit láhev' : 'Zakázat láhev'}
             </button>
 
             <button

@@ -44,20 +44,14 @@ def get_number_of_drinks() -> int:
     return sum(1 for g in glass_glasses if g is not None)
 
 
-def delete_glass(name: str, position: int) -> bool:
+def delete_glass(position: int) -> bool:
     """
-    Smaže sklenici na dané pozici. Pokud je na pozici jiné jméno,
-    smaže i tak (API předává jméno jen informativně).
+    Smaže sklenici na dané pozici.
     Vrací True, pokud na pozici něco bylo a bylo smazáno.
     """
     p = _check_pos(position)
     if glass_glasses[p] is None:
-        # už prázdné
         return False
-
-    # Volitelně můžeš hlídat shodu jména:
-    # if glass_glasses[p].name != name:
-    #     return False
 
     glass_glasses[p] = None
     return True

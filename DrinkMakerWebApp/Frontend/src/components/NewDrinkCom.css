@@ -1,117 +1,143 @@
-.ingredients-container {
-  padding: 0.5rem;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  justify-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  margin: 0 auto;
+.newdrink-page {
+  min-height: 100vh;
+  background: #28092b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
   box-sizing: border-box;
 }
 
-@media (max-width: 600px) {
-  .ingredients-container {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-    padding: 0.25rem;
-  }
+.newdrink-card {
+  width: 100%;
+  max-width: 430px;
+  background: #3b1b4b;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }
 
-@media (min-width: 601px) and (max-width: 900px) {
-  .ingredients-container {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.newdrink-title {
+  margin: 0;
+  text-align: center;
+  font-size: 1.35rem;
+}
+
+.selected-station-box {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  border: 2px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  color: #ffffff;
+  font-weight: 800;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.newdrink-status,
+.newdrink-info {
+  margin: 0;
+  text-align: center;
+}
+
+.ingredients-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.7rem;
+  width: 100%;
 }
 
 .ingredient-item {
   display: flex;
-  justify-content: center;
-  padding: 0.6rem 0.75rem;
-  align-items: center;
   flex-direction: column;
+  gap: 0.45rem;
   width: 100%;
-  gap: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: #3c1a3c;
-  border-radius: 1rem;
+  padding: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #34153f;
+  border-radius: 0.9rem;
   color: white;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: transform 0.2s ease;
-  min-width: 0;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.22);
   box-sizing: border-box;
 }
 
-.ingredient-item:hover {
-  transform: scale(1.02);
+.ingredient-item p {
+  margin: 0;
+  text-align: center;
 }
 
-/* select pro výběr ingredience */
-.ingredient-select {
-  width: 100%;
-  max-width: 220px;
-  min-width: 0;
+.input-field,
+.ingredient-select,
+.ingredient-item select {
+  width: 100% !important;
+  max-width: none !important;
   box-sizing: border-box;
 }
 
-/* číselný vstup pro objem */
 .ingredient-volume {
   width: 90px;
   box-sizing: border-box;
   text-align: center;
 }
 
-/* název drinku */
-.drink-name-input {
+.volume-summary {
+  text-align: center;
+  font-weight: 800;
+  color: #fff;
+}
+
+.button-row {
+  display: flex;
+  gap: 0.7rem;
   width: 100%;
-  max-width: 200px;
+}
+
+.compact-actions button {
+  flex: 1;
+}
+
+.secondary-button,
+.add-button {
+  width: 100%;
+  border: none;
+  border-radius: 0.85rem;
+  padding: 0.85rem 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
   box-sizing: border-box;
 }
 
-/* 6 čtverečků pro výběr pozice – fluid, nepřetéká */
-.pos-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  width: 100%;
-  max-width: 340px;
+.secondary-button {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.12);
 }
 
-/* základ */
-.pos-tile {
-  aspect-ratio: 1;
-  min-width: 0;
-  border-radius: 10px;
-  border: 2px solid rgba(255,255,255,0.35);
-  background: transparent;
-  color: inherit;
-  font-weight: 900;
-  cursor: pointer;
-  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+.add-button {
+  background: #b0a000;
+  color: white;
 }
 
-.pos-tile:hover:not(:disabled) {
-  transform: translateY(-1px);
-  border-color: rgba(255,255,255,0.75);
-}
-
-/* vybraná */
-.pos-tile.is-active {
-  border-color: rgba(255,255,255,0.95);
-  box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
-  background-color: rgb(149, 41, 138);
-  color: rgb(255, 255, 255);
-}
-
-/* obsazená sklenice = zelená */
-.pos-tile.is-occupied {
-  background: rgba(0, 200, 0, 0.22);
-  border-color: rgba(0, 200, 0, 0.75);
-  color: rgba(180, 255, 180, 0.95);
-}
-
-/* neklikatelné */
-.pos-tile:disabled {
-  opacity: 0.7;
+.secondary-button:disabled,
+.add-button:disabled {
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
+.loading-block {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+@media (min-width: 700px) {
+  .ingredients-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}

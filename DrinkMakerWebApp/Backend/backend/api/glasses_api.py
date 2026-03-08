@@ -28,7 +28,7 @@ def add_glass(payload: GlassAtPosition):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     
-    print(f"[GLASS] Přidání sklenice '{payload.glass.name}' na pozici: {payload.position}")
+    print(f"[GLASS] Přidání sklenice na pozici: {payload.position}")
     return {"status": "ok", "message": "Sklenice uložena", "position": payload.position}
 
 @router_glasses.post("/deleteAllGlasses")
@@ -40,7 +40,7 @@ def delete_full_glasses():
 @router_glasses.post("/deleteGlassOnPosition")
 def delete_item_from_glasses(payload: DeleteGlassPayload):
     try:
-        deleted = glasses_service.delete_glass(payload.name or "", payload.position)
+        deleted = glasses_service.delete_glass(payload.position)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

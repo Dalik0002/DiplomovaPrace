@@ -9,5 +9,5 @@ export function addGlass(glass) {
 }
 
 export function deleteGlass(position) {
-  return apiPost('/glasses/deleteGlassOnPosition', position );
+  return apiPost('/glasses/deleteGlassOnPosition', { position })
 }

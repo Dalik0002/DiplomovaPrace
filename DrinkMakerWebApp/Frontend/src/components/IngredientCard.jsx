@@ -19,7 +19,7 @@ function IngredientCard({ index, value, onChange, available, disabled, currentTo
 
   return (
     <div className={`ingredient-item ${!value.ingredient ? 'empty' : ''}`}>
-      <p><strong>Ingredience {index + 1}</strong></p>
+      <p><strong>Ingredience</strong></p>
       <select
         value={value.ingredient}
         onChange={handleSelect}
@@ -47,7 +47,7 @@ function IngredientCard({ index, value, onChange, available, disabled, currentTo
         <span style={{ 
           minWidth: '55px', 
           fontWeight: 'bold', 
-          color: value.ingredient ? '#00ffcc' : '#888',
+          color: value.ingredient ? '#ffffff' : '#888',
           fontSize: '1.1rem'
         }}>
           {value.volume} ml
