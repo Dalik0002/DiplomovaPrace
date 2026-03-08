@@ -132,6 +132,7 @@ async def uart_JSON_listener_loop():
 send_queue = asyncio.Queue()
 
 async def uart_sender_loop():
+    global last_sent_json, last_sent_raw
     while True:
         data = await send_queue.get()
         if not ser:
@@ -141,6 +142,15 @@ async def uart_sender_loop():
         try:
             ser.write(data.encode("utf-8"))
             print(f"[UART SENDING] Odesláno", data.strip())
+
+            if data.startswith("<JSON>"):
+                raw = data[len("<JSON>"):data.find("</JSON>")]
+                last_sent_json = json.loads(raw)
+                last_sent_raw = None
+            else:
+                last_sent_raw = data.strip()
+                last_sent_json = None
+
             await asyncio.sleep(0.05) 
         except Exception as e:
              print(f"[UART SENDING ERROR] Chyba při odesílání: {e}")
@@ -148,17 +158,11 @@ async def uart_sender_loop():
             send_queue.task_done()    
 
 def send_json(json_obj):
-    global last_sent_json
-    last_sent_json = json_obj
     data = "<JSON>" + json.dumps(json_obj) + "</JSON>\n"
-    # Místo ser.write dáme do fronty
     asyncio.create_task(send_queue.put(data))
     print(f"[UART → QUEUED] {json.dumps(json_obj)}")
 
 
 def send_uart_command(msg: str):
-    global last_sent_raw
-    last_sent_raw = msg
-    # Přidáme do stejné fronty jako JSONy
     asyncio.create_task(send_queue.put(msg + '\n'))
     print(f"[UART → QUEUED RAW] {msg}")

@@ -21,6 +21,8 @@ function NewDrinkCom() {
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
 
+  const MAX_TOTAL_ML = 200;
+
   const {
     isLoading,
     error,
@@ -41,6 +43,9 @@ function NewDrinkCom() {
   } = useFreePosition() || {}
 
   const [position, setPosition] = useState(null)
+
+  const currentTotalVolume = items.reduce((sum, it) => sum + (Number(it.volume) || 0), 0);
+
 
   const updateItem = (idx, newVal) => {
     setItems(prev => prev.map((it, i) => (i === idx ? newVal : it)))
@@ -216,10 +221,17 @@ function NewDrinkCom() {
                 onChange={updateItem}
                 available={availableIngredients}
                 disabled={saving}
+                // Předáme tyto dvě hodnoty pro hlídání limitu
+                currentTotal={currentTotalVolume}
+                MAX_TOTAL={MAX_TOTAL_ML}
               />
             ))}
           </div>
-
+              
+          <div style={{ marginTop: '10px', fontWeight: 'bold', color: '#fff' }}>
+            Využito: {currentTotalVolume} / {MAX_TOTAL_ML} ml
+          </div>
+          
           <div className="button-row">
             <button
               className="secondary-button"
