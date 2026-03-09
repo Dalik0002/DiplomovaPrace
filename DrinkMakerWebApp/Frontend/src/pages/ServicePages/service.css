@@ -10,6 +10,32 @@
   gap: 1rem;
   height: fit-content;
   justify-content: center;
+
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.service-page-frame {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 700px) {
+  .service-page-frame {
+    border: 2px solid #533761;
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+.service-page-content {
+  width: 100%;
 }
 
 .service-container-title {
@@ -27,6 +53,7 @@
 .service-btn {
   width: 100%;
   color: rgb(255, 255, 255);
+  background-color: #1a1a1a;
   padding: 0.6rem 0.8rem;
   border-radius: 0.6rem;
   transition: transform 0.2s, background 0.2s;
@@ -84,7 +111,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   width: 100%;
-  margin-bottom: 1rem;
 }
 
 .service-nav-btn {
@@ -135,16 +161,23 @@
 /* --- KOMPONENTA: STATIONS (Jednotlivá stanoviště) --- */
 .stations-tabs {
   display: grid;
-  grid-template-columns: repeat(6, 48px);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 10px;
-  justify-content: center;
-  margin-bottom: 18px;
+  width: 100%;
+  margin-top: 1rem;
+  align-items: stretch;
 }
 
 .stations-tab {
   position: relative;
-  width: 48px;
-  height: 48px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   border-radius: 10px;
   border: 2px solid rgba(255,255,255,0.35);
   background: transparent;
@@ -152,6 +185,7 @@
   font-weight: 800;
   cursor: pointer;
   transition: all 0.15s ease;
+  text-align: center;
 }
 
 .stations-tab.is-active {
@@ -369,7 +403,7 @@
   .circle-node {
     width: 60px;
     height: 60px;
-    left: calc(50% + cos(var(--angle)) * 110px - 30px);
+    left: calc(50% + cos(var(--angle)) * 110px -30px);
     top: calc(50% + sin(var(--angle)) * 110px - 30px);
   }
 }

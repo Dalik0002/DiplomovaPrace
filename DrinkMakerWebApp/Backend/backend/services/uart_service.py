@@ -112,10 +112,13 @@ async def uart_JSON_listener_loop():
                         system_state.set_state(messErrfromESP32=True)
                         send_json(system_state.to_info_json())
                         print("[UART STATE ERROR] Neplatný JSON:", json_str)
-
+                
             if time.time() - last_state_time > 10:
-                print("[UART STATE TIMEOUT] Žádný STATE >10s")
-                input_state.reset_mode()
+                if not input_state.simulation_mode_active:
+                    print("[UART STATE TIMEOUT] Žádný STATE >10s")
+                    input_state.reset_mode()
+                else:
+                    print("[UART STATE TIMEOUT] Simulace módu aktivní -> reset_mode přeskočen")
                 last_state_time = time.time()
 
         except Exception as e:

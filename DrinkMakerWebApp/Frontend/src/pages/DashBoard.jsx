@@ -120,10 +120,10 @@ function Dashboard() {
   }
 
   const serviceLabel = err_service
-    ? '⚙️ Servis (Nedostupný)'
+    ? '⚙️ (Nedostupné)'
     : pendingServiceNav
-      ? '⚙️ Servis (přepínám...)'
-      : (isBusy ? '⚙️ Servis (obsazeno)' : '⚙️ Servis')
+      ? '⚙️ (Přepínám...)'
+      : (isBusy ? '⚙️ (Obsazeno)' : '⚙️ Servis')
 
   const serviceDisabled = !!err_service || pendingServiceNav || (isBusy && !pendingServiceNav)
 

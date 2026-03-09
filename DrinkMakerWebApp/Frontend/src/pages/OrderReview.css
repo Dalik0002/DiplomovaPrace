@@ -50,7 +50,8 @@
 .orderreview-title {
   margin: 0;
   text-align: center;
-  font-size: 1.35rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .orderreview-status,
@@ -129,29 +130,6 @@
   margin-top: 0.25rem;
 }
 
-.start-button {
-  width: 100%;
-  border: none;
-  border-radius: 0.85rem;
-  padding: 0.9rem 1rem;
-  font-weight: 800;
-  cursor: pointer;
-  box-sizing: border-box;
-  background: #b0a000;
-  color: white;
-  font-size: 0.95rem;
-  text-transform: uppercase;
-}
-
-.start-button:hover:not(:disabled) {
-  background: #c4b300;
-}
-
-.start-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 @media (max-width: 480px) {
 
   .orderreview-card {
@@ -160,7 +138,7 @@
   }
 
   .orderreview-title {
-    font-size: 1.15rem;
+    font-size: 1.5rem;
   }
 
   .orderreview-list {

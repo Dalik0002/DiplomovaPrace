@@ -80,7 +80,7 @@ function BottleSetUp() {
       ) : error ? (
         <p>❌ Nepodařilo se načíst data z backendu</p>
       ) : (
-<>
+        <>
           <div className={`bottle-list ${!isEditing ? 'read-only' : ''}`}>
             {rows.map(({ position, bottle }) => {
               const disabled = isPosDisabled(position);

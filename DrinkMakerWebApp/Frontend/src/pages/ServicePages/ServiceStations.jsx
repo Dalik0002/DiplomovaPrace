@@ -107,8 +107,7 @@ function ServiceStations() {
   return (
     <div className="pages-centered-page">
       <div className="service-container">
-
-        {/* TOP: 6 čtverečků */}
+        
         <div className="stations-tabs" role="tablist" aria-label="Výběr stanoviště">
           {Array.from({ length: 6 }, (_, i) => {
             const active = i === selected
@@ -134,8 +133,6 @@ function ServiceStations() {
                 disabled={isLoading}
               >
                 {i + 1}
-
-                {/* malý badge s počtem problémů */}
                 {hasProblem && (
                   <span className="tab-badge" aria-hidden="true">
                     {n}
@@ -152,11 +149,8 @@ function ServiceStations() {
           </div>
         )}
 
-        {/* 4 možnosti pro vybrané stanoviště */}
         <div className="service-container">
           <h2 className="service-container-title">Stanoviště {selected + 1}</h2>
-
-          {/* ✅ KONKRÉTNÍ VÝPIS PROBLÉMŮ PRO VYBRANÉ STANOVIŠTĚ */}
           <div className={`station-status ${selectedHasProblem ? 'has-problem' : 'ok'}`}>
             {selectedHasProblem ? (
               <>
@@ -173,8 +167,6 @@ function ServiceStations() {
           </div>
 
           <div className="service-column">
-
-            {/* 1. Zakázat / Povolit */}
             <button
               className={`service-btn ${isDisabled ? 'is-on' : ''}`}
               aria-pressed={isDisabled}

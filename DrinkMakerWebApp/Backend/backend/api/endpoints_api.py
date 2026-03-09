@@ -40,7 +40,6 @@ def get_state():
 
 @router.get("/var/inputState")
 def get_input_state():
-    # Vracíme JSON obohacený o data pro frontend
     response = input_state.to_dict()
     response.update({
         "position_disabled": bottles_state.disabled,
@@ -82,13 +81,11 @@ def simulate_input_state(payload: dict):
     }
     """
     
-    # 1. Uložíme stav prázdných lahví ROVNOU do bottles_state (hlavní paměť RPI)
     if "empty_bottle" in payload:
         for i, is_empty in enumerate(payload["empty_bottle"]):
             if i < 6:
                 bottles_state.empty_bottle[i] = is_empty
 
-    # 2. Pak řešíme position_disabled
     if "position_disabled" in payload:
         for i, is_disabled in enumerate(payload["position_disabled"]):
             if i < 6:
@@ -98,10 +95,8 @@ def simulate_input_state(payload: dict):
                 else:
                     bottles_state.enable_position(i)
 
-    # 2. Zbytek nasimulujeme klasicky do input_state (zabezpečeno přes hasattr)
     input_state.simulate(payload)
     
-    # 3. Vrátíme spojený výsledek
     merged_state = build_merged_input_state()
     
     return {
@@ -173,15 +168,36 @@ async def reset_party_mod():
 ## Simulation Endpoints
 @router.post("/sim/setStateToStandBy")
 def set_state_to_standby():
-    print(f"[ENDPOINT] Nastaven stav zařízení na STANDBY")
-    return {"status": "ok", "data": input_state.set_standby_mode()}
+    input_state.enable_mode_simulation()
+    input_state.set_standby_mode()
+    print("[ENDPOINT] Nastaven stav zařízení na STANDBY (simulace)")
+    return {
+        "status": "ok",
+        "message": "Simulovaný STAND BY aktivován",
+        "mode": input_state.mode_return(),
+        "simulation_mode_active": input_state.simulation_mode_active,
+    }
 
 @router.post("/sim/setStateToService")
 def set_state_to_service():
-    print(f"[ENDPOINT] Nastavení servisního módu")
-    return {"status": "ok", "data": input_state.set_service_mode()}
+    input_state.enable_mode_simulation()
+    input_state.set_service_mode()
+    print("[ENDPOINT] Nastaven stav zařízení na SERVICE (simulace)")
+    return {
+        "status": "ok",
+        "message": "Simulovaný SERVICE aktivován",
+        "mode": input_state.mode_return(),
+        "simulation_mode_active": input_state.simulation_mode_active,
+    }
 
 @router.post("/sim/resetState")
 def reset_state():
-    print(f"[ENDPOINT] Restartovan stav zařízení zpět na none")
-    return {"status": "ok", "data": input_state.reset_mode()}
+    input_state.disable_mode_simulation()
+    input_state.reset_mode()
+    print("[ENDPOINT] Simulace módu vypnuta, stav vrácen na none")
+    return {
+        "status": "ok",
+        "message": "Simulace módu vypnuta",
+        "mode": input_state.mode_return(),
+        "simulation_mode_active": input_state.simulation_mode_active,
+    }

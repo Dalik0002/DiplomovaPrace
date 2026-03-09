@@ -15,6 +15,8 @@ class InputState:
             7: "PARTYMODE"
         }
 
+        self.simulation_mode_active = False
+
     def reset(self):
         self.position_check = [False] * 6
         self.glass_done = [False] * 6
@@ -34,6 +36,12 @@ class InputState:
     
     def reset_mode(self):
         self.current_mode = None
+
+    def enable_mode_simulation(self):
+        self.simulation_mode_active = True
+
+    def disable_mode_simulation(self):
+        self.simulation_mode_active = False
     
     def mess_error_rising_edge(self) -> bool:
         rising = (not self._prev_mess_error) and bool(self.mess_error)

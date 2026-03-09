@@ -3,21 +3,21 @@
   display: grid;
   color: #fff;
   height: 100vh;
-  border: #d0ff00 2px dashed;
+  /*border: #d0ff00 1px dashed;*/
   width: 100%;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Omezení pro mobilní telefony */
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .app-shell {
-    max-width: 390px;
-    max-height: 840px;
+    max-width: 350px;
+    max-height: 790px;
     margin: 0;
     border-width: 1px;
   }
 }
-
 
 .loader {
   display: flex;
@@ -25,7 +25,7 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  border: #ffffff 2px dashed;
+  /*border: #ffffff 2px dashed;*/
 }
 
 .logo-static {
@@ -43,7 +43,7 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid white;
+  /*border: 4px solid white;*/
   border-top: 4px solid rgb(255, 176, 250);
   border-radius: 100%;
   animation: spin 1s linear infinite;

@@ -16,9 +16,16 @@
 .nav-buttons {
   display: flex;
   gap: 0.5rem;
-  width: 100%; /* Vyplní šířku žlutého rámečku */
-  box-sizing: border-box; /* Započítá padding do šířky */
-  border: #08b335 2px dashed;
+  width: 100%;
+  box-sizing: border-box; 
+  /*border: #08b335 2px dashed;*/
+}
+
+.nav-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .nav-buttons button {
@@ -27,9 +34,7 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-
   white-space: nowrap;
-
   align-self: stretch;
   padding: 0.5rem 1rem;
   background: #aa44cc;
@@ -43,6 +48,12 @@
 .nav-buttons button:hover {
   background: #cc66ee;
   transform: scale(1.05);
+}
+
+.nav-buttons button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .add-button {
@@ -62,33 +73,32 @@
   transform: scale(1.05);
 }
 
+
 .start-button {
-  font-size: 1rem;
-  padding: 0.8rem 2rem;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
+  width: 100%;
+  color: rgb(255, 255, 255);
+  padding: 0.85rem 0.8rem;
+  border-radius: 0.8rem;
+  transition: transform 0.2s, background 0.2s;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
-  transition: transform 0.2s;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: #4caf50;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #c4b300;
+  transform: scale(1.02);
 }
 
 .start-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
   background: #444;
-  cursor: not-allowed;
 }
-
-.start-button:hover {
-  transform: scale(1.05);
-}
-
-.start-button:disabled {
-  background-color: #ccc;
-  color: #666;
-  cursor: not-allowed;
-}
-
 
 .stop-button {
   font-size: 1rem;

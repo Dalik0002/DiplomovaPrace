@@ -5,7 +5,7 @@
   align-items: center;
   text-align: center;
   border-radius: 0.75rem;
-  border: #ff00b7 2px dashed;
+  /*border: #ff00b7 2px dashed;*/
   gap: 1rem;
 }
 
@@ -18,7 +18,18 @@
   text-align: center;
   padding: 1rem;
   border-radius: 0.75rem;
-  border: #44ff00 2px dashed;
+  /*border: #44ff00 2px dashed;*/
+}
+
+.centered-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: #533761 2px solid;
 }
 
 .error-message {

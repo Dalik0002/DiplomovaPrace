@@ -105,34 +105,36 @@ function ServiceMain() {
 
   return (
     <div className="pages-centered-page">
-      <button className="back-button" onClick={onBackClick}>Zpět</button>
-      <div className="service-top-nav">
-        <button
-          className={`service-nav-btn ${!isStationsActive ? 'is-active' : ''}`}
-          onClick={() => navigate('/service/serviceRemote')}
-        >
-          Servisní obrazovka
-        </button>
-        
-        <button
-          className={`service-nav-btn ${isStationsActive ? 'is-active' : ''}`}
-          onClick={() => navigate('/service/serviceStations')}
-        >
-          Jednotlivá stanoviště
-          {showStationsBadge && (
-            <span
-              className="service-badge"
-              aria-label={`Počet problémů: ${totalProblemsCount}`}
-              title={`Počet problémů: ${totalProblemsCount}`}
-            >
-              ! {totalProblemsCount}
-            </span>
-          )}
-        </button>
-      </div>
+      <div className="service-page-frame">
+        <button className="back-button" onClick={onBackClick}>Zpět</button>
+        <div className="service-top-nav">
+          <button
+            className={`service-nav-btn ${!isStationsActive ? 'is-active' : ''}`}
+            onClick={() => navigate('/service/serviceRemote')}
+          >
+            Servisní obrazovka
+          </button>
+          
+          <button
+            className={`service-nav-btn ${isStationsActive ? 'is-active' : ''}`}
+            onClick={() => navigate('/service/serviceStations')}
+          >
+            Jednotlivá stanoviště
+            {showStationsBadge && (
+              <span
+                className="service-badge"
+                aria-label={`Počet problémů: ${totalProblemsCount}`}
+                title={`Počet problémů: ${totalProblemsCount}`}
+              >
+                ! {totalProblemsCount}
+              </span>
+            )}
+          </button>
+        </div>
 
-      <div style={{ width: '100%' }}>
-        <Outlet />
+        <div style={{ width: '100%' }}>
+          <Outlet />
+        </div>
       </div>
     </div>
   )
