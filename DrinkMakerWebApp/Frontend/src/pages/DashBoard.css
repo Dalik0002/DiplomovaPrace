@@ -224,7 +224,7 @@
   background: #ef3b2d;
   color: #ffffff;
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 1.35rem;
   line-height: 1.05;
   display: flex;
   align-items: center;
@@ -458,7 +458,7 @@
   .dashboard-stop-button {
     width: 90px;
     height: 90px;
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
 
   .dashboard-node-label {

@@ -287,7 +287,7 @@ function Dashboard() {
             {l_state ? (
               <p>Stahování...</p>
             ) : err_state ? (
-              <p>Chyba při získávání dat.</p>
+              <p style={{ color: 'red' }}>Chyba při získávání dat.</p>
             ) : isNone ? (
               <p>ZAŘÍZENÍ NEDOSTUPNÉ</p>
             ) : (
