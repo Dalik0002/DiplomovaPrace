@@ -15,7 +15,7 @@ export function useStateStatus() {
   const isStop = !!(data?.data === "STOP");
   const isNone = !!(data?.data === null);
   const isStandBy = !!(data?.data === "STAND BY");
-  const isService = !!(data?.data === "SERVICE");
+  const isService = !!(data?.data === "SERVIS");
   const isParty = !!(data?.data === "PARTY");
 
   const refresh = useCallback((next, shouldRevalidate) => mutate(next, shouldRevalidate), [mutate])

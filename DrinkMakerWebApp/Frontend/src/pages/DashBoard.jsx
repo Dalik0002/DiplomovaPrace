@@ -21,6 +21,7 @@ function Dashboard() {
     error: err_state,
     refresh: refreshState,
     isStandBy,
+    isParty,
     isService,
     isStop,
     isNone,
@@ -176,6 +177,20 @@ function Dashboard() {
     setSelectedStation(station)
   }
 
+  const handleEditStation = () => {
+    if (!selectedStation) return
+
+    navigate('/newDrink', {
+      state: {
+        editMode: true,
+        preselectedPosition: selectedStation.position,
+        initialGlass: selectedStation.glass,
+      },
+    })
+
+    setSelectedStation(null)
+  }
+
   const closeStationModal = () => {
     if (deleting) return
     setSelectedStation(null)
@@ -238,13 +253,13 @@ function Dashboard() {
         return 'dashboard-state-standby'
       case 'STOP':
         return 'dashboard-state-stop'
-      case 'CHECKING':
+      case 'KONTROLA':
         return 'dashboard-state-checking'
-      case 'POURING':
+      case 'NALÉVÁNÍ':
         return 'dashboard-state-pouring'
-      case 'SERVICE':
+      case 'SERVIS':
         return 'dashboard-state-service'
-      case 'UPDATING':
+      case 'AKTUALIZACE':
         return 'dashboard-state-updating'
       case 'PARTY':
         return 'dashboard-state-party'
@@ -324,11 +339,17 @@ function Dashboard() {
 
             <div className="dashboard-circle-center">
               <button
-                className="dashboard-stop-button"
+                className={`dashboard-stop-button ${isStop ? 'is-ack' : ''}`}
                 onClick={openStopConfirm}
                 type="button"
               >
-                {isStop ? 'KVITACE STOP' : 'STOP'}
+                {isStop ? (
+                  <>
+                    KVITACE<br />STOP
+                  </>
+                ) : (
+                  'STOP'
+                )}
               </button>
             </div>
           </div>
@@ -336,7 +357,7 @@ function Dashboard() {
           <div className="dashboard-start-wrap">
             <button
               className="start-button"
-              disabled={!isStandBy}
+              disabled={!(isStandBy || isParty)}
               onClick={() => navigate('/orderReview')}
             >
               ZAHÁJIT NALÉVÁNÍ
@@ -371,6 +392,14 @@ function Dashboard() {
             </div>
 
             <div className="station-modal-actions">
+              <button
+                className="station-edit-btn"
+                onClick={handleEditStation}
+                disabled={deleting}
+              >
+                ✏️ Upravit
+              </button>
+
               <button
                 className="station-delete-btn"
                 onClick={handleDeleteStation}

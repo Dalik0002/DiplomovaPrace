@@ -4,7 +4,6 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import RedirectResponse
 from fastapi.openapi.docs import get_swagger_ui_html
 
-from services.uart_service import uart_listener_loop
 from services.uart_service import uart_JSON_listener_loop
 from services.uart_service import uart_sender_loop
 import asyncio
@@ -79,7 +78,6 @@ async def custom_swagger_ui_html():
 
 @app.on_event("startup")
 async def startup_event():
-    #asyncio.create_task(uart_listener_loop())
     asyncio.create_task(uart_JSON_listener_loop())
     asyncio.create_task(uart_sender_loop())
 

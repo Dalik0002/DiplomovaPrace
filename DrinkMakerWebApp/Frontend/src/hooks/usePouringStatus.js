@@ -9,21 +9,31 @@ export function usePouringStatus() {
     dedupingInterval: 100,
   });
 
-  // LOG pro ladění přímo v hooku - uvidíš, co SWR reálně dostává
   console.log("SWR RAW DATA:", data);
 
-  // Pokud apiGet vrací přímo objekt {running, stage...}, použij 'data'
-  // Pokud apiGet vrací Axios response nebo obal, použij 'data.data'
-  const status = data?.data ? data.data : (data || {}); 
+  const status = data?.data ? data.data : (data || {});
 
   const isRunning = !!status.running;
-  const stage = status.stage || 'IDLE'; // Tady vzniká to IDLE, pokud je status prázdný
+  const stage = status.stage || 'IDLE';
   const message = status.message || '';
+  const processError = status.error || '';
+  const ok = status.ok ?? null;
 
-  // Pomocné checky pro UI
-  const isChecking = stage === "POURING CHECK";
-  const isPouring = stage === "POURING UART" || stage === "POURING WAIT" || stage.includes("pour");
-  const isDone = stage === "POURING DONE";
+  const resultKind = status.result_kind || 'idle';
+  const resultText = status.result_text || '';
+
+  const donePositions = status.done_positions || [];
+  const failedPositions = status.failed_positions || [];
+  const expectedPositions = status.expected_positions || [];
+
+  const isChecking = stage.includes("CHECK");
+  const isPouring = isRunning;
+
+  const isDone = resultKind === "success";
+  const isPartial = resultKind === "partial";
+  const isCancelled = resultKind === "cancelled" || stage === "POURING CANCELLED";
+  const isFailed = resultKind === "failed" || stage === "POURING FAILED";
+  const isFinished = isDone || isPartial || isFailed || isCancelled;
 
   const refresh = useCallback((next, shouldRevalidate) => mutate(next, shouldRevalidate), [mutate]);
 
@@ -31,9 +41,20 @@ export function usePouringStatus() {
     isRunning,
     stage,
     message,
+    processError,
+    ok,
+    resultKind,
+    resultText,
+    donePositions,
+    failedPositions,
+    expectedPositions,
     isChecking,
     isPouring,
     isDone,
+    isPartial,
+    isCancelled,
+    isFailed,
+    isFinished,
     error,
     isLoading,
     refresh,

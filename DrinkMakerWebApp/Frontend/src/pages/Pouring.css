@@ -94,6 +94,14 @@
   transform: scale(0.99);
 }
 
+.pouring-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+
 /* menší mobily */
 @media (max-width: 420px) {
   .pouring-card {
@@ -129,6 +137,10 @@
   animation: pouring-spin 0.9s linear infinite;
 }
 
+.spinner-slow {
+  animation-duration: 1.5s;
+}
+
 @keyframes pouring-spin {
   to {
     transform: rotate(360deg);
@@ -153,34 +165,71 @@
   animation: done-pop 0.4s ease-out;
 }
 
-/* zeleno-fialový check v kroužku */
-.pouring-done-icon {
+.pouring-result-icon {
   width: 72px;
   height: 72px;
   margin: 4px auto 8px;
 
   border-radius: 50%;
-  border: 3px solid #7312f1;
-  background: #4d2a5e;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
   font-size: 36px;
   font-weight: 900;
-  color: #b7ffcf;
+}
 
+.pouring-result-title {
+  letter-spacing: 0.03em;
+}
+
+.pouring-summary {
+  margin: 14px 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.7rem;
+  background: rgba(255, 255, 255, 0.06);
+  text-align: left;
+}
+
+.pouring-summary p {
+  margin: 0.35rem 0;
+  color: #eee;
+}
+
+.pouring-done-card .pouring-result-icon {
+  border: 3px solid #7312f1;
+  background: #4d2a5e;
+  color: #b7ffcf;
   box-shadow: 0 0 0 rgba(115, 18, 241, 0.7);
   animation:
     done-scale 0.45s ease-out,
     done-pulse 1.8s ease-out infinite;
 }
 
-.pouring-done-title {
+.pouring-done-card .pouring-result-title {
   color: #b7ffcf;
-  letter-spacing: 0.03em;
 }
+
+.pouring-partial-card .pouring-result-icon {
+  border: 3px solid #d7a400;
+  background: #5b4310;
+  color: #ffe27a;
+}
+
+.pouring-partial-card .pouring-result-title {
+  color: #ffe27a;
+}
+
+.pouring-failed-card .pouring-result-icon {
+  border: 3px solid #c63b3b;
+  background: #4b1f2b;
+  color: #ffb3b3;
+}
+
+.pouring-failed-card .pouring-result-title {
+  color: #ffb3b3;
+}
+
 
 /* jemný náběh celé karty */
 @keyframes done-pop {

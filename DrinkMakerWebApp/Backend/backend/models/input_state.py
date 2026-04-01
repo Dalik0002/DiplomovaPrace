@@ -8,11 +8,11 @@ class InputState:
         self.mode_map = {
             1: "STAND BY",
             2: "STOP",
-            3: "CHECKING",
-            4: "POURING",
-            5: "SERVICE",
-            6: "UPDATING",
-            7: "PARTYMODE"
+            3: "KONTROLA",
+            4: "NALÉVÁNÍ",
+            5: "SERVIS",
+            6: "AKTUALIZACE",
+            7: "PARTY"
         }
 
         self.simulation_mode_active = False
@@ -26,6 +26,7 @@ class InputState:
         self.tensometer_values = [0.0] * 6
         self.pouring_done = False
         self.mess_error = False
+        self.mess_ok = False
         self.cannot_process_position = False
         self.cannot_process_glass = False
         self.cannot_set_mode = False
@@ -65,6 +66,8 @@ class InputState:
 
         if mode_number in self.mode_map:
             self.current_mode = self.mode_map[mode_number]
+        else:
+            print(f"[InputState] Neznámý State: {mode_number}")
     
     def set_standby_mode(self):
         mode_number = 1
@@ -74,6 +77,12 @@ class InputState:
     
     def set_service_mode(self):
         mode_number = 5
+
+        if mode_number in self.mode_map:
+            self.current_mode = self.mode_map[mode_number]
+
+    def set_stop_mode(self):
+        mode_number = 2
 
         if mode_number in self.mode_map:
             self.current_mode = self.mode_map[mode_number]
@@ -88,20 +97,27 @@ class InputState:
             self.tensometer_values[i] = msg.get(f"tensoValOnPos_{i}", self.tensometer_values[i])
 
         self.pouring_done = msg.get("pourDone", self.pouring_done)
-        self.mess_error = msg.get("messErr", self.mess_error)
+        self.mess_error = bool(msg.get("messErr", False))
+        self.mess_ok = bool(msg.get("messOk", False))
         self.cannot_process_position = msg.get("canotProcPos", self.cannot_process_position)
         self.cannot_process_glass = msg.get("canotProcGls", self.cannot_process_glass)
         self.cannot_set_mode = msg.get("canotStMd", self.cannot_set_mode)
         self.emergency_stop = msg.get("emrgncyStopAppear", self.emergency_stop)
-        self.process_pouring_started = msg.get("procPouringStarted", self.process_pouring_started)
+        self.process_pouring_started = msg.get("procPouringStarted", False)
 
         #log:
         print()
-        print("[InputState] Aktualizace z JSON:", self.to_dict())
+        print("\n[InputState] Aktualizace z JSON:")
+        for k, v in self.to_dict().items():
+            print(f"{k:25}: {v}")
         print()
+
 
     def mode_return(self):
         return self.current_mode
+    
+    def reset_handshake(self):
+        self.mess_ok = False
 
     def to_dict(self):
         return {

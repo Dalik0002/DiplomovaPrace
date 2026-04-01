@@ -32,12 +32,14 @@
   width: 350px;
   height: auto;
   margin-bottom: 30px;
+  border-radius: 12px;
+  border: 2px solid #f0f0f0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .logo {
   width: 300px;
   height: auto;
-
 }
 
 .spinner {

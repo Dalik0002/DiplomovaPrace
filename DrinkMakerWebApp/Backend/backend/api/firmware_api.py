@@ -54,16 +54,26 @@ async def update_esp32():
     print("[SERVICE] Update ESP32")
     return {"status": "ok", "message": "ESP32 aktualizováno"}
 
-@firmware_router.post("/updateCarouselESP")
-async def update_carousel(data: ESPPosition):
-    position = data.position
-    if position not in range(6):
-        raise HTTPException(status_code=400, detail="Invalid position for ESP update")
 
-    payload = system_state.set_state(update=True, **{f"updateESP32C3{position}": True})
+@firmware_router.post("/updateCarouselESP")
+async def update_carousel(position: int = Query(..., ge=1, le=6)):
+    # převedeme 1–6 → 0–5 (tvůj interní index)
+    index = position - 1
+
+    payload = system_state.set_state(
+        update=True,
+        **{f"updateESP32C3{index}": True}
+    )
+
     send_json(payload)
+
     print(f"[SERVICE] Update ESP na pozici {position}")
-    return {"status": "ok", "message": f"ESP na pozici {position} aktualizováno"}
+
+    return {
+        "status": "ok",
+        "message": f"ESP na pozici {position} aktualizováno"
+    }
+
 
 @firmware_router.post("/updateAllCarouselESPs")
 async def update_all_carousel_esps():
@@ -157,18 +167,50 @@ def download_bin(
 
 @firmware_router.post("/report")
 def report(payload: Dict[str, Any]):
-    """
-    Optional: ESP reports OTA result.
-    """
     _ensure_store()
     reports_path = FIRM_STORE_DIR / "reports.jsonl"
+
     with reports_path.open("a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
     return {"ok": True}
 
-@firmware_router.get("/reports/show")
+
+@firmware_router.get("/reports")
 def get_reports():
     reports_path = FIRM_STORE_DIR / "reports.jsonl"
+
     if not reports_path.exists():
-        return {"msg": "Zatím žádné reporty."}
-    return FileResponse(reports_path)
+        return {"reports": []}
+
+    reports = []
+    with reports_path.open("r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                reports.append(json.loads(line))
+
+    return {"reports": reports}
+
+
+@firmware_router.get("/reports/show")
+def get_reports_show():
+    reports_path = FIRM_STORE_DIR / "reports.jsonl"
+
+    if not reports_path.exists():
+        raise HTTPException(status_code=404, detail="Zatím žádné reporty.")
+
+    return FileResponse(
+        path=str(reports_path),
+        media_type="text/plain; charset=utf-8",
+        filename="reports.jsonl",
+    )
+
+@firmware_router.post("/reports/clear")
+def clear_reports():
+    reports_path = FIRM_STORE_DIR / "reports.jsonl"
+
+    reports_path.parent.mkdir(parents=True, exist_ok=True)
+    reports_path.write_text("", encoding="utf-8")
+
+    return {"ok": True, "message": "Reporty vymazány (soubor zachován)"}

@@ -1,5 +1,5 @@
 # services/glasses_service.py
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from models.endpoints_schemas import Glass
 from core.all_states import glasses_state  # pokud používáš pro předání do HW
@@ -25,6 +25,7 @@ def add_glass_to_position(glass: Glass, position: int) -> None:
     """
     p = _check_pos(position)
     glass_glasses[p] = glass
+    glasses_state.set_to_glasses_state(glass_glasses)
 
 
 def get_glasses() -> List[Optional[Glass]]:
@@ -37,6 +38,7 @@ def get_glasses() -> List[Optional[Glass]]:
 def clear_glasses() -> None:
     for i in range(6):
         glass_glasses[i] = None
+    glasses_state.set_to_glasses_state(glass_glasses)
 
 
 def get_number_of_drinks() -> int:
@@ -54,12 +56,49 @@ def delete_glass(position: int) -> bool:
         return False
 
     glass_glasses[p] = None
+    glasses_state.set_to_glasses_state(glass_glasses)
     return True
 
 def get_free_positions() -> List[int]:
     """Vrať indexy pozic (0..5), které jsou volné (None)."""
     return [i for i, g in enumerate(glass_glasses) if g is None]
 
+
+def _normalize_bottle_name(name: str) -> str:
+    return (name or "").strip()
+
+
+def _glass_contains_unavailable_ingredient(glass: Glass, available_bottles: Set[str]) -> bool:
+    ingredients = getattr(glass, "ingredients", None) or []
+
+    for ing in ingredients:
+        ing_norm = _normalize_bottle_name(ing)
+        if ing_norm == "":
+            continue
+        if ing_norm not in available_bottles:
+            return True
+
+    return False
+
+def remove_invalid_glasses(available_bottles: List[str]) -> List[int]:
+    allowed = {
+        _normalize_bottle_name(b)
+        for b in available_bottles
+        if _normalize_bottle_name(b) != ""
+    }
+
+    deleted_positions: List[int] = []
+
+    for i, glass in enumerate(glass_glasses):
+        if glass is None:
+            continue
+
+        if _glass_contains_unavailable_ingredient(glass, allowed):
+            glass_glasses[i] = None
+            deleted_positions.append(i)
+
+    glasses_state.set_to_glasses_state(glass_glasses)
+    return deleted_positions
 
 def set_from_temp_to_JSON() -> dict:
     """
@@ -69,7 +108,6 @@ def set_from_temp_to_JSON() -> dict:
     glasses_state.set_to_glasses_state(glass_glasses)
 
     return glasses_state.to_glasses_json()
-
 
 def set_from_temp_to_JSON_compact() -> dict:
     """
@@ -83,23 +121,16 @@ def set_from_temp_to_JSON_compact() -> dict:
 
     compact_glasses = {}
     for pos_key, items in g.items():
-        # items má být list objektů {"nm":..., "vol":...}
         if not isinstance(items, list):
             continue
 
-        active = False
-        for it in items:
-            if not isinstance(it, dict):
-                continue
-            nm = (it.get("nm") or "").strip()
-            vol = it.get("vol") or 0
-            if nm != "" or vol > 0:
-                active = True
-                break
+        # Kontrola, zda je sklenice na této pozici aktivní (má aspoň jeden objem > 0)
+        is_active = any(int(it.get("vol", 0)) > 0 for it in items)
 
-        if active:
+        if is_active:
+            # Pošleme všech 6 ingrediencí pro tuto sklenici (včetně prázdných)
+            # Tím zajistíme, že ESP32 parser, který jede fixní cyklus 6, neselže.
             compact_glasses[pos_key] = items
 
-    # Přidáme flag, že je to "compact update"
     return {"glasses": compact_glasses}
 

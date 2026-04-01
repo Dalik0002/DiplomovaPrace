@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks
 from services.uart_service import send_json
 from core.all_states import system_state, bottles_state
 from models.endpoints_schemas import ESPPosition, ValveID, HeightPlexi
+import services.glasses_service as glasses_service
 
 router_service = APIRouter(prefix="/service", tags=["Service Services"])
 
@@ -113,7 +114,6 @@ async def calibrate_position(data: ESPPosition):
 
     payload = system_state.set_state(**{f"calibratePosition{position}": True})
     send_json(payload)
-    send_json(system_state.to_info_json())
     print(f"[SERVICE] Kalibrace pozice {position}")
     return {"status": "ok", "message": f"Kalibrace pozice {position} spuštěna"}
 
@@ -126,6 +126,8 @@ async def disable_position(data: ESPPosition):
         raise HTTPException(status_code=400, detail="Invalid position for disabling")
     
     bottles_state.disable_position(position, is_empty=False)
+    available_bottles = bottles_state.get_available_bottles()
+    deleted_positions = glasses_service.remove_invalid_glasses(available_bottles)
     return {"status": "ok", "message": f"Position {position} disabled."}
 
 

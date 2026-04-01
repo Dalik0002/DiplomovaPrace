@@ -13,12 +13,33 @@ function NewDrinkCom() {
   const location = useLocation()
 
   const preselectedPosition = location.state?.preselectedPosition
+  const initialGlass = location.state?.initialGlass || null
+  const editMode = !!location.state?.editMode
+
   const position = typeof preselectedPosition === 'number' ? preselectedPosition : null
 
-  const [items, setItems] = useState([
-    { ingredient: '', volume: 0 },
-    { ingredient: '', volume: 0 },
-  ])
+ const getInitialItems = () => {
+  const ingredients = Array.isArray(initialGlass?.ingredients) ? initialGlass.ingredients : []
+  const volumes = Array.isArray(initialGlass?.volumes) ? initialGlass.volumes : []
+
+  const mapped = ingredients
+      .map((ingredient, idx) => ({
+        ingredient: String(ingredient || '').trim(),
+        volume: Number(volumes[idx]) || 0,
+      }))
+      .filter((it) => it.ingredient !== '')
+
+    if (mapped.length > 0) return mapped
+
+    return [
+      { ingredient: '', volume: 0 },
+      { ingredient: '', volume: 0 },
+    ]
+  }
+
+const [items, setItems] = useState(getInitialItems)
+
+
   const [status, setStatus] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -67,7 +88,7 @@ function NewDrinkCom() {
       return
     }
 
-    if (!freePositions.includes(position)) {
+    if (!editMode && !freePositions.includes(position)) {
       setStatus('❌ Toto stanoviště už není volné')
       return
     }
@@ -97,13 +118,19 @@ function NewDrinkCom() {
         },
       })
 
-      setStatus(`✅ Nápoj byl přidán na pozici ${position + 1}`)
+      setStatus(
+        editMode
+          ? `✅ Nápoj na pozici ${position + 1} byl upraven`
+          : `✅ Nápoj byl přidán na pozici ${position + 1}`
+      )
 
-      setItems([
-        { ingredient: '', volume: 0 },
-        { ingredient: '', volume: 0 },
-      ])
-
+      if (!editMode) {
+        setItems([
+          { ingredient: '', volume: 0 },
+          { ingredient: '', volume: 0 },
+        ])
+      }
+      
       navigate('/')
     } catch (err) {
       console.error(err)
@@ -114,12 +141,19 @@ function NewDrinkCom() {
     }
   }
 
-  const noFree = !posLoading && !posError && freePositions.length === 0
-  const stationNotAvailable = position !== null && !posLoading && !posError && !freePositions.includes(position)
+  const noFree = !editMode && !posLoading && !posError && freePositions.length === 0
+  const stationNotAvailable =
+    !editMode &&
+    position !== null &&
+    !posLoading &&
+    !posError &&
+    !freePositions.includes(position)
 
   return (
     <div className="newdrink-card">
-      <h2 className="newdrink-title">PŘIDÁNÍ NOVÉHO NÁPOJE</h2>
+      <h2 className="newdrink-title">
+        {editMode ? 'ÚPRAVA NÁPOJE' : 'PŘIDÁNÍ NOVÉHO NÁPOJE'}
+      </h2>
 
       <div className="selected-station-box">
         Stanoviště {position != null ? position + 1 : '—'}
@@ -193,7 +227,11 @@ function NewDrinkCom() {
               onClick={handleAdd}
               disabled={saving || position === null || stationNotAvailable}
             >
-              {saving ? 'Odesílám…' : '➕ Přiřadit nápoj ke sklenici'}
+              {saving
+                ? 'Odesílám…'
+                : editMode
+                  ? '💾 Uložit změny'
+                  : '➕ Přiřadit nápoj ke sklenici'}
             </button>
           </div>
         </>

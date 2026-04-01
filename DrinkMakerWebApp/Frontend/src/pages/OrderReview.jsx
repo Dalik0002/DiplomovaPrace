@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react'
 import './OrderReview.css'
 
 import { useGlasses } from '../hooks/useGlassesData'
-import { startPouring } from '../services/general'
+import { startPouring } from '../services/pouringService'
 
 function OrderReview() {
   const navigate = useNavigate()

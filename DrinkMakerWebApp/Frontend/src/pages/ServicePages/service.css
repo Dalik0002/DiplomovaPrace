@@ -14,8 +14,9 @@
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow-x: visible;
 }
+
 
 .service-page-frame {
   width: 100%;
@@ -403,7 +404,7 @@
   .circle-node {
     width: 60px;
     height: 60px;
-    left: calc(50% + cos(var(--angle)) * 110px -30px);
+    left: calc(50% + cos(var(--angle)) * 110px - 30px);
     top: calc(50% + sin(var(--angle)) * 110px - 30px);
   }
 }

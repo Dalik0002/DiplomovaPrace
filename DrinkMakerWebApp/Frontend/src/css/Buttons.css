@@ -21,15 +21,9 @@
   /*border: #08b335 2px dashed;*/
 }
 
-.nav-buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  width: 100%;
-}
-
 .nav-buttons button {
   flex: 1;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,6 +39,7 @@
   cursor: pointer;
 }
 
+/* --- --- --- */
 .nav-buttons button:hover {
   background: #cc66ee;
   transform: scale(1.05);
@@ -73,7 +68,7 @@
   transform: scale(1.05);
 }
 
-
+/* --- --- --- */
 .start-button {
   width: 100%;
   color: rgb(255, 255, 255);
@@ -100,6 +95,7 @@
   background: #444;
 }
 
+/* --- --- --- */
 .stop-button {
   font-size: 1rem;
   background: #e53935;
@@ -111,11 +107,12 @@
   transition: transform 0.2s;
   width: 100%;
 }
+
 .stop-button:hover {
   transform: scale(1.05);
 }
 
-
+/* --- --- --- */
 .delete-button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
@@ -136,7 +133,7 @@
   cursor: not-allowed;
 }
 
-
+/* --- --- --- */
 .back-button {
   margin-bottom: 1rem;
   padding: 0.4rem 1rem;
@@ -153,6 +150,7 @@
   transform: scale(1.05);
 }
 
+/* --- --- --- */
 .action-button {
   padding: 0.6rem 1.2rem;
   font-size: 1rem;
@@ -165,5 +163,21 @@
 
 .action-button:hover {
   background: #da952e;
+  transform: scale(1.05);
+}
+
+/* --- --- --- */
+.cancel-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background: #533761;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.cancel-button:hover {
+  background: #a463c5;
   transform: scale(1.05);
 }

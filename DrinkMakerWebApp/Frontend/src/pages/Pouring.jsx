@@ -6,7 +6,8 @@ import { usePouringStatus } from "../hooks/usePouringStatus";
 import Loading from "../components/LoadingCom";
 import Error from "../components/ErrorCom";
 
-import { setStop, resetStop } from '../services/stateService'
+import { resetStop } from '../services/stateService'
+import { cancelPouring } from '../services/pouringService'
 import "./Pouring.css";
 
 export default function Pouring() {
@@ -17,9 +18,18 @@ export default function Pouring() {
   const { 
     stage, 
     message: stageMessage, 
-    isRunning: isProcessRunning, 
-    isDone: isProcessDone
-   } = usePouringStatus();
+    isRunning: isProcessRunning,
+    processError,
+    isDone,
+    isPartial,
+    isCancelled,
+    isFailed,
+    isFinished,
+    resultText,
+    donePositions,
+    failedPositions,
+    expectedPositions,
+  } = usePouringStatus();
 
   useEffect(() => {
     console.log(`[PROCESS] Stage: ${stage} | Msg: ${stageMessage} | Running: ${isProcessRunning}`);
@@ -40,13 +50,24 @@ export default function Pouring() {
   useEffect(() => {
     if (!isLoading) {
       console.log(`[HW DATA] Started: ${processPouringStarted}, Done: ${pouringDone}, Emergency: ${emergencyStop}`);
-      if (messError || cannotProcessPosition || cannotProcessGlass) {
-        console.log(`[HW ERROR] Mess: ${messError}, Pos: ${cannotProcessPosition}, Glass: ${cannotProcessGlass}`);
-      }
+    if (messError || cannotProcessPosition || cannotProcessGlass || cannotSetMode) {
+      console.log(
+        `[HW ERROR] Mess: ${messError}, Pos: ${cannotProcessPosition}, Glass: ${cannotProcessGlass}, Mode: ${cannotSetMode}`
+      );
+    }
     }
   }, [isLoading, processPouringStarted, pouringDone, emergencyStop, messError, cannotProcessPosition, cannotProcessGlass])
 
-  const goHome = () => {
+  const goHome = async () => {
+    try {
+      await setStop()
+    } catch (e) {
+      console.error("Reset stop modu selhal", e)
+    }
+    navigate("/", { replace: true });
+  };
+
+  const goHomeNoStadby = () => {
     navigate("/", { replace: true });
   };
   
@@ -63,12 +84,13 @@ export default function Pouring() {
     console.log("[ACTION] Uživatel klikl na STOP.");
     setLocalErr("");
     setStopping(true);
+
     try {
-      await setStop();
-      goHome();
+      await cancelPouring();
+      goHomeNoStadby();
     } catch (e) {
-      console.error("[ACTION] Chyba při odesílání STOP:", e);
-      setLocalErr("Nepodařilo se odeslat STOP. Zkuste to znovu.");
+      console.error("[ACTION] Chyba při STOP/cancel:", e);
+      setLocalErr("Nepodařilo se zastavit proces. Zkuste to znovu.");
     } finally {
       setStopping(false);
     }
@@ -78,44 +100,73 @@ export default function Pouring() {
   if (error) return <Error mess={"Chyba: " + error.message} />;
 
   // HOTOVO screen
-  if (pouringDone) {
+  if (isFinished) {
+    const allCount = expectedPositions.length;
+    const doneCount = donePositions.length;
+    const failedCount = failedPositions.length;
+
+    let icon = "✓";
+    let title = "Hotovo!";
+    let cardClass = "pouring-done-card";
+
+    if (isPartial) {
+      icon = "!";
+      title = "Dokončeno částečně";
+      cardClass = "pouring-partial-card";
+    }
+
+    if (isFailed) {
+      icon = "✕";
+      title = "Proces selhal";
+      cardClass = "pouring-failed-card";
+    }
+
+    if (isCancelled) {
+      icon = "⏹";
+      title = "Proces zrušen";
+      cardClass = "pouring-failed-card";
+    }
+
     return (
       <div className="pouring-page">
-        <div className="pouring-card pouring-done-card">
-
-          <div className="pouring-done-icon">
-            ✓
+        <div className={`pouring-card ${cardClass}`}>
+          <div className="pouring-result-icon">
+            {icon}
           </div>
 
-          <h1 className="pouring-title pouring-done-title">
-            Hotovo!
+          <h1 className="pouring-title pouring-result-title">
+            {title}
           </h1>
 
           <p className="pouring-status">
-            Nápoj byl úspěšně připraven.
+            {resultText || stageMessage || "Proces byl ukončen."}
           </p>
+
+          <div className="pouring-summary">
+            <p>Počet objednaných sklenic: <strong>{allCount}</strong></p>
+            <p>Hotové: <strong>{doneCount}</strong></p>
+            <p>Selhané: <strong>{failedCount}</strong></p>
+
+            {donePositions.length > 0 && (
+              <p>Hotové pozice: <strong>{donePositions.map(i => i + 1).join(", ")}</strong></p>
+            )}
+
+            {failedPositions.length > 0 && (
+              <p>Selhané pozice: <strong>{failedPositions.map(i => i + 1).join(", ")}</strong></p>
+            )}
+          </div>
+
+          {processError && processError !== resultText && (
+            <p className="pouring-error">❌ {processError}</p>
+          )}
 
           <button className="home-button" onClick={goHome}>
             Zpět na hlavní stránku
           </button>
-
         </div>
       </div>
     );
   }
-
-  // PROBÍHÁ / čekám
-  const statusText = processPouringStarted
-    ? "Probíhá nalávání vašich nápojů..."
-    : "Připravuji zařízení k nalévání...";
-
-  // volitelné: jednoduchá chyba do UI (když nechceš, smaž)
-  const processErr =
-    (messError && "Chyba procesu (mess_error)") ||
-    (cannotProcessPosition && "Nelze zpracovat pozici") ||
-    (cannotProcessGlass && "Nelze zpracovat sklenici") ||
-    (cannotSetMode && "Nelze nastavit režim") ||
-    "";
 
   return (
     <div className="pouring-page">
@@ -138,21 +189,31 @@ export default function Pouring() {
         <div className="pouring-stage-badge">{stage}</div>
 
         {/* Chybové hlášky z HW */}
-        {(messError || cannotProcessPosition || cannotProcessGlass || cannotSetMode) && (
+        {(cannotProcessPosition || cannotProcessGlass || cannotSetMode) && (
           <p className="pouring-warn">
-            ⚠️ {(messError && "Chyba mechanismu") || "Problém s pozicí/sklenicí"}
+            ⚠️ {cannotProcessPosition && "Nelze zpracovat pozici"}
+            {cannotProcessGlass && " Nelze zpracovat sklenici"}
+            {cannotSetMode && " Nelze nastavit režim"}
+          </p>
+        )}
+
+        {messError && !cannotProcessPosition && !cannotProcessGlass && !cannotSetMode && (
+          <p className="pouring-warn">
+            ℹ️ Probíhá opakování komunikace se zařízením...
           </p>
         )}
 
         {localErr && <p className="pouring-error">❌ {localErr}</p>}
 
-        <button
-          className="stop-button"
-          onClick={handleStop}
-          disabled={stopping}
-        >
-          {stopping ? "Odesílám STOP..." : "STOP"}
-        </button>
+        <div className="pouring-actions">
+          <button
+            className="stop-button"
+            onClick={handleStop}
+            disabled={stopping}
+          >
+            {stopping ? "Odesílám STOP..." : "STOP"}
+          </button>
+        </div>
       </div>
     </div>
   );

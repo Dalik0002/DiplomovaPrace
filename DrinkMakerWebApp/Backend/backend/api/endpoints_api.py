@@ -178,6 +178,18 @@ def set_state_to_standby():
         "simulation_mode_active": input_state.simulation_mode_active,
     }
 
+@router.post("/sim/setStateToStop")
+def set_state_to_stop():
+    input_state.enable_mode_simulation()
+    input_state.set_stop_mode()
+    print("[ENDPOINT] Nastaven stav zařízení na STOP (simulace)")
+    return {
+        "status": "ok",
+        "message": "Simulovaný STOP aktivován",
+        "mode": input_state.mode_return(),
+        "simulation_mode_active": input_state.simulation_mode_active,
+    }
+
 @router.post("/sim/setStateToService")
 def set_state_to_service():
     input_state.enable_mode_simulation()
@@ -189,6 +201,7 @@ def set_state_to_service():
         "mode": input_state.mode_return(),
         "simulation_mode_active": input_state.simulation_mode_active,
     }
+
 
 @router.post("/sim/resetState")
 def reset_state():

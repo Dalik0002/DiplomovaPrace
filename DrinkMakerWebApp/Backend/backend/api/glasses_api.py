@@ -13,6 +13,11 @@ def get_glasses():
     print("[GLASS] Požadavek na sklenice")
     return glasses_service.get_glasses()
 
+@router_glasses.get("/compactGlasses")
+def get_compact_glasses():
+    print("[GLASS] Požadavek na compact sklenice")
+    return glasses_service.set_from_temp_to_JSON_compact()
+
 @router_glasses.get("/count")
 def get_glasses_count():
     return {"count": glasses_service.get_number_of_drinks()}

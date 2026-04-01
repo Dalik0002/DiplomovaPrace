@@ -10,6 +10,8 @@ function BottleSetUp() {
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState('');
 
+  const getLabel = (position) => String.fromCharCode(65 + position); // 0→A, 1→B...
+
   const { 
     data, 
     error, 
@@ -93,12 +95,12 @@ function BottleSetUp() {
                     disabled ? (
                       /* ✅ Zakázané lahve v EDIT módu - roztažené na střed */
                       <div className="disabled-full-width">
-                        Láhev {position + 1} je zakázána
+                        Láhev {getLabel(position)} je zakázána
                       </div>
                     ) : (
                       /* ✅ Normální lahve v EDIT módu */
                       <>
-                        <label className="bottle-pos">Láhev {position + 1}:</label>
+                        <label className="bottle-pos">Láhev {getLabel(position)}:</label>
                         <input
                           type="text"
                           value={bottle}
@@ -121,7 +123,7 @@ function BottleSetUp() {
                   ) : (
                     /* LOGIKA PRO VIEW MOD (Beze změny) */
                     <>
-                      <label className="bottle-pos">Láhev {position + 1}:</label>
+                      <label className="bottle-pos">Láhev {getLabel(position)}:</label>
                       {disabled ? (
                         <i className="disabled-tag">– ZAKÁZÁNA –</i>
                       ) : (
@@ -139,14 +141,14 @@ function BottleSetUp() {
           <div className="button-row">
             {!isEditing ? (
               <button onClick={handleEdit} className="action-button" disabled={saving}>
-                ✏️ EDIT
+                ✏️ UPRAVIT
               </button>
             ) : (
               <>
                 <button onClick={handleSave} className="action-button" disabled={saving}>
                   💾 Uložit
                 </button>
-                <button onClick={handleCancel} className="secondary-button" disabled={saving}>
+                <button onClick={handleCancel} className="cancel-button" disabled={saving}>
                   ❌ Zrušit
                 </button>
               </>

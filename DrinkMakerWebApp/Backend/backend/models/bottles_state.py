@@ -27,6 +27,15 @@ class BottlesState:
         }
         save_data("bottles_state", current_state)
 
+    def get_available_bottles(self) -> List[str]:
+
+        return [
+            self.bottles[i]
+            for i in range(6)
+            if (self.bottles[i] or "").strip() != ""
+            and not self.disabled[i]
+        ]
+
 
     def set_bottles(self, assignments: List[BottleAssignment]):
         for item in assignments:
