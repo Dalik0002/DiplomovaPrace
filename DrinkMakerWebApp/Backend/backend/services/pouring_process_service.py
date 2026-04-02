@@ -99,6 +99,7 @@ class PouringProcessService:
         empty_bottle = getattr(input_state, "empty_bottle", None)
         hx711_error = getattr(input_state, "HX711_error", None) or getattr(input_state, "hx711_error", None)
         position_check = getattr(input_state, "position_check", None)
+        glass_present = getattr(input_state, "glass_present", None)
 
         if isinstance(empty_bottle, list) and pos < len(empty_bottle) and empty_bottle[pos]:
             reasons.append("během procesu byla detekována prázdná lahev")
@@ -106,7 +107,9 @@ class PouringProcessService:
         if isinstance(hx711_error, list) and pos < len(hx711_error) and hx711_error[pos]:
             reasons.append("chyba HX711")
 
-        if isinstance(position_check, list) and pos < len(position_check) and not position_check[pos]:
+        if isinstance(glass_present, list) and pos < len(glass_present) and not glass_present[pos]:
+            reasons.append("sklenice nebyla detekována (odstraněna během nalévání)")
+        elif isinstance(position_check, list) and pos < len(position_check) and not position_check[pos]:
             reasons.append("sklenice není na pozici")
 
         if not reasons:

@@ -21,6 +21,7 @@ class InputState:
         self.position_check = [False] * 6
         self.glass_done = [False] * 6
         self.glass_failed = [False] * 6
+        self.glass_present = [False] * 6
         self.HX711_error = [False] * 6
         self.empty_bottle = [False] * 6
         self.tensometer_values = [0.0] * 6
@@ -95,6 +96,7 @@ class InputState:
             self.HX711_error[i] = msg.get(f"HX711Err_{i}", self.HX711_error[i])
             self.empty_bottle[i] = msg.get(f"emptBotAtPos_{i}", self.empty_bottle[i])
             self.tensometer_values[i] = msg.get(f"tensoValOnPos_{i}", self.tensometer_values[i])
+            self.glass_present[i] = msg.get(f"glsPrsnt_{i}", self.glass_present[i])
 
         self.pouring_done = msg.get("pourDone", self.pouring_done)
         self.mess_error = bool(msg.get("messErr", False))
@@ -124,6 +126,7 @@ class InputState:
             "position_check": self.position_check,
             "glass_done": self.glass_done,
             "glass_failed": self.glass_failed,
+            "glass_present": self.glass_present,
             "HX711_error": self.HX711_error,
             "tensometer_values": self.tensometer_values,
             "empty_bottle": self.empty_bottle,

@@ -29,12 +29,6 @@
   font-weight: 500;
 }
 
-/* edit módu: celý text červeně */
-.disabled-edit {
-  color: rgba(255, 70, 70, 0.95);
-  font-weight: 900;
-}
-
 /* volitelně: celý řádek lehce podbarvit */
 .bottle-row.pos-disabled {
   background: rgba(255, 70, 70, 0.06);

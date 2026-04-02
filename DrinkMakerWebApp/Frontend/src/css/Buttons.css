@@ -6,13 +6,6 @@
   justify-content: center;
 }
 
-.icon-btn {
-  position: relative;
-  padding: 0.4rem 0.6rem;
-  border-radius: 0.6rem;
-  white-space: normal;
-}
-
 .nav-buttons {
   display: flex;
   gap: 0.5rem;

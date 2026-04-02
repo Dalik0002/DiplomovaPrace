@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat EOF Checking import order in main JSX files to understand CSS cascade... EOF __NEW_LINE_b4c4eb18f9e0fa1f__ grep -r import.*.css /c/Users/dalibor.sliva/Desktop/Dalibor/School/Diplomova_Prace/DiplomovaPrace/DrinkMakerWebApp/frontend/src --include=*.jsx)"
+    ]
+  }
+}
