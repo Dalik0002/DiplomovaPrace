@@ -91,6 +91,7 @@ function ServiceRemote() {
     try {
       setHomingPlexi(true)
       await homePlexi()
+      setPlexiHeight(0)
     } catch (err) {
       console.error('Chyba při HOME patro', err)
     } finally {
@@ -216,9 +217,9 @@ function ServiceRemote() {
 
             <div className="divider" />
 
-            <h2 className="service-subtitle">POJÍZDNÉ PATRO</h2>
-            <div className="service-card-inner" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div className="mini-grid">
+            <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, flex: 1 }}>
+                <h2 className="service-subtitle" style={{ margin: 0 }}>POJÍZDNÉ PATRO</h2>
                 <button
                   className="service-btn"
                   onClick={homePlexiAction}
@@ -228,7 +229,6 @@ function ServiceRemote() {
                 >
                   {homingPlexi ? 'POHYB PATRA…' : 'PATRO DO ZÁKLADNÍ POLOHY'}
                 </button>
-
                 <button
                   className="service-btn"
                   type="button"
@@ -240,7 +240,8 @@ function ServiceRemote() {
                 </button>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                <span style={{ fontSize: '1.3rem' }}>⬆</span>
                 <input
                   type="range"
                   min={0}
@@ -248,12 +249,10 @@ function ServiceRemote() {
                   step={10}
                   value={plexiHeight}
                   onChange={(e) => setPlexiHeight(Number(e.target.value))}
-                  style={{ flex: 1, cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', writingMode: 'vertical-lr', height: 120, width: 'auto' }}
                   aria-label="Výška pojízdného patra v procentech"
                 />
-                <div style={{ minWidth: 48, textAlign: 'right', fontVariantNumeric: 'tabular-nums', fontWeight: 'bold' }}>
-                  {plexiHeight}%
-                </div>
+                <span style={{ fontSize: '1.3rem' }}>⬇</span>
               </div>
             </div>
           </div>
