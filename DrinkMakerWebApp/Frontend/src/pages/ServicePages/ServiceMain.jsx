@@ -40,7 +40,7 @@ function ServiceMain() {
 
     notServiceStreakRef.current += 1
 
-    if (notServiceStreakRef.current < 2) return
+    if (notServiceStreakRef.current < 1) return
 
     const kick = async () => {
       try { await releaseServiceLock() } catch (e) { console.error('Release při kicku selhal', e) }
@@ -78,7 +78,7 @@ function ServiceMain() {
     }
 
     tick()
-    const interval = setInterval(tick, 5000)
+    const interval = setInterval(tick, 2000)
 
     return () => {
       alive = false
