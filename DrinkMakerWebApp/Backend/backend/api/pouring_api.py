@@ -43,8 +43,9 @@ async def get_pour_status():
         "expected_positions": expected,
         "done_positions": done_positions,
         "failed_positions": failed_positions,
+        "failed_details": getattr(service, "failed_details", {}),
         "snapshot": snap,
-    } 
+    }
 
 @router_pouring.post("/pour/cancel")
 async def pour_cancel():

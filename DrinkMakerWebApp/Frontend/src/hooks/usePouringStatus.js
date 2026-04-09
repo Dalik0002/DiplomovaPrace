@@ -25,6 +25,7 @@ export function usePouringStatus() {
   const donePositions = status.done_positions || [];
   const failedPositions = status.failed_positions || [];
   const expectedPositions = status.expected_positions || [];
+  const failedDetails = status.failed_details || {};
 
   const isChecking = stage.includes("CHECK");
   const isPouring = isRunning;
@@ -48,6 +49,7 @@ export function usePouringStatus() {
     donePositions,
     failedPositions,
     expectedPositions,
+    failedDetails,
     isChecking,
     isPouring,
     isDone,

@@ -15,9 +15,9 @@ export default function Pouring() {
   const [stopping, setStopping] = useState(false);
   const [localErr, setLocalErr] = useState("");
   
-  const { 
-    stage, 
-    message: stageMessage, 
+  const {
+    stage,
+    message: stageMessage,
     isRunning: isProcessRunning,
     processError,
     isDone,
@@ -29,6 +29,7 @@ export default function Pouring() {
     donePositions,
     failedPositions,
     expectedPositions,
+    failedDetails,
   } = usePouringStatus();
 
   useEffect(() => {
@@ -101,10 +102,6 @@ export default function Pouring() {
 
   // HOTOVO screen
   if (isFinished) {
-    const allCount = expectedPositions.length;
-    const doneCount = donePositions.length;
-    const failedCount = failedPositions.length;
-
     let icon = "✓";
     let title = "Hotovo!";
     let cardClass = "pouring-done-card";
@@ -117,7 +114,7 @@ export default function Pouring() {
 
     if (isFailed) {
       icon = "✕";
-      title = "Proces selhal";
+      title = "Neúspěch";
       cardClass = "pouring-failed-card";
     }
 
@@ -126,6 +123,13 @@ export default function Pouring() {
       title = "Proces zrušen";
       cardClass = "pouring-failed-card";
     }
+
+    // Sbíráme unikátní věty o kapalině (prázdná lahev / HX711)
+    const liquidMessages = [
+      ...new Set(
+        Object.values(failedDetails || {}).filter(Boolean)
+      )
+    ];
 
     return (
       <div className="pouring-page">
@@ -138,26 +142,28 @@ export default function Pouring() {
             {title}
           </h1>
 
-          <p className="pouring-status">
-            {resultText || stageMessage || "Proces byl ukončen."}
-          </p>
+          {!isCancelled && liquidMessages.length > 0 && (
+            <div className="pouring-liquid-warnings">
+              {liquidMessages.map((msg, i) => (
+                <p key={i} className="pouring-status">{msg}</p>
+              ))}
+            </div>
+          )}
 
-          <div className="pouring-summary">
-            <p>Počet objednaných sklenic: <strong>{allCount}</strong></p>
-            <p>Hotové: <strong>{doneCount}</strong></p>
-            <p>Selhané: <strong>{failedCount}</strong></p>
+          {isCancelled && (
+            <p className="pouring-status">Proces byl zastaven uživatelem.</p>
+          )}
 
-            {donePositions.length > 0 && (
-              <p>Hotové pozice: <strong>{donePositions.map(i => i + 1).join(", ")}</strong></p>
-            )}
+          {failedPositions.length > 0 && (
+            <p className="pouring-status">
+              Neúspěšně dokončené pozice: <strong>{failedPositions.map(i => i + 1).join(", ")}</strong>
+            </p>
+          )}
 
-            {failedPositions.length > 0 && (
-              <p>Selhané pozice: <strong>{failedPositions.map(i => i + 1).join(", ")}</strong></p>
-            )}
-          </div>
-
-          {processError && processError !== resultText && (
-            <p className="pouring-error">❌ {processError}</p>
+          {donePositions.length > 0 && (
+            <p className="pouring-status">
+              Úspěšně dokončené pozice: <strong>{donePositions.map(i => i + 1).join(", ")}</strong>
+            </p>
           )}
 
           <button className="home-button" onClick={goHome}>

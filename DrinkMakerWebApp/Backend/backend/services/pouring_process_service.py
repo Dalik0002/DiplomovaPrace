@@ -43,6 +43,7 @@ class PouringProcessService:
         self.expected_positions: list[int] = []
         self.done_positions: list[int] = []
         self.failed_positions: list[int] = []
+        self.failed_details: dict[int, str] = {}
 
     def _update_status(self, stage: str, data: Dict[str, Any]):
         self.current_stage = stage
@@ -61,6 +62,7 @@ class PouringProcessService:
         self.expected_positions = []
         self.done_positions = []
         self.failed_positions = []
+        self.failed_details = {}
 
     def _reset_pouring_runtime_flags(self) -> None:
         input_state.pouring_done = False
@@ -94,28 +96,17 @@ class PouringProcessService:
             print(f"[POURING FATAL WARN] Nepodařilo se ukončit CHECK mód: {e}")
     
     def _build_failure_reason_for_position(self, pos: int) -> str:
-        reasons: list[str] = []
-
         empty_bottle = getattr(input_state, "empty_bottle", None)
         hx711_error = getattr(input_state, "HX711_error", None) or getattr(input_state, "hx711_error", None)
-        position_check = getattr(input_state, "position_check", None)
-        glass_present = getattr(input_state, "glass_present", None)
 
         if isinstance(empty_bottle, list) and pos < len(empty_bottle) and empty_bottle[pos]:
-            reasons.append("během procesu byla detekována prázdná lahev")
+            return f"Během nalévání došla kapalina na stanovišti {pos + 1}."
 
         if isinstance(hx711_error, list) and pos < len(hx711_error) and hx711_error[pos]:
-            reasons.append("chyba HX711")
+            return f"Během nalévání došla kapalina na stanovišti {pos + 1}."
 
-        if isinstance(glass_present, list) and pos < len(glass_present) and not glass_present[pos]:
-            reasons.append("sklenice nebyla detekována (odstraněna během nalévání)")
-        elif isinstance(position_check, list) and pos < len(position_check) and not position_check[pos]:
-            reasons.append("sklenice není na pozici")
-
-        if not reasons:
-            return "neznámý důvod"
-
-        return ", ".join(reasons)
+        # Problém se skleničkou — nezobrazujeme důvod
+        return ""
 
     def _evaluate_result(self) -> Dict[str, Any]:
         expected = self._expected_glass_positions()
@@ -158,57 +149,31 @@ class PouringProcessService:
         if isinstance(empty_bottles, list):
             empty_bottle_positions = [i for i, v in enumerate(empty_bottles) if v]
 
+        liquid_parts = [reason for reason in failed_details.values() if reason]
+
         if len(failed_positions) == 0 and len(done_positions) == len(expected):
             kind = "success"
             ok = True
             msg = "Všechny objednané sklenice byly úspěšně dokončeny."
 
-            if empty_bottle_positions:
-                msg += (
-                    f" Během procesu byla detekována prázdná lahev na pozicích "
-                    f"{[i + 1 for i in empty_bottle_positions]}."
-                )
-
         elif len(done_positions) == 0 and len(failed_positions) == len(expected):
             kind = "failed"
             ok = False
-
-            fail_parts = [
-                f"pozice {pos + 1}: {reason}"
-                for pos, reason in failed_details.items()
-            ]
-
-            msg = "Všechny objednané sklenice selhaly."
-            if fail_parts:
-                msg += " Důvody: " + "; ".join(fail_parts) + "."
+            msg = "Proces nebyl úspěšně dokončen."
+            if liquid_parts:
+                msg += " " + " ".join(liquid_parts)
 
         elif len(done_positions) > 0 or len(failed_positions) > 0:
             kind = "partial"
             ok = False
-
-            msg = (
-                f"Některé sklenice byly dokončeny a některé selhaly. "
-                f"Hotové: {[i + 1 for i in done_positions]}, "
-                f"selhaly: {[i + 1 for i in failed_positions]}."
-            )
-
-            fail_parts = [
-                f"pozice {pos + 1}: {reason}"
-                for pos, reason in failed_details.items()
-            ]
-            if fail_parts:
-                msg += " Důvody selhání: " + "; ".join(fail_parts) + "."
-
-            if conflicted_positions:
-                msg += (
-                    f" Konfliktní stav done+failed byl detekován na pozicích "
-                    f"{[i + 1 for i in conflicted_positions]}."
-                )
+            msg = "Proces byl dokončen částečně."
+            if liquid_parts:
+                msg += " " + " ".join(liquid_parts)
 
         else:
             kind = "failed"
             ok = False
-            msg = "Proces skončil bez jednoznačně vyhodnoceného výsledku."
+            msg = "Proces nebyl úspěšně dokončen."
 
         return {
             "kind": kind,
@@ -322,6 +287,7 @@ class PouringProcessService:
                 self.expected_positions = list(evaluation["expected"])
                 self.done_positions = list(evaluation["done_positions"])
                 self.failed_positions = list(evaluation["failed_positions"])
+                self.failed_details = {int(k): v for k, v in evaluation["failed_details"].items()}
 
                 self.result_ok = evaluation["ok"]
                 self.result_kind = evaluation["kind"]
