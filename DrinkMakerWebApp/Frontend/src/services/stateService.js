@@ -25,3 +25,7 @@ export function resetParty() {
   return apiPost('/remote/resetParty');
 }
 
+export function setPartySong() {
+  return apiPost('/remote/setPartySong');
+}
+

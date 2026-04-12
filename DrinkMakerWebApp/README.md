@@ -187,19 +187,22 @@ npm run dev
 | Metoda | Endpoint | Popis |
 |---|---|---|
 | GET | `/health` | Health check |
-| GET | `/var/inputState` | Aktuální vstupní stav z ESP32 |
-| GET | `/var/systemState` | Aktuální systémový stav (příkazy) |
+| GET | `/getStoredData` | Obsah persistentního datového souboru |
+| GET | `/var/inputState` | Vstupní stav z ESP32 + stav lahví z RPi paměti |
+| GET | `/var/systemState` | Aktuální systémový stav (příkazy pro ESP32) |
 | GET | `/var/currentModeOnDevice` | Aktuální režim zařízení |
 | POST | `/var/inputState/simulate` | Simulace vstupního stavu (testování) |
 | POST | `/var/inputState/reset` | Reset vstupního stavu |
 | POST | `/remote/setService` | Přechod do servisního režimu |
 | POST | `/remote/resetService` | Ukončení servisního režimu |
 | POST | `/remote/setStop` | Nouzové zastavení |
-| POST | `/remote/resetStop` | Zrušení nouzového zastavení |
+| POST | `/remote/resetStop` | Zrušení nouzového zastavení (errorAcknowledgment) |
 | POST | `/remote/setParty` | Režim Party |
 | POST | `/remote/resetParty` | Ukončení Party režimu |
+| POST | `/remote/setPartySong` | Spuštění party songu (easter egg) |
 | POST | `/sim/setStateToStandBy` | Simulace: stav StandBy |
 | POST | `/sim/setStateToStop` | Simulace: stav Stop |
+| POST | `/sim/setStateToService` | Simulace: stav Service |
 | POST | `/sim/resetState` | Simulace: reset stavu |
 
 ### Správa lahví (`/bottles`)
@@ -316,32 +319,44 @@ npm run dev
 
 Klíčové výstupní proměnné (Backend → ESP32 přes UART):
 
-| Proměnná | Popis |
-|---|---|
-| `strt` / `stp` | Start / Stop procesu |
-| `chck` | Spuštění kontrolní fáze |
-| `srvc` / `stnd` / `prty` | Service / Standby / Party režim |
-| `opnVlvOnPos0–5` | Otevření ventilu na pozici |
-| `relsCarMtr` / `relsPlxMtr` | Uvolnění motorů |
-| `homeCarousel` / `homePlexi` | Najetí na home |
-| `movePlexi` / `percentHeight` | Pohyb plošiny (0–100 %) |
-| `resESP32` / `resESP_0–5` | Restart ESP32 |
-| `updESP32` / `updESP_0–5` | OTA update ESP |
-| `calibPos_0–5` | Kalibrace pozice |
+| UART klíč | Python parametr | Popis |
+|---|---|---|
+| `strt` / `stp` | `start` / `stop` | Start / Stop procesu |
+| `chck` | `check` | Spuštění kontrolní fáze |
+| `srvc` / `stnd` | `service` / `standBy` | Service / Standby režim |
+| `prty` / `prtySng` | `party` / `partySong` | Party režim / Party song |
+| `errAcknow` | `errorAcknowledgment` | Kvitace chyby (výstup ze STOP) |
+| `opnVlvOnPos0–5` | `openValve0–5` | Otevření ventilu na pozici |
+| `relsCarMtr` / `relsPlxMtr` | `releaseCarouselMotor` / `releasePlexiMotor` | Uvolnění motorů |
+| `homeCarousel` / `homePlexi` | `homeCarousel` / `homePlexi` | Najetí na home |
+| `moveCarousel` / `movePlexi` | `moveCarousel` / `movePlexi` | Pohyb karuselu / plošiny |
+| `percentHeight` | `percentHeight` | Výška plošiny (0–100 %) |
+| `resESP32` / `resESP_0–5` | `restartESP32` / `restartESP32C30–5` | Restart ESP32 |
+| `updESP32` / `updESP_0–5` | `updateESP32` / `updateESP32C30–5` | OTA update ESP |
+| `calibPos_0–5` | `calibratePosition0–5` | Kalibrace pozice |
 
 ### Vstupní stav z hardware (`input_state.py`)
 
-| Proměnná | Popis |
-|---|---|
-| `pos_0_chck – pos_5_chck` | Potvrzení přítomnosti sklenice |
-| `glsDn_0 – glsDn_5` | Sklenice naplněna úspěšně |
-| `glsFail_0 – glsFail_5` | Plnění selhalo |
-| `emptBotAtPos_0–5` | Prázdná lahev na pozici |
-| `tensoValOnPos_0–5` | Hodnota váhy (HX711) |
-| `emrgncyStopAppear` | Nouzové zastavení |
-| `messErr` / `messOk` | Potvrzení UART zprávy |
-| `pourDone` | Proces plnění dokončen |
-| `State` | Aktuální režim zařízení (1–7) |
+Pole jsou dostupná přes REST API jako Python jména; UART klíče (ESP32 → RPi) jsou v závorce.
+
+| API pole | UART klíč (ESP32 → RPi) | Typ | Popis |
+|---|---|---|---|
+| `position_check` | `pos_0_chck – pos_5_chck` | `bool[6]` | Potvrzení přítomnosti sklenice |
+| `glass_done` | `glsDn_0 – glsDn_5` | `bool[6]` | Sklenice naplněna úspěšně |
+| `glass_failed` | `glsFail_0 – glsFail_5` | `bool[6]` | Plnění selhalo |
+| `HX711_error` | `HX711Err_0 – HX711Err_5` | `bool[6]` | Chyba váhového senzoru |
+| `empty_bottle` | `emptBotAtPos_0–5` | `bool[6]` | Prázdná lahev na pozici |
+| `tensometer_values` | `tensoValOnPos_0–5` | `float[6]` | Naměřená hodnota váhy (HX711) |
+| `pouring_done` | `pourDone` | `bool` | Proces plnění dokončen |
+| `process_pouring_started` | `procPouringStarted` | `bool` | Nalévání bylo zahájeno |
+| `mess_error` / `mess_ok` | `messErr` / `messOk` | `bool` | Potvrzení / chyba UART zprávy |
+| `cannot_process_position` | `canotProcPos` | `bool` | ESP nemůže zpracovat pozici |
+| `cannot_process_glass` | `canotProcGls` | `bool` | ESP nemůže zpracovat sklenici |
+| `cannot_set_mode` | `canotStMd` | `bool` | ESP nemůže přejít do daného režimu |
+| `emergency_stop` | `emrgncyStopAppear` | `bool` | Nouzové zastavení |
+| `State` (UART only) | `State` | `int 1–7` | Aktuální režim zařízení (viz tabulka módů) |
+
+> **Poznámka:** Endpoint `/var/inputState` navíc vrací `position_disabled` (z `bottles_state` na RPi, nikoli z ESP32).
 
 ---
 
@@ -362,12 +377,18 @@ Stavový automat s fázemi:
 
 | Fáze | Timeout | Popis |
 |---|---|---|
-| SYNC | – | Synchronizace stavu |
-| CHECK | 30 s | Kontrola přítomnosti sklenic |
-| POUR | 600 s | Vlastní plnění nápojů |
-| PICKUP | 120 s | Čekání na odebrání sklenic |
+| SYNC | – | Synchronizace lahví a sklenic do ESP32 přes UART |
+| CHECK | 30 s | Kontrola přítomnosti sklenic (position_check) |
+| POUR_START | 30 s | Čekání na potvrzení, že nalévání začalo (process_pouring_started) |
+| POUR | 600 s | Vlastní plnění nápojů (čeká na pouring_done) |
+| PICKUP | 120 s | Čekání na dokončení všech pozic (glass_done / glass_failed) |
 
 Výsledky: `success` / `partial` / `failed` / `cancelled`
+
+Automatické akce po plnění:
+- Pozice s `empty_bottle=True` jsou automaticky deaktivovány v `bottles_state`
+- `failed_details` obsahuje důvod selhání pro každou pozici (prázdná lahev / chyba HX711)
+- Po úspěšném dokončení se všechny nápoje (`glasses_state`) automaticky vymažou
 
 ### `glasses_service.py` – Business logika nápojů
 
@@ -397,13 +418,20 @@ Výsledky: `success` / `partial` / `failed` / `cancelled`
 
 ### Stránky
 
-**DashBoard** – zobrazuje aktuální režim, nápoje v přípravě, inventář lahví. Obsahuje tlačítka pro přechod do Service/Party/Stop režimu a navigaci na ostatní stránky.
+**DashBoard** – hlavní stránka systému. Zobrazuje aktuální režim, 6 stanovišť v kruhovém layoutu a tlačítka akcí.
+- Klik na obsazené stanoviště otevře modal se složením nápoje a možností editace/smazání
+- Klik na prázdné stanoviště přesměruje na AddNewDrink
+- Servisní tlačítko zobrazuje badge s počtem problémů (prázdné lahve, HX711 chyby, deaktivované pozice)
+- Vstup do servisu přes distribuovaný zámek (`/lock/acquire/service`) — pokud je servis obsazený, zobrazí varování
+- STOP tlačítko uprostřed kruhu; přechod ze STOP vyžaduje checkbox-potvrzení v modalu
+- `processPouringStarted=true` → automatická navigace na `/pouring`
+- V Party módu: klik na nadpis „DrinkMaker" spustí party song (easter egg)
 
-**Pouring** – real-time vizualizace průběhu plnění. Zobrazuje fázi, zprávy, úspěšné/neúspěšné pozice. Polling každých 500 ms přes SWR hook `usePouringStatus`.
+**Pouring** – real-time vizualizace průběhu plnění. Zobrazuje fázi, zprávy, úspěšné/neúspěšné pozice včetně důvodu selhání. Polling každých 500 ms přes `usePouringStatus`.
 
 **OrderReview** – přehled všech 6 pozic s jejich nápoji a ingrediencemi před spuštěním plnění.
 
-**AddNewDrink** – formulář pro přiřazení ingrediencí a objemů na pozici (max. 6 ingrediencí).
+**AddNewDrink** – formulář pro přiřazení ingrediencí a objemů na pozici (max. 6 ingrediencí). Podporuje editační režim.
 
 **Bottles** – konfigurace, která lahev je na které pozici. Označení prázdných/plných lahví.
 
@@ -411,14 +439,15 @@ Výsledky: `success` / `partial` / `failed` / `cancelled`
 
 ### Hooks (SWR)
 
-| Hook | Endpoint | Interval |
-|---|---|---|
-| `usePouringStatus` | `/pour/status` | 500 ms |
-| `useStateData` | `/var/systemState` | 500 ms |
-| `useInputData` | `/var/inputState` | 500 ms |
-| `useGlassesData` | `/glasses/glasses` | on demand |
-| `useBottleData` | `/bottles/getBottles` | on demand |
-| `useServiceStatus` | `/var/currentModeOnDevice` | 1 s |
+| Hook | Endpoint | Interval | Poznámka |
+|---|---|---|---|
+| `usePouringStatus` | `/pour/status` | 500 ms | Stav průběhu plnění |
+| `useStateStatus` | `/var/currentModeOnDevice` | 500 ms | Aktuální režim zařízení |
+| `useInputData` | `/var/inputState` | 2 000 ms | Vstupní stav; vrací computed `problemsByPos`, `problemPositionsCount`, `totalProblemsCount` |
+| `useInputDataFast` | `/var/inputState` | 1 000 ms | Rychlejší varianta, navíc vrací `tensometerValues` |
+| `useGlassesData` | `/glasses/glasses` | on demand | – |
+| `useBottleData` | `/bottles/getBottles` | on demand | – |
+| `useServiceStatus` | `/lock/status/service` | 5 000 ms | Distribuovaný zámek servisu; vrací `isBusy` |
 
 ---
 
@@ -444,18 +473,23 @@ Potvrzení:         messOk: true  nebo  messErr: true
 ## Datový tok – příklad odlití nápoje
 
 ```
-1. [DashBoard]      Uživatel klikne "Add Drink"
-2. [AddNewDrink]    Vybere ingredience + objemy, přiřadí na pozici
-3. [Frontend→API]   POST /glasses/addGlassToPosition
-4. [Backend]        Aktualizuje glasses_state, persistuje
-5. [OrderReview]    Zobrazí přehled všech 6 pozic
-6. [Frontend→API]   POST /pour/start
-7. [Backend]        Spustí PouringProcessService (async)
-8. [UART]           Odešle CHECK příkaz → ESP32 potvrdí pozice
-9. [UART]           Odešle POUR příkaz → ESP32 spustí plnění
-10. [Frontend]      Polling /pour/status každých 500 ms
-11. [Pouring]       Zobrazuje průběh, úspěšné/neúspěšné pozice
-12. [Dokončení]     Výsledek: success / partial / failed
+1.  [DashBoard]      Uživatel klikne na prázdné stanoviště
+2.  [AddNewDrink]    Vybere ingredience + objemy, přiřadí na pozici
+3.  [Frontend→API]   POST /glasses/addGlassToPosition
+4.  [Backend]        Aktualizuje glasses_state, persistuje
+5.  [OrderReview]    Zobrazí přehled všech 6 pozic
+6.  [Frontend→API]   POST /pour/start
+7.  [Backend]        Spustí PouringProcessService jako asyncio task
+8.  [UART – SYNC]    Odešle seznam lahví + sklenic do ESP32
+9.  [UART – CHECK]   Odešle CHECK příkaz → ESP32 zkontroluje sklenice (position_check)
+10. [UART – START]   Odešle START příkaz → čeká na process_pouring_started=true
+11. [UART – POUR]    ESP32 nalévá → čeká na pouring_done=true
+12. [Backend]        Vyhodnotí výsledek, deaktivuje prázdné lahve, vymaže glasses_state
+13. [UART – PICKUP]  Čeká na glass_done[i] nebo glass_failed[i] pro každou pozici
+14. [Frontend]       Polling /pour/status každých 500 ms; input_state.process_pouring_started
+                     → DashBoard automaticky přesměruje na /pouring
+15. [Pouring]        Zobrazuje průběh, úspěšné/neúspěšné pozice + důvod selhání
+16. [Dokončení]      Výsledek: success / partial / failed / cancelled
 ```
 
 ---

@@ -163,6 +163,12 @@ async def reset_party_mod():
     print(f"[ENDPOINT] Požadavek na výstup z párty módu")
     return {"status": "ok", "message": "Párty mód deaktivován"}
 
+@router.post("/remote/setPartySong")
+async def set_party_song():
+    payload = system_state.set_state(partySong=True)
+    send_json(payload)
+    print(f"[ENDPOINT] Požadavek na spuštění párty songu")
+    return {"status": "ok", "message": "Párty song aktivován"}
 
 
 ## Simulation Endpoints

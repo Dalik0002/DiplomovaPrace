@@ -6,7 +6,7 @@ import { useServiceStatus } from '../hooks/useServiceStatus'
 import { useInputData } from '../hooks/useInputData'
 import { useGlasses } from '../hooks/useGlassesData'
 
-import { setService, setStop, resetStop } from '../services/stateService'
+import { setService, setStop, resetStop, setPartySong } from '../services/stateService'
 import { acquireServiceLock, releaseServiceLock } from '../services/lockService'
 import { deleteGlass } from '../services/glassesService'
 
@@ -120,13 +120,13 @@ function Dashboard() {
     }
   }
 
-  const serviceLabel = err_service
-    ? '⚙️ (Nedostupné)'
+  const serviceLabel = (err_service || isNone)
+    ? '⚙️ Nedostupné'
     : pendingServiceNav
       ? '⚙️ (Přepínám...)'
       : (isBusy ? '⚙️ (Obsazeno)' : '⚙️ Servis')
 
-  const serviceDisabled = !!err_service || pendingServiceNav || (isBusy && !pendingServiceNav)
+  const serviceDisabled = !!err_service || isNone || pendingServiceNav || (isBusy && !pendingServiceNav)
 
   const stations = useMemo(() => {
     const arr = Array.from({ length: 6 }, (_, i) => ({
@@ -222,6 +222,7 @@ function Dashboard() {
       setIsStopModalOpen(true)
     } catch (err) {
       console.error(err)
+      alert('Nepodařilo se aktivovat STOP. Zkuste to prosím znovu.')
     }
   }
 
@@ -276,7 +277,11 @@ function Dashboard() {
     <div className="dashboard-container">
       <div className="dashboard-shell">
         <div className="top-bar">
-          <h1 className="title">DrinkMaker</h1>
+          <h1
+            className="title"
+            onClick={() => { if (isParty) setPartySong().catch(console.error) }}
+            style={isParty ? { cursor: 'pointer' } : undefined}
+          >DrinkMaker</h1>
 
           <div className="nav-buttons">
             <button onClick={() => navigate('/bottles')}>

@@ -1,4 +1,5 @@
 import useSWR from 'swr'
+import { useCallback } from 'react'
 import { apiGet } from '../services/api'
 
 export function useInputData() {
@@ -53,11 +54,13 @@ export function useInputData() {
     )
   }, 0)
 
+  const refresh = useCallback((next, shouldRevalidate) => mutate(next, shouldRevalidate), [mutate])
+
   return {
     data,
     error,
     isLoading,
-    refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
+    refresh,
 
     // arrays
     positionCheck,
@@ -135,11 +138,13 @@ export function useInputDataFast() {
     )
   }, 0)
 
+  const refresh = useCallback((next, shouldRevalidate) => mutate(next, shouldRevalidate), [mutate])
+
   return {
     data,
     error,
     isLoading,
-    refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
+    refresh,
 
     // arrays
     positionCheck,

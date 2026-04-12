@@ -1,5 +1,6 @@
 // src/hooks/useServiceStatus.js
 import useSWR from 'swr';
+import { useCallback } from 'react';
 import { apiGet } from '../services/api';
 
 export function useServiceStatus() {
@@ -13,11 +14,13 @@ export function useServiceStatus() {
 
   const isBusy = !!data?.locked;
 
+  const refresh = useCallback((next, shouldRevalidate) => mutate(next, shouldRevalidate), [mutate])
+
   return {
     data,
     error,
     isLoading,
-    refresh: (next, shouldRevalidate) => mutate(next, shouldRevalidate),
+    refresh,
     isBusy,
   };
 }

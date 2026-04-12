@@ -103,7 +103,7 @@ class PouringProcessService:
             return f"Během nalévání došla kapalina na stanovišti {pos + 1}."
 
         if isinstance(hx711_error, list) and pos < len(hx711_error) and hx711_error[pos]:
-            return f"Během nalévání došla kapalina na stanovišti {pos + 1}."
+            return f"Chyba váhového senzoru na stanovišti {pos + 1}."
 
         # Problém se skleničkou — nezobrazujeme důvod
         return ""
@@ -377,9 +377,7 @@ class PouringProcessService:
             }
 
         finally:
-            # task už doběhl / selhal / skončil
-            if self._task and self._task.done():
-                self._task = None
+            pass
     
 
     # --------- Kroky – čisté a krátké ----------
@@ -438,24 +436,24 @@ class PouringProcessService:
         await self._wait_until(lambda: bool(input_state.pouring_done), timeout, stage)
 
     async def _wait_for_pickup(self, stage: str, timeout: float, notify: NotifyFn) -> None:
-            notify("POURING WAIT PICKUP", {"stage": "pickup", "msg": "Čekám na dokončení všech objednaných sklenic (done/failed)..."})
+        notify("POURING WAIT PICKUP", {"stage": "pickup", "msg": "Čekám na dokončení všech objednaných sklenic (done/failed)..."})
 
-            def pickup_cond() -> bool:
-                # Kontrolujeme pouze to, zda proces pro očekávané sklenice skončil.
-                # Fyzickou přítomnost sklenic (position_check) ignorujeme.
-                expected = self._expected_glass_positions()
-                
-                if expected and isinstance(input_state.glass_done, list) and isinstance(input_state.glass_failed, list):
-                    # Každá očekávaná sklenice musí mít buď done=True nebo failed=True
-                    if all(input_state.glass_done[i] or input_state.glass_failed[i] for i in expected):
-                        return True
-                return False
+        def pickup_cond() -> bool:
+            # Kontrolujeme pouze to, zda proces pro očekávané sklenice skončil.
+            # Fyzickou přítomnost sklenic (position_check) ignorujeme.
+            expected = self._expected_glass_positions()
+            
+            if expected and isinstance(input_state.glass_done, list) and isinstance(input_state.glass_failed, list):
+                # Každá očekávaná sklenice musí mít buď done=True nebo failed=True
+                if all(input_state.glass_done[i] or input_state.glass_failed[i] for i in expected):
+                    return True
+            return False
 
-            await self._wait_until(pickup_cond, timeout, stage)
+        await self._wait_until(pickup_cond, timeout, stage)
 
     async def _wait_for_pouring_started(self, stage: str, timeout: float, notify: NotifyFn) -> None:
-      notify("POURING WAIT POURING STARTED", {"stage": "pour_start", "msg": "Čekám na potvrzení, že nalévání začalo..."})
-      await self._wait_until(lambda: bool(getattr(input_state, "process_pouring_started", False)), timeout, stage)
+        notify("POURING WAIT POURING STARTED", {"stage": "pour_start", "msg": "Čekám na potvrzení, že nalévání začalo..."})
+        await self._wait_until(lambda: bool(getattr(input_state, "process_pouring_started", False)), timeout, stage)
 
     # --------- Defenzivní kontroly + společná wait smyčka ----------
 
