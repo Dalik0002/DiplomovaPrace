@@ -119,7 +119,7 @@ function ServiceMain() {
             className={`service-nav-btn ${isStationsActive ? 'is-active' : ''}`}
             onClick={() => navigate('/service/serviceStations')}
           >
-            Jednotlivá stanoviště
+            Nádoby & Stanoviště
             {showStationsBadge && (
               <span
                 className="service-badge"

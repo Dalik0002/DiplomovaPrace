@@ -159,6 +159,17 @@
   color: #ffffff;
 }
 
+.dashboard-circle-node.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  border-color: rgba(255, 70, 0, 0.6);
+}
+
+.dashboard-circle-node.is-disabled:hover {
+  transform: none;
+  border-color: rgba(255, 70, 0, 0.6);
+}
+
 .dashboard-node-label {
   font-weight: 900;
   font-size: 1.5rem;

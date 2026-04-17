@@ -71,13 +71,22 @@ export function calibrateLoadCell(position) {
   return apiPost('/service/calibratePosition', { position });
 }
 
-//Enable/Disable Stations
+//Enable/Disable Bottle
 export function disableStation(position) {
-  return apiPost('/service/disablePosition', { position });
+  return apiPost('/service/disableBottle', { position });
 }
 
 export function enableStation(position) {
-  return apiPost('/service/enablePosition', { position });
+  return apiPost('/service/enableBottle', { position });
+}
+
+//Disable/Enable Station (fyzické stanoviště)
+export function disableStationSlot(position) {
+  return apiPost('/service/disableStation', { position });
+}
+
+export function enableStationSlot(position) {
+  return apiPost('/service/enableStation', { position });
 }
 
 //Fill Bottles

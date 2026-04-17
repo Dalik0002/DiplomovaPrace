@@ -43,7 +43,8 @@ def get_input_state():
     response = input_state.to_dict()
     response.update({
         "position_disabled": bottles_state.disabled,
-        "empty_bottle": bottles_state.empty_bottle
+        "empty_bottle": bottles_state.empty_bottle,
+        "station_disabled": bottles_state.station_disabled,
         })
     
     return response

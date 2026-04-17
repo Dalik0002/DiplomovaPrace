@@ -71,7 +71,7 @@ function BottleSetUp() {
 
   return (
     <div className="centered-page">
-      <h2>KONFIGURACE LAHVÍ</h2>
+      <h2>KONFIGURACE NÁDOB</h2>
       {status && <p>{status}</p>}
 
       {isLoading ? (
@@ -95,12 +95,12 @@ function BottleSetUp() {
                     disabled ? (
                       /* ✅ Zakázané lahve v EDIT módu - roztažené na střed */
                       <div className="disabled-full-width">
-                        Láhev {getLabel(position)} je zakázána
+                        Nádoba {getLabel(position)} je zakázána
                       </div>
                     ) : (
                       /* ✅ Normální lahve v EDIT módu */
                       <>
-                        <label className="bottle-pos">Láhev {getLabel(position)}:</label>
+                        <label className="bottle-pos">Nádoba {getLabel(position)}:</label>
                         <input
                           type="text"
                           value={bottle}
@@ -123,7 +123,7 @@ function BottleSetUp() {
                   ) : (
                     /* LOGIKA PRO VIEW MOD (Beze změny) */
                     <>
-                      <label className="bottle-pos">Láhev {getLabel(position)}:</label>
+                      <label className="bottle-pos">Nádoba {getLabel(position)}:</label>
                       {disabled ? (
                         <i className="disabled-tag">– ZAKÁZÁNA –</i>
                       ) : (

@@ -33,7 +33,7 @@ function Dashboard() {
     refresh: refreshService,
   } = useServiceStatus()
 
-  const { totalProblemsCount, processPouringStarted } = useInputData()
+  const { totalProblemsCount, processPouringStarted, stationDisabled } = useInputData()
 
   const {
     data: glasses = [],
@@ -285,7 +285,7 @@ function Dashboard() {
 
           <div className="nav-buttons">
             <button onClick={() => navigate('/bottles')}>
-              📦 Konfigurace lahví
+              📦 Konfigurace nádob
             </button>
 
             <button onClick={handleServiceClick} disabled={serviceDisabled}>
@@ -322,25 +322,32 @@ function Dashboard() {
           <div className="dashboard-station-circle-container">
             <div className="dashboard-station-circle-track" />
 
-            {stations.map((station, i) => (
-              <button
-                key={station.position}
-                className={[
-                  'dashboard-circle-node',
-                  station.occupied ? 'is-filled' : '',
-                ].join(' ')}
-                style={{ '--index': i }}
-                onClick={() => handleStationClick(station)}
-                type="button"
-                title={
-                  station.occupied
-                    ? `Stanoviště ${station.position + 1}`
-                    : `Přidat nápoj na stanoviště ${station.position + 1}`
-                }
-              >
-                <span className="dashboard-node-label">{station.position + 1}</span>
-              </button>
-            ))}
+            {stations.map((station, i) => {
+              const isSlotDisabled = !!stationDisabled?.[station.position]
+              return (
+                <button
+                  key={station.position}
+                  className={[
+                    'dashboard-circle-node',
+                    station.occupied ? 'is-filled' : '',
+                    isSlotDisabled ? 'is-disabled' : '',
+                  ].join(' ')}
+                  style={{ '--index': i }}
+                  onClick={() => !isSlotDisabled && handleStationClick(station)}
+                  type="button"
+                  disabled={isSlotDisabled}
+                  title={
+                    isSlotDisabled
+                      ? `Stanoviště ${station.position + 1} — zakázáno`
+                      : station.occupied
+                        ? `Stanoviště ${station.position + 1}`
+                        : `Přidat nápoj na stanoviště ${station.position + 1}`
+                  }
+                >
+                  <span className="dashboard-node-label">{station.position + 1}</span>
+                </button>
+              )
+            })}
 
             <div className="dashboard-circle-center">
               <button

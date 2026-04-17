@@ -12,18 +12,21 @@ class BottlesState:
             self.bottles = saved_state.get("bottles", [""] * 6)
             self.disabled = saved_state.get("disabled", [False] * 6)
             self.empty_bottle = saved_state.get("empty_bottle", [False] * 6)
+            self.station_disabled = saved_state.get("station_disabled", [False] * 6)
             print("INFO: Stav lahví úspěšně načten ze zálohy.")
         else:
             # Pokud záznam neexistuje (např. první spuštění), vytvoříme čistý stav
             self.bottles = [""] * 6
             self.disabled = [False] * 6
             self.empty_bottle = [False] * 6
+            self.station_disabled = [False] * 6
 
     def _save_state(self):
         current_state = {
             "bottles": self.bottles,
             "disabled": self.disabled,
-            "empty_bottle": self.empty_bottle
+            "empty_bottle": self.empty_bottle,
+            "station_disabled": self.station_disabled,
         }
         save_data("bottles_state", current_state)
 
@@ -68,6 +71,18 @@ class BottlesState:
         if 0 <= position < 6:
             self.disabled[position] = False
             self.empty_bottle[position] = False
+        self._save_state()
+
+    def disable_station(self, position: int):
+        """Zakáže fyzické stanoviště — žádná objednávka na tuto pozici"""
+        if 0 <= position < 6:
+            self.station_disabled[position] = True
+        self._save_state()
+
+    def enable_station(self, position: int):
+        """Povolí fyzické stanoviště"""
+        if 0 <= position < 6:
+            self.station_disabled[position] = False
         self._save_state()
 
     def get_bottles(self) -> List[str]:

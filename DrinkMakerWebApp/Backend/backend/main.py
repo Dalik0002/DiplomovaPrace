@@ -73,7 +73,7 @@ async def custom_swagger_ui_html():
         title="DrinkMaker API - Docs",
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",     
-        swagger_favicon_url="/static/piano.ico",      
+        swagger_favicon_url="/static/logo_small.ico",      
     )
 
 @app.on_event("startup")

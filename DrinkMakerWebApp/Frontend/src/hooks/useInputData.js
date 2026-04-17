@@ -20,6 +20,7 @@ export function useInputData() {
   const hx711Error = input.HX711_error ?? Array(6).fill(false)
   const emptyBottle = input.empty_bottle ?? Array(6).fill(false)
   const positionDisabled = input.position_disabled ?? Array(6).fill(false)
+  const stationDisabled = input.station_disabled ?? Array(6).fill(false)
 
   // ---- global flags ----
   const pouringDone = !!input.pouring_done
@@ -36,6 +37,7 @@ export function useInputData() {
     hx711Error: !!hx711Error?.[i],
     emptyBottle: !!emptyBottle?.[i],
     disabled: !!positionDisabled?.[i],
+    stationDisabled: !!stationDisabled?.[i],
   }))
 
   // kolik stanovišť má alespoň jeden problém
@@ -44,13 +46,14 @@ export function useInputData() {
     return acc + (hasProblem ? 1 : 0)
   }, 0)
 
-  // kolik problémů celkem (hx + empty + disabled se sčítají)
+  // kolik problémů celkem (hx + empty + disabled + stationDisabled se sčítají)
   const totalProblemsCount = problemsByPos.reduce((acc, p) => {
     return (
       acc +
       (p.hx711Error ? 1 : 0) +
       (p.emptyBottle ? 1 : 0) +
-      (p.disabled ? 1 : 0)
+      (p.disabled ? 1 : 0) +
+      (p.stationDisabled ? 1 : 0)
     )
   }, 0)
 
@@ -67,6 +70,7 @@ export function useInputData() {
     glassDone,
     emptyBottle,
     positionDisabled,
+    stationDisabled,
     hx711Error,
 
     // flags
@@ -103,6 +107,7 @@ export function useInputDataFast() {
   const hx711Error = input.HX711_error ?? Array(6).fill(false)
   const emptyBottle = input.empty_bottle ?? Array(6).fill(false)
   const positionDisabled = input.position_disabled ?? Array(6).fill(false)
+  const stationDisabled = input.station_disabled ?? Array(6).fill(false)
   const tensometerValues = input.tensometer_values ?? Array(6).fill(0)
 
   // ---- global flags ----
@@ -120,6 +125,7 @@ export function useInputDataFast() {
     hx711Error: !!hx711Error?.[i],
     emptyBottle: !!emptyBottle?.[i],
     disabled: !!positionDisabled?.[i],
+    stationDisabled: !!stationDisabled?.[i],
   }))
 
   // kolik stanovišť má alespoň jeden problém
@@ -128,13 +134,14 @@ export function useInputDataFast() {
     return acc + (hasProblem ? 1 : 0)
   }, 0)
 
-  // kolik problémů celkem (hx + empty + disabled se sčítají)
+  // kolik problémů celkem (hx + empty + disabled + stationDisabled se sčítají)
   const totalProblemsCount = problemsByPos.reduce((acc, p) => {
     return (
       acc +
       (p.hx711Error ? 1 : 0) +
       (p.emptyBottle ? 1 : 0) +
-      (p.disabled ? 1 : 0)
+      (p.disabled ? 1 : 0) +
+      (p.stationDisabled ? 1 : 0)
     )
   }, 0)
 
@@ -151,6 +158,7 @@ export function useInputDataFast() {
     glassDone,
     emptyBottle,
     positionDisabled,
+    stationDisabled,
     hx711Error,
     tensometerValues,
 

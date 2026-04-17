@@ -26,7 +26,7 @@ Webová aplikace pro ovládání robotického výdejníku nápojů. Systém se s
 ┌──────────────────────────────────────────────────────────────┐
 │                 React Frontend (port 80)                      │
 │  DashBoard → Bottles → NewDrink → OrderReview → Pouring      │
-│  SWR polling každých 500 ms pro real-time aktualizace        │
+│  SWR polling (interval 500 ms – 5 s podle hooku)             │
 └───────────────────────┬──────────────────────────────────────┘
                         │ HTTP REST API (port 8000)
 ┌───────────────────────▼──────────────────────────────────────┐
@@ -356,7 +356,7 @@ Pole jsou dostupná přes REST API jako Python jména; UART klíče (ESP32 → R
 | `emergency_stop` | `emrgncyStopAppear` | `bool` | Nouzové zastavení |
 | `State` (UART only) | `State` | `int 1–7` | Aktuální režim zařízení (viz tabulka módů) |
 
-> **Poznámka:** Endpoint `/var/inputState` navíc vrací `position_disabled` (z `bottles_state` na RPi, nikoli z ESP32).
+> **Poznámka:** Endpoint `/var/inputState` navíc vrací tři pole přebíjená z `bottles_state` (nikoli přímo z ESP32): `position_disabled` (deaktivované lahve), `empty_bottle` (prázdné lahve dle evidence backendu) a `station_disabled` (deaktivovaná stanoviště).
 
 ---
 
@@ -443,8 +443,8 @@ Automatické akce po plnění:
 |---|---|---|---|
 | `usePouringStatus` | `/pour/status` | 500 ms | Stav průběhu plnění |
 | `useStateStatus` | `/var/currentModeOnDevice` | 500 ms | Aktuální režim zařízení |
-| `useInputData` | `/var/inputState` | 2 000 ms | Vstupní stav; vrací computed `problemsByPos`, `problemPositionsCount`, `totalProblemsCount` |
-| `useInputDataFast` | `/var/inputState` | 1 000 ms | Rychlejší varianta, navíc vrací `tensometerValues` |
+| `useInputData` | `/var/inputState` | 2 000 ms | Vstupní stav; vrací computed `problemsByPos`, `problemPositionsCount`, `totalProblemsCount`; pole `positionDisabled`, `stationDisabled`, `emptyBottle`, `hx711Error` |
+| `useInputDataFast` | `/var/inputState` | 1 000 ms | Rychlejší varianta (sdílí SWR klíč s `useInputData`), navíc vrací `tensometerValues` |
 | `useGlassesData` | `/glasses/glasses` | on demand | – |
 | `useBottleData` | `/bottles/getBottles` | on demand | – |
 | `useServiceStatus` | `/lock/status/service` | 5 000 ms | Distribuovaný zámek servisu; vrací `isBusy` |

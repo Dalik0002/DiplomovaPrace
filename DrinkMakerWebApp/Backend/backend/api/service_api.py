@@ -118,28 +118,48 @@ async def calibrate_position(data: ESPPosition):
     return {"status": "ok", "message": f"Kalibrace pozice {position} spuštěna"}
 
 
-## Disable Positions Endpoints
-@router_service.post("/disablePosition")
-async def disable_position(data: ESPPosition):
+## Disable/Enable Bottle Endpoints
+@router_service.post("/disableBottle")
+async def disable_bottle(data: ESPPosition):
     position = data.position
     if position not in range(6):
         raise HTTPException(status_code=400, detail="Invalid position for disabling")
-    
+
     bottles_state.disable_position(position, is_empty=False)
     available_bottles = bottles_state.get_available_bottles()
     deleted_positions = glasses_service.remove_invalid_glasses(available_bottles)
-    return {"status": "ok", "message": f"Position {position} disabled."}
+    return {"status": "ok", "message": f"Bottle at position {position} disabled."}
 
 
-## Enable Positions Endpoints
-@router_service.post("/enablePosition")
-async def enable_position(data: ESPPosition):
+@router_service.post("/enableBottle")
+async def enable_bottle(data: ESPPosition):
     position = data.position
     if position not in range(6):
         raise HTTPException(status_code=400, detail="Invalid position for enabling")
-    
+
     bottles_state.enable_position(position)
-    return {"status": "ok", "message": f"Position {position} enabled."}
+    return {"status": "ok", "message": f"Bottle at position {position} enabled."}
+
+
+## Disable/Enable Station (fyzické stanoviště)
+@router_service.post("/disableStation")
+async def disable_station(data: ESPPosition):
+    position = data.position
+    if position not in range(6):
+        raise HTTPException(status_code=400, detail="Invalid position for disabling station")
+
+    bottles_state.disable_station(position)
+    return {"status": "ok", "message": f"Station {position} disabled."}
+
+
+@router_service.post("/enableStation")
+async def enable_station(data: ESPPosition):
+    position = data.position
+    if position not in range(6):
+        raise HTTPException(status_code=400, detail="Invalid position for enabling station")
+
+    bottles_state.enable_station(position)
+    return {"status": "ok", "message": f"Station {position} enabled."}
 
 
 ## Fill Bottle Endpoints
