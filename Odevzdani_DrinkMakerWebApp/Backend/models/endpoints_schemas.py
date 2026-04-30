@@ -1,0 +1,51 @@
+from pydantic import BaseModel, conint
+from typing import List, Optional
+
+# GLASSES
+class Glass(BaseModel):
+    ingredients: List[str]
+    volumes: List[int]
+
+class GlassAtPosition(BaseModel):
+    position: conint(ge=0, le=5)
+    glass: Glass
+
+class DeleteGlassPayload(BaseModel):
+    position: conint(ge=0, le=5)
+
+
+# BOTTLES
+class BottleAssignment(BaseModel):
+    position: int
+    bottle: str
+
+class BottleStatus(BaseModel):
+    position: int
+    bottle: str
+    disabled: bool = False
+    empty_bottle: bool = False
+
+class DrinkName(BaseModel):
+    name: str
+    position: int
+
+class ChoosedDrink(BaseModel):
+    name: str
+    position: int
+
+class ESPPosition(BaseModel):
+    position: int
+
+# MOTOR
+class HeightPlexi(BaseModel):
+    height: conint(ge=0, le=100)
+
+# SERVICE
+class ValveID(BaseModel):
+    valve_id: conint(ge=0, le=5)
+    open: bool
+
+
+# LOCKS
+class LockRequest(BaseModel):
+    client_id: str

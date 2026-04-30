@@ -13,8 +13,7 @@ class SystemState:
         mapping = {
             "start": "strt", "stop": "stp", "check": "chck",
             "service": "srvc", "standBy": "stnd", "update": "updt", "party": "prty",
-            "partySong": "prtySng",
-            "releaseCarouselMotor": "relsCarMtr",
+"releaseCarouselMotor": "relsCarMtr",
             "releasePlexiMotor": "relsPlxMtr",
             "homeCarousel": "homeCarousel",
             "homePlexi": "homePlexi",

@@ -243,6 +243,7 @@ class PouringProcessService:
         self._reset_runtime_status()
         self._reset_pouring_runtime_flags()
         self._reset_pouring_outcome_flags()
+        input_state.set_pouring_active(True)
 
         try:
             async with self._lock:
@@ -322,10 +323,12 @@ class PouringProcessService:
                         **result  
                     })
 
+                input_state.set_pouring_active(False)
                 glasses_service.clear_glasses()
                 return result
             
         except asyncio.CancelledError:
+            input_state.set_pouring_active(False)
             self._reset_pouring_runtime_flags()
             self._reset_pouring_outcome_flags()
 
@@ -343,6 +346,7 @@ class PouringProcessService:
             raise
 
         except PourError as e:
+            input_state.set_pouring_active(False)
             self.result_ok = False
             self.last_error = str(e)
             self.result_kind = "failed"
@@ -360,6 +364,7 @@ class PouringProcessService:
             }
 
         except Exception as e:
+            input_state.set_pouring_active(False)
             self.result_ok = False
             self.last_error = f"Neočekávaná chyba: {e}"
             self.result_kind = "failed"
@@ -390,7 +395,7 @@ class PouringProcessService:
             except Exception as e:
                 raise PourError("sync_glasses", f"Odeslání sklenic selhalo: {e}", self._snapshot())
             
-        notify("POURING UART", {"msg": "Odeslán seznam sklenic do ESP.", "slots": list(glasses_state.get_glasses_in_list())})
+        notify("POURING UART", {"msg": "Připravuji sklenice pro nalévání.", "slots": list(glasses_state.get_glasses_in_list())})
 
     async def _sync_bottles_and_send(self, notify: NotifyFn) -> None:
         payload = bottles_state.to_position_json()
@@ -400,7 +405,7 @@ class PouringProcessService:
             except Exception as e:
                 raise PourError("sync_bottles", f"Odeslání lahví selhalo: {e}", self._snapshot())
             
-        notify("POURING UART", {"msg": "Odeslány lahve do ESP.", "slots": list(bottles_state.get_bottle_assignments())})
+        notify("POURING UART", {"msg": "Připravuji nádoby pro nalévání.", "slots": list(bottles_state.get_bottle_assignments())})
 
 
     async def _send_check(self, enabled: bool, notify: NotifyFn) -> None:
@@ -410,7 +415,7 @@ class PouringProcessService:
         except Exception as e:
             raise PourError("send_check", f"Odeslání check selhalo: {e}", self._snapshot())
         
-        notify("POURING UART", {"msg": f"CHECK => {enabled}"})
+        notify("POURING UART", {"msg": "Spouštím kontrolu stanovišť..." if enabled else "Ukončuji kontrolu stanovišť."})
 
 
     async def _send_start_pouring(self, notify: NotifyFn) -> None:
@@ -423,12 +428,12 @@ class PouringProcessService:
         except Exception as e:
             raise PourError("pour_start_send", f"Odeslání START selhalo: {e}", self._snapshot())
 
-        notify("POURING UART", {"msg": "START POURING"})
+        notify("POURING UART", {"msg": "Zahajuji nalévání..."})
 
 
     # --------- Čekací podmínky ----------
     async def _wait_for_check_ok(self, stage: str, timeout: float, notify: NotifyFn) -> None:
-        notify("POURING WAIT CHECK", {"stage": "check", "msg": "Čekám na dokončení CHECK..."})
+        notify("POURING WAIT CHECK", {"stage": "check", "msg": "Probíhá kontrola stanovišť. Ujistěte se, že sklenice jsou prázdné a na svých pozicích."})
         await self._wait_until(self._check_ok_condition, timeout, stage)
 
     async def _wait_for_pouring_done(self, stage: str, timeout: float, notify: NotifyFn) -> None:
@@ -436,7 +441,7 @@ class PouringProcessService:
         await self._wait_until(lambda: bool(input_state.pouring_done), timeout, stage)
 
     async def _wait_for_pickup(self, stage: str, timeout: float, notify: NotifyFn) -> None:
-        notify("POURING WAIT PICKUP", {"stage": "pickup", "msg": "Čekám na dokončení všech objednaných sklenic (done/failed)..."})
+        notify("POURING WAIT PICKUP", {"stage": "pickup", "msg": "Dokončuji proces nalévání..."})
 
         def pickup_cond() -> bool:
             # Kontrolujeme pouze to, zda proces pro očekávané sklenice skončil.
@@ -452,10 +457,17 @@ class PouringProcessService:
         await self._wait_until(pickup_cond, timeout, stage)
 
     async def _wait_for_pouring_started(self, stage: str, timeout: float, notify: NotifyFn) -> None:
-        notify("POURING WAIT POURING STARTED", {"stage": "pour_start", "msg": "Čekám na potvrzení, že nalévání začalo..."})
+        notify("POURING WAIT POURING STARTED", {"stage": "pour_start", "msg": "Spouštím nalévání..."})
         await self._wait_until(lambda: bool(getattr(input_state, "process_pouring_started", False)), timeout, stage)
 
     # --------- Defenzivní kontroly + společná wait smyčka ----------
+
+    _FATAL_MESSAGES = {
+        "EMERGENCY STOP":          "Nouzové zastavení. Zkontrolujte zařízení.",
+        "CANNOT PROCESS POSITION": "Nelze zpracovat dané stanoviště.",
+        "CANNOT PROCESS GLASS":    "Nelze zpracovat sklenici.",
+        "CANNOT SET MODE":         "Nelze nastavit provozní režim zařízení.",
+    }
 
     def _have_fatal_error(self) -> Optional[str]:
         if getattr(input_state, "emergency_stop", False):
@@ -522,7 +534,8 @@ class PouringProcessService:
             fatal = self._have_fatal_error()
             if fatal:
                 await self._clear_check_mode_on_fatal(stage, fatal)
-                raise PourError(stage, f"Chyba z ESP: {fatal}", self._snapshot())
+                human_msg = self._FATAL_MESSAGES.get(fatal, f"Chyba zařízení: {fatal}")
+                raise PourError(stage, human_msg, self._snapshot())
 
             if self._have_nonfatal_comm_issue():
                 if not comm_warn_logged:
@@ -538,7 +551,7 @@ class PouringProcessService:
                 raise PourError(stage, f"Chyba evaluace podmínky: {e!r}", self._snapshot())
 
             if loop.time() > deadline:
-                raise PourError(stage, f"Timeout {timeout:.0f}s ve fázi '{stage}'.", self._snapshot())
+                raise PourError(stage, "Vypršel časový limit. Zkontrolujte zařízení a zkuste to znovu.", self._snapshot())
 
             await asyncio.sleep(self.poll_dt)
     # --------- Snapshots pro log/debug ----------

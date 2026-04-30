@@ -10,6 +10,22 @@ import { resetStop } from '../services/stateService'
 import { cancelPouring } from '../services/pouringService'
 import "./Pouring.css";
 
+const STAGE_LABELS = {
+  "IDLE":                        "Připravuji...",
+  "POURING INIT":                "Spouštím proces...",
+  "POURING UART":                "Komunikuji se zařízením...",
+  "POURING WAIT CHECK":          "Kontrola stanovišť",
+  "POURING WAIT POURING STARTED":"Spouštění nalévání",
+  "POURING WAIT POURING":        "Probíhá nalévání",
+  "POURING WAIT PICKUP":         "Dokončování",
+  "POURING WARNING":             "Upozornění",
+  "BOTTLE DISABLED":             "Nádoba deaktivována",
+  "POURING DONE":                "Hotovo",
+  "POURING PARTIAL":             "Dokončeno částečně",
+  "POURING FAILED":              "Chyba",
+  "POURING CANCELLED":           "Zrušeno",
+}
+
 export default function Pouring() {
   const navigate = useNavigate();
   const [stopping, setStopping] = useState(false);
@@ -32,10 +48,6 @@ export default function Pouring() {
     failedDetails,
   } = usePouringStatus();
 
-  useEffect(() => {
-    console.log(`[PROCESS] Stage: ${stage} | Msg: ${stageMessage} | Running: ${isProcessRunning}`);
-  }, [stage, stageMessage, isProcessRunning]);
-  
   const {
     isLoading,
     error,
@@ -48,16 +60,6 @@ export default function Pouring() {
     cannotSetMode,
   } = useInputData();
 
-  useEffect(() => {
-    if (!isLoading) {
-      console.log(`[HW DATA] Started: ${processPouringStarted}, Done: ${pouringDone}, Emergency: ${emergencyStop}`);
-    if (messError || cannotProcessPosition || cannotProcessGlass || cannotSetMode) {
-      console.log(
-        `[HW ERROR] Mess: ${messError}, Pos: ${cannotProcessPosition}, Glass: ${cannotProcessGlass}, Mode: ${cannotSetMode}`
-      );
-    }
-    }
-  }, [isLoading, processPouringStarted, pouringDone, emergencyStop, messError, cannotProcessPosition, cannotProcessGlass])
 
   const goHome = async () => {
     try {
@@ -82,7 +84,6 @@ export default function Pouring() {
   }, [emergencyStop, navigate]);
   
   const handleStop = async () => {
-    console.log("[ACTION] Uživatel klikl na STOP.");
     setLocalErr("");
     setStopping(true);
 
@@ -186,13 +187,13 @@ export default function Pouring() {
         <p className="pouring-status">
           {stageMessage || "Připravuji zařízení..."}
         </p>
-        
+
         <div className="pouring-spinner-wrap">
           <div className={`pouring-spinner ${stage.includes("WAIT") ? "spinner-slow" : ""}`} />
         </div>
 
-        {/* Zobrazení technické fáze (badge) */}
-        <div className="pouring-stage-badge">{stage}</div>
+        {/* Fáze procesu – zobrazena česky */}
+        <div className="pouring-stage-badge">{STAGE_LABELS[stage] ?? stage}</div>
 
         {/* Chybové hlášky z HW */}
         {(cannotProcessPosition || cannotProcessGlass || cannotSetMode) && (

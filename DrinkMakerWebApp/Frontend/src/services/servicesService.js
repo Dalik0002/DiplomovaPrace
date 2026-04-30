@@ -7,7 +7,7 @@ export function releaseCarouselMotor() {
 }
 
 export function blockCarouselMotor() {
-  return apiPost('/service/motorPlexiBlock');
+  return apiPost('/service/motorCarouselBlock');
 }
 
 export function homeCarousel() {

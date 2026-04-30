@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { assignBottles } from '../services/bottleService';
 import './BottleSetUp.css';
 import { useBottles} from '../hooks/useBottleData';
-import { useInputData } from '../hooks/useInputData';
 
 function BottleSetUp() {
   const [isEditing, setIsEditing] = useState(false);
@@ -34,10 +33,12 @@ function BottleSetUp() {
     setStatus('✏️ Režim úprav – proveď změny a ulož.');
   };
 
+  const sanitizeName = (str) =>
+    str.replace(/[^a-zA-Z0-9À-ɏ ]/g, '');
+
   const handleChange = (position, newName) => {
     if (!isEditing || saving) return;
-    // optimisticky upravíme SWR cache (bez fetch)
-    const next = rows.map(b => b.position === position ? { ...b, bottle: newName } : b);
+    const next = rows.map(b => b.position === position ? { ...b, bottle: sanitizeName(newName) } : b);
     refresh(next, false);
   };
 
@@ -141,7 +142,7 @@ function BottleSetUp() {
           <div className="button-row">
             {!isEditing ? (
               <button onClick={handleEdit} className="action-button" disabled={saving}>
-                ✏️ UPRAVIT
+                ✏️ Upravit
               </button>
             ) : (
               <>

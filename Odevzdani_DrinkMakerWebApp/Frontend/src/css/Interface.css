@@ -1,0 +1,64 @@
+.pages-centered-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 0.75rem;
+  /*border: #ff00b7 2px dashed;*/
+  gap: 1rem;
+}
+
+.centered-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #3b1b4b;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  /*border: #44ff00 2px dashed;*/
+}
+
+.centered-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  border: #533761 2px solid;
+}
+
+.error {
+  display: flex;
+  flex: 1;
+  color: red;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid red;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  flex-direction: column;
+}
+
+.loading {
+  display: flex;
+  flex: 1;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #48b8c7;
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+  flex-direction: column;
+}
+
+.input-field{
+  text-align: center;
+}
+

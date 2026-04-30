@@ -120,11 +120,12 @@ async def uart_JSON_listener_loop():
                         print("[UART STATE ERROR] Neplatný JSON:", json_str)
                 
             if time.time() - last_state_time > 10:
-                if not input_state.simulation_mode_active:
+                if not input_state.simulation_mode_active and not input_state.pouring_active:
                     print("[UART STATE TIMEOUT] Žádný STATE >10s")
                     input_state.reset_mode()
                 else:
-                    print("[UART STATE TIMEOUT] Simulace módu aktivní -> reset_mode přeskočen")
+                    reason = "Simulace módu aktivní" if input_state.simulation_mode_active else "Probíhá nalévání"
+                    print(f"[UART STATE TIMEOUT] {reason} -> reset_mode přeskočen")
                 last_state_time = time.time()
 
         except Exception as e:

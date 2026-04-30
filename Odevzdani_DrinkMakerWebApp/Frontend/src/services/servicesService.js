@@ -1,0 +1,96 @@
+import { apiPost } from "./api";
+
+//Motor Control
+export function releaseCarouselMotor() {
+  return apiPost('/service/motorCarouselRelease');
+}
+
+export function blockCarouselMotor() {
+  return apiPost('/service/motorCarouselBlock');
+}
+
+export function homeCarousel() {
+  return apiPost('/service/homeCarousel');
+}
+
+export function moveCarousel() {
+  return apiPost('/service/moveCarousel');
+}
+
+export function releasePlexiMotor() {
+  return apiPost('/service/motorPlexiRelease');
+}
+
+export function blockPlexiMotor() {
+  return apiPost('/service/motorPlexiBlock');
+}
+
+export function homePlexi() {
+  return apiPost('/service/homePlexi');
+}
+
+export function movePlexi(percentHeight) {
+  return apiPost('/service/movePlexi', { height: percentHeight});
+}
+
+
+//Valve Control
+export function setValve(id, open) {
+  return apiPost('/service/setValve', { valve_id: id, open });
+}
+
+//Restart ESPs 
+export function restartESP32() {
+  return apiPost('/service/restartESP32');
+}
+
+export function restartESPs() {
+  return apiPost('/service/restartAllCarouselESPs');
+}
+
+export function restartCarouselESP(position) {
+  return apiPost('/service/restartCarouselESP', { position });
+}
+
+//Update ESPs
+export function updateESP32() {
+  return apiPost('/fw/updateESP32');
+}
+
+export function updateESPs() {
+  return apiPost('/fw/updateAllCarouselESPs');
+}
+
+export function updateCarouselESP(position) {
+  return apiPost('/fw/updateCarouselESP', { position });
+}
+
+//Calibration
+export function calibrateLoadCell(position) {
+  return apiPost('/service/calibratePosition', { position });
+}
+
+//Enable/Disable Bottle
+export function disableStation(position) {
+  return apiPost('/service/disableBottle', { position });
+}
+
+export function enableStation(position) {
+  return apiPost('/service/enableBottle', { position });
+}
+
+//Disable/Enable Station (fyzické stanoviště)
+export function disableStationSlot(position) {
+  return apiPost('/service/disableStation', { position });
+}
+
+export function enableStationSlot(position) {
+  return apiPost('/service/enableStation', { position });
+}
+
+//Fill Bottles
+export function markBottleFilled(position) {
+  return apiPost('/service/markBottleFilled', { position });
+}
+
+

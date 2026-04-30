@@ -1,0 +1,176 @@
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  justify-content: center;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box; 
+  /*border: #08b335 2px dashed;*/
+}
+
+.nav-buttons button {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: nowrap;
+  align-self: stretch;
+  padding: 0.5rem 1rem;
+  background: #aa44cc;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* --- --- --- */
+.nav-buttons button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
+}
+
+.nav-buttons button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.add-button {
+  font-size: 1rem;
+  padding: 0.8rem 2rem;
+  background: #948608;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;  
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(168, 161, 34, 0.5);
+  transition: transform 0.2s;
+  margin-top: 0.5rem;
+}
+
+.add-button:hover {
+  transform: scale(1.05);
+}
+
+/* --- --- --- */
+.start-button {
+  width: 100%;
+  color: rgb(255, 255, 255);
+  padding: 0.85rem 0.8rem;
+  border-radius: 0.8rem;
+  transition: transform 0.2s, background 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: #4caf50;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #c4b300;
+  transform: scale(1.02);
+}
+
+.start-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+  background: #444;
+}
+
+/* --- --- --- */
+.stop-button {
+  font-size: 1rem;
+  background: #e53935;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(229, 57, 53, 0.5);
+  transition: transform 0.2s;
+  width: 100%;
+}
+
+.stop-button:hover {
+  transform: scale(1.05);
+}
+
+/* --- --- --- */
+.delete-button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #d41919;
+  color: white;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  align-self: center;
+}
+
+.delete-button:hover {
+  transform: scale(1.05);
+}
+
+.delete-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* --- --- --- */
+.back-button {
+  margin-bottom: 1rem;
+  padding: 0.4rem 1rem;
+  font-size: 1.2rem;
+  background: #aa44cc;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.back-button:hover {
+  background: #cc66ee;
+  transform: scale(1.05);
+}
+
+/* --- --- --- */
+.action-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background: #d68e22;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.action-button:hover {
+  background: #da952e;
+  transform: scale(1.05);
+}
+
+/* --- --- --- */
+.cancel-button {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background: #533761;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.cancel-button:hover {
+  background: #a463c5;
+  transform: scale(1.05);
+}

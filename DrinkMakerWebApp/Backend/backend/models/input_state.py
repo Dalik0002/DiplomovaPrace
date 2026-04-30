@@ -16,6 +16,7 @@ class InputState:
         }
 
         self.simulation_mode_active = False
+        self.pouring_active = False
 
     def reset(self):
         self.position_check = [False] * 6
@@ -37,6 +38,9 @@ class InputState:
     
     def reset_mode(self):
         self.current_mode = None
+
+    def set_pouring_active(self, active: bool):
+        self.pouring_active = active
 
     def enable_mode_simulation(self):
         self.simulation_mode_active = True

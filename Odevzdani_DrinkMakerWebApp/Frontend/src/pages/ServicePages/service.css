@@ -1,0 +1,406 @@
+/* --- GLOBÁLNÍ A SPOLEČNÉ STYLY --- */
+.service-container {
+  display: flex;
+  background: #3b1b4b;
+  color: #ffffff;
+  color-scheme: dark;
+  flex-direction: column;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  gap: 1rem;
+  height: fit-content;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: visible;
+}
+
+
+.service-page-frame {
+  width: 100%;
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-sizing: border-box;
+}
+
+@media (min-width: 700px) {
+  .service-page-frame {
+    border: 2px solid #533761;
+    border-radius: 0.75rem;
+    padding: 1rem;
+  }
+}
+
+.service-container-title {
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.service-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.service-btn {
+  width: 100%;
+  color: rgb(255, 255, 255);
+  background-color: #1a1a1a;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.6rem;
+  transition: transform 0.2s, background 0.2s;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.1);
+
+  font-size: 0.75rem; 
+  font-weight: 700;
+  text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.service-btn:focus,
+.service-btn:focus-visible,
+.service-btn:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.service-btn:focus:not(.is-on),
+.service-btn:focus-visible:not(.is-on) {
+  background: transparent;
+  color: rgb(255, 255, 255);
+}
+
+.service-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service-btn:not(:disabled):hover {
+    background: #bbb8b4;
+    color: black;
+    transform: scale(1.05);
+  }
+}
+
+/* Tlačítko Toggle (Zakázat/Povolit) */
+.service-btn.is-on {
+  background: rgba(255, 140, 0, 0.28);
+  border-color: rgba(255, 140, 0, 0.85);
+  color: #ffb347;
+  font-weight: 800;
+}
+
+/* --- HLAVNÍ NAVIGACE (ServiceMain) --- */
+.service-top-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.service-nav-btn {
+  position: relative;
+  background: #3b1b4b;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  padding: 0.8rem 0.5rem;
+  border-radius: 0.75rem;
+  font-weight: 800;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.service-nav-btn.is-active {
+  border-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Badge v navigaci */
+.service-badge {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 18px;
+  background: rgba(255, 140, 0, 0.95);
+  color: #111;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 400px) {
+  .service-nav-btn {
+    font-size: 0.7rem;
+  }
+}
+
+/* --- KOMPONENTA: STATIONS (Jednotlivá stanoviště) --- */
+.stations-tabs {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin-top: 1rem;
+  align-items: stretch;
+}
+
+.stations-tab {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-width: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.35);
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.stations-tab.is-active {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+  background-color: rgb(149, 41, 138);
+  color: rgb(255, 255, 255);
+}
+
+.stations-tab.has-problem {
+  background: rgba(255, 140, 0, 0.22);
+  border-color: rgba(255, 140, 0, 0.75);
+}
+
+.stations-tab.is-disabled {
+  background: rgba(255, 70, 0, 0.22);
+  border-color: rgba(255, 70, 0, 0.85);
+  color: #ffb347;
+}
+
+.tab-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 12px;
+  background: rgba(255, 140, 0, 0.95);
+  color: #111;
+  border: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+.stations-tab.is-disabled .tab-badge {
+  background: rgba(255, 70, 0, 0.95);
+}
+
+/* Status box pod výběrem stanoviště */
+.station-status {
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 10px 0 14px 0;
+  border: 2px solid rgba(255,255,255,0.18);
+}
+
+.station-status.ok { opacity: 0.9; }
+
+.station-status.has-problem {
+  background: rgba(255, 140, 0, 0.16);
+  border-color: rgba(255, 140, 0, 0.55);
+}
+
+.station-status-title {
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.station-status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* --- KOMPONENTA: SERVICE REMOTE (Servisní obrazovka) --- */
+.service-remote {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.service-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.service-tab {
+  border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.25);
+  background: transparent;
+  color: inherit;
+  font-weight: 800;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.service-tab.is-active {
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.12);
+}
+
+.service-card {
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,0.12);
+  padding: 12px;
+}
+
+.service-subtitle {
+  margin: 0 0 10px 0;
+  font-weight: 900;
+  opacity: 0.9;
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.12);
+  margin: 14px 0;
+}
+
+/* Mřížky pro akce */
+.mini-grid {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 520px) {
+  .mini-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* --- KRUH: Ventily / Tenzometry --- */
+.station-circle-container {
+  position: relative;
+  width: 280px;
+  height: 280px;
+  margin: 40px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.station-circle-track {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.circle-node {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #3b1b4b;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 2;
+
+  --angle: calc(var(--index) * 60deg + 90deg);
+  left: calc(50% + cos(var(--angle)) * 140px - 35px);
+  top: calc(50% + sin(var(--angle)) * 140px - 35px);
+}
+
+.circle-node.is-on {
+  background: rgba(255, 140, 0, 0.9);
+  border-color: white;
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+}
+
+.circle-node:hover {
+  transform: scale(1.1);
+  border-color: white;
+}
+
+.node-label {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.node-status {
+  font-size: 0.65rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+}
+
+.node-value {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #ffb347;
+}
+
+.circle-node.sensor {
+  cursor: default;
+  border-style: solid;
+  background: #3b1b4b;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  pointer-events: none;
+}
+
+.circle-node.sensor:hover {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 400px) {
+  .station-circle-container {
+    width: 220px;
+    height: 220px;
+  }
+
+  .circle-node {
+    width: 60px;
+    height: 60px;
+    left: calc(50% + cos(var(--angle)) * 110px - 30px);
+    top: calc(50% + sin(var(--angle)) * 110px - 30px);
+  }
+}

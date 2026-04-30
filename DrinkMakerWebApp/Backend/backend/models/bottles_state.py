@@ -1,3 +1,4 @@
+import unicodedata
 from typing import List, Dict, Any
 from models.endpoints_schemas import BottleAssignment
 from services.storage_service import save_data, load_data
@@ -100,9 +101,15 @@ class BottlesState:
             for i, b in enumerate(self.bottles)
         ]
     
+    def _strip_diacritics(self, text: str) -> str:
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', text or '')
+            if unicodedata.category(c) != 'Mn'
+        )
+
     def to_position_json(self) -> dict:
         return {
             "bottOnPos": [
-                {f"pos_{i}": b for i, b in enumerate(self.bottles)}
+                {f"pos_{i}": self._strip_diacritics(b) for i, b in enumerate(self.bottles)}
             ]
         }

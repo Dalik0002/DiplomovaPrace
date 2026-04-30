@@ -19,6 +19,8 @@ import {
 
 import { useInputData, useInputDataFast } from '../../hooks/useInputData'
 
+const VALVE_LABELS = ['A', 'B', 'C', 'D', 'E', 'F']
+
 function ServiceRemote() {
   const [activeTab, setActiveTab] = useState('actions') // actions | valves | sensors
 
@@ -272,7 +274,7 @@ function ServiceRemote() {
                   onClick={() => toggleValve(i)}
                   type="button"
                 >
-                  <span className="node-label">{i + 1}</span>
+                  <span className="node-label">{VALVE_LABELS[i]}</span>
                   <small className="node-status">{valveOn[i] ? 'ON' : 'OFF'}</small>
                 </button>
               ))}
